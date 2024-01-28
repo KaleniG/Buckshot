@@ -4,6 +4,9 @@
     <Filter Include="Buckshot">
       <UniqueIdentifier>{28BDC981-148A-248D-3DA3-123529CF591B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Buckshot\Events">
+      <UniqueIdentifier>{0C0C92D5-7897-FF99-81A8-828EEDB25B9A}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Buckshot.h" />
@@ -15,6 +18,18 @@
     </ClInclude>
     <ClInclude Include="src\Buckshot\EntryPoint.h">
       <Filter>Buckshot</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Events\ApplicationEvent.h">
+      <Filter>Buckshot\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Events\Event.h">
+      <Filter>Buckshot\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Events\KeyEvent.h">
+      <Filter>Buckshot\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Events\MouseEvent.h">
+      <Filter>Buckshot\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Log.h">
       <Filter>Buckshot</Filter>
