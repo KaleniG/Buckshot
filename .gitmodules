@@ -1,0 +1,3 @@
+[submodule "Buckshot/vendor/spdlog"]
+	path = Buckshot/vendor/spdlog
+	url = https://github.com/gabime/spdlog

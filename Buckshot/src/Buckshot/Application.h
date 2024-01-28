@@ -7,7 +7,6 @@ namespace Buckshot {
   class BS_API Application
   {
   public:
-
     Application();
     virtual ~Application();
 
