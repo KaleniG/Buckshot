@@ -10,4 +10,12 @@
   #error Buckshot supports only Windows!
 #endif
 
+#ifdef BS_ENABLE_ASSERTS
+  #define BS_ASSERT(x, ...) { if(!(x)) { BS_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+  #define CL_ASSERT(x, ...) { if(!(x)) { CL_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#else
+  #define BS_ASSERT(x, ...)
+  #define CL_ASSERT(x, ...)
+#endif
+
 #define BIT(x) (1 << x)

@@ -1,3 +1,6 @@
 [submodule "Buckshot/vendor/spdlog"]
 	path = Buckshot/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Buckshot/vendor/GLFW"]
+	path = Buckshot/vendor/GLFW
+	url = https://github.com/TheCherno/GLFW

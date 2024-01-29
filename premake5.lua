@@ -1,3 +1,5 @@
+-- [A0] Parameters changed/added that are different form the tutorial
+
 workspace "Buckshot"
 	architecture "x64"
 
@@ -10,6 +12,11 @@ workspace "Buckshot"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Buckshot/vendor/GLFW/include"
+
+include "Buckshot/vendor/GLFW"
+
 project "Buckshot"
 	location "Buckshot"
 	kind "SharedLib"
@@ -17,6 +24,9 @@ project "Buckshot"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	pchheader "bspch.h"
+	pchsource "Buckshot/src/bspch.cpp"
 
 	files
 	{
@@ -27,12 +37,20 @@ project "Buckshot"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
+	}
+
+	links 
+	{ 
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
 		cppdialect "C++latest"
-		staticruntime "On"
+		staticruntime "off" -- [A0] Normally is "on"
+		
 		systemversion "latest"
 
 		defines
@@ -47,14 +65,17 @@ project "Buckshot"
 		}
 
 	filter "configurations:Debug"
+		runtime "Debug"   -- [A0] Doesn't exist in teh original
 		defines "BS_DEBUG"
 		symbols "On"
 
 	filter "configurations:Release"
+		runtime "Release"   -- [A0] Doesn't exist in teh original
 		defines "BS_RELEASE"
 		optimize "On"
 
 	filter "configurations:Dist"
+		runtime "Release"   -- [A0] Doesn't exist in teh original
 		defines "BS_DIST"
 		optimize "On"
 
@@ -85,7 +106,7 @@ project "Sandbox"
 
 	filter "system:windows"
 		cppdialect "C++latest"
-		staticruntime "On"
+		staticruntime "on"
 		systemversion "latest"
 
 		defines

@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace Buckshot {
 
 	class BS_API KeyEvent : public Event

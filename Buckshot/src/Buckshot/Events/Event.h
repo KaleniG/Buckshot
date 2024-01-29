@@ -1,7 +1,6 @@
 #pragma once
 
-#include <string>
-#include <functional>
+#include <bspch.h>
 
 #include "Buckshot/Core.h"
 
