@@ -37,6 +37,12 @@
     <ClInclude Include="src\Buckshot\Events\MouseEvent.h">
       <Filter>Buckshot\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buckshot\Layer.h">
+      <Filter>Buckshot</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\LayerStack.h">
+      <Filter>Buckshot</Filter>
+    </ClInclude>
     <ClInclude Include="src\Buckshot\Log.h">
       <Filter>Buckshot</Filter>
     </ClInclude>
@@ -50,6 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buckshot\Application.cpp">
+      <Filter>Buckshot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Layer.cpp">
+      <Filter>Buckshot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\LayerStack.cpp">
       <Filter>Buckshot</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Log.cpp">

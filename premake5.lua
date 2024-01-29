@@ -49,7 +49,7 @@ project "Buckshot"
 
 	filter "system:windows"
 		cppdialect "C++latest"
-		staticruntime "off" -- [A0] Normally is "on"
+		staticruntime "on" -- [A0] Normally is "on"
 		
 		systemversion "latest"
 
@@ -65,17 +65,17 @@ project "Buckshot"
 		}
 
 	filter "configurations:Debug"
-		runtime "Debug"   -- [A0] Doesn't exist in teh original
+		buildoptions "/MDd"   -- [A0] Doesn't exist in teh original
 		defines "BS_DEBUG"
 		symbols "On"
 
 	filter "configurations:Release"
-		runtime "Release"   -- [A0] Doesn't exist in teh original
+		buildoptions "/MD"   -- [A0] Doesn't exist in teh original
 		defines "BS_RELEASE"
 		optimize "On"
 
 	filter "configurations:Dist"
-		runtime "Release"   -- [A0] Doesn't exist in teh original
+		buildoptions "/MD"   -- [A0] Doesn't exist in teh original
 		defines "BS_DIST"
 		optimize "On"
 
@@ -115,13 +115,16 @@ project "Sandbox"
 		}
 
 	filter "configurations:Debug"
+		buildoptions "/MDd"
 		defines "BS_DEBUG"
 		symbols "On"
 
 	filter "configurations:Release"
+		buildoptions "/MD"
 		defines "BS_RELEASE"
 		optimize "On"
 
 	filter "configurations:Dist"
+		buildoptions "/MD"
 		defines "BS_DIST"
 		optimize "On"
