@@ -20,9 +20,13 @@ namespace Buckshot {
     void PushLayer(Layer* layer);
     void PushOverlay(Layer* layer);
 
+    inline Window& GetWindow() { return *m_Window; }
+    inline static Application& Get() { return *s_Instance; }
+
   private:
     bool OnWindowClose(WindowCloseEvent& e);
 
+    static Application* s_Instance;
     std::unique_ptr<Window> m_Window;
     LayerStack m_LayerStack;
     bool m_Running = true;

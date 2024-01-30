@@ -8,10 +8,6 @@ public:
 	{
 	}
 
-	void OnUpdate() override
-	{
-	}
-
 	void OnEvent(Buckshot::Event& event) override
 	{
 		BS_TRACE("{0}", event);
@@ -25,6 +21,7 @@ public:
   Sandbox()
   {
 		PushLayer(new ExampleLayer());
+		PushOverlay(new Buckshot::ImGuiLayer());
   }
 
   ~Sandbox()

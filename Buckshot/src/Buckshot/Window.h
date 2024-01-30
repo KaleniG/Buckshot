@@ -13,7 +13,7 @@ namespace Buckshot {
 		unsigned int Width;
 		unsigned int Height;
 
-		WindowProps(const std::string& title = "Buckshot Engine", unsigned int width = 800, unsigned int height = 600)
+		WindowProps(const std::string& title = "Buckshot Engine", unsigned int width = 1280, unsigned int height = 720)
 			: Title(title), Width(width), Height(height){}
 	};
 
