@@ -1,5 +1,3 @@
--- [A0] Parameters changed/added that are different form the tutorial
-
 workspace "Buckshot"
 	architecture "x64"
 
@@ -14,8 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Buckshot/vendor/GLFW/include"
+IncludeDir["GLAD"] = "Buckshot/vendor/GLAD/include"
 
 include "Buckshot/vendor/GLFW"
+include "Buckshot/vendor/GLAD"
 
 project "Buckshot"
 	location "Buckshot"
@@ -38,18 +38,20 @@ project "Buckshot"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.GLAD}"
 	}
 
 	links 
 	{ 
 		"GLFW",
+		"GLAD",
 		"opengl32.lib"
 	}
 
 	filter "system:windows"
 		cppdialect "C++latest"
-		staticruntime "on" -- [A0] Normally is "on"
+		staticruntime "on"
 		
 		systemversion "latest"
 
@@ -57,6 +59,7 @@ project "Buckshot"
 		{
 			"BS_PLATFORM_WINDOWS",
 			"BS_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands
@@ -65,17 +68,17 @@ project "Buckshot"
 		}
 
 	filter "configurations:Debug"
-		buildoptions "/MDd"   -- [A0] Doesn't exist in teh original
-		defines "BS_DEBUG"
+		buildoptions "/MDd"
+		defines { "BS_ENABLE_ASSERTS", "BS_DEBUG"}
 		symbols "On"
 
 	filter "configurations:Release"
-		buildoptions "/MD"   -- [A0] Doesn't exist in teh original
-		defines "BS_RELEASE"
+		buildoptions "/MD"
+		defines { "BS_ENABLE_ASSERTS", "BS_RELEASE"}
 		optimize "On"
 
 	filter "configurations:Dist"
-		buildoptions "/MD"   -- [A0] Doesn't exist in teh original
+		buildoptions "/MD"
 		defines "BS_DIST"
 		optimize "On"
 
@@ -116,12 +119,12 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		buildoptions "/MDd"
-		defines "BS_DEBUG"
+		defines { "BS_ENABLE_ASSERTS", "BS_DEBUG"}
 		symbols "On"
 
 	filter "configurations:Release"
 		buildoptions "/MD"
-		defines "BS_RELEASE"
+		defines { "BS_ENABLE_ASSERTS", "BS_RELEASE"}
 		optimize "On"
 
 	filter "configurations:Dist"

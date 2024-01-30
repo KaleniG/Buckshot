@@ -1,5 +1,7 @@
 #include <bspch.h>
 
+#include <glad/glad.h>
+
 #include "WindowsWindow.h"
 #include "Buckshot/Events/ApplicationEvent.h"
 #include "Buckshot/Events/MouseEvent.h"
@@ -48,6 +50,8 @@ namespace Buckshot {
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int glad_status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		BS_ASSERT(glad_status, "Failed to initialize GLAD!")
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 

@@ -10,13 +10,13 @@ public:
 
 	void OnUpdate() override
 	{
-		BS_INFO("ExampleLayer::Update");
 	}
 
 	void OnEvent(Buckshot::Event& event) override
 	{
 		BS_TRACE("{0}", event);
 	}
+
 };
 
 class Sandbox : public Buckshot::Application
