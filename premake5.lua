@@ -1,6 +1,7 @@
 workspace "Buckshot"
 	architecture "x64"
-
+	startproject "Sandbox"
+	
 	configurations
 	{
 		"Debug",
@@ -55,7 +56,7 @@ project "Buckshot"
 
 	filter "system:windows"
 		cppdialect "C++latest"
-		staticruntime "on"
+		staticruntime "off"
 		
 		systemversion "latest"
 
@@ -68,21 +69,21 @@ project "Buckshot"
 
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
 		}
 
 	filter "configurations:Debug"
-		buildoptions "/MDd"
+		runtime "Debug"
 		defines { "BS_ENABLE_ASSERTS", "BS_DEBUG"}
 		symbols "On"
 
 	filter "configurations:Release"
-		buildoptions "/MD"
+		runtime "Release"
 		defines { "BS_ENABLE_ASSERTS", "BS_RELEASE"}
 		optimize "On"
 
 	filter "configurations:Dist"
-		buildoptions "/MD"
+		runtime "Release"
 		defines "BS_DIST"
 		optimize "On"
 
@@ -113,7 +114,7 @@ project "Sandbox"
 
 	filter "system:windows"
 		cppdialect "C++latest"
-		staticruntime "on"
+		staticruntime "off"
 		systemversion "latest"
 
 		defines
@@ -122,16 +123,16 @@ project "Sandbox"
 		}
 
 	filter "configurations:Debug"
-		buildoptions "/MDd"
+		runtime "Debug"
 		defines { "BS_ENABLE_ASSERTS", "BS_DEBUG"}
 		symbols "On"
 
 	filter "configurations:Release"
-		buildoptions "/MD"
+		runtime "Release"
 		defines { "BS_ENABLE_ASSERTS", "BS_RELEASE"}
 		optimize "On"
 
 	filter "configurations:Dist"
-		buildoptions "/MD"
+		runtime "Release"
 		defines "BS_DIST"
 		optimize "On"
