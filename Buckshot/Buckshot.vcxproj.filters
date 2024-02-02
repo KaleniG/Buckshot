@@ -7,8 +7,14 @@
     <Filter Include="Buckshot\Events">
       <UniqueIdentifier>{0C0C92D5-7897-FF99-81A8-828EEDB25B9A}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Buckshot\ImGui">
+      <UniqueIdentifier>{5270852D-3E3E-7933-27D2-E959133F5598}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Platform">
       <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\OpenGL">
+      <UniqueIdentifier>{1E7D2C1D-8A08-9AE1-9319-1DD6FF23F6E1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Platform\Windows">
       <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
@@ -37,6 +43,9 @@
     <ClInclude Include="src\Buckshot\Events\MouseEvent.h">
       <Filter>Buckshot\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buckshot\ImGui\ImGuiLayer.h">
+      <Filter>Buckshot\ImGui</Filter>
+    </ClInclude>
     <ClInclude Include="src\Buckshot\Layer.h">
       <Filter>Buckshot</Filter>
     </ClInclude>
@@ -49,16 +58,20 @@
     <ClInclude Include="src\Buckshot\Window.h">
       <Filter>Buckshot</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h">
+      <Filter>Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\bspch.h" />
-    <ClInclude Include="src\Buckshot\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buckshot\Application.cpp">
       <Filter>Buckshot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\ImGui\ImGuiLayer.cpp">
+      <Filter>Buckshot\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Layer.cpp">
       <Filter>Buckshot</Filter>
@@ -69,11 +82,12 @@
     <ClCompile Include="src\Buckshot\Log.cpp">
       <Filter>Buckshot</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp">
+      <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\bspch.cpp" />
-    <ClCompile Include="src\Buckshot\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
   </ItemGroup>
 </Project>

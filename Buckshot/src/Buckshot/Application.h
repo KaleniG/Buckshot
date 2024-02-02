@@ -26,6 +26,7 @@ namespace Buckshot {
   private:
     bool OnWindowClose(WindowCloseEvent& e);
 
+  private:
     static Application* s_Instance;
     std::unique_ptr<Window> m_Window;
     LayerStack m_LayerStack;
