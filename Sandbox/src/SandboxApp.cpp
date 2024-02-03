@@ -10,7 +10,6 @@ public:
 
 	void OnEvent(Buckshot::Event& event) override
 	{
-		BS_TRACE("{0}", event);
 	}
 
 };

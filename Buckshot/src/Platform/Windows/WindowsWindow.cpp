@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 
 #include "WindowsWindow.h"
+#include "Buckshot/Window.h"
 #include "Buckshot/Events/ApplicationEvent.h"
 #include "Buckshot/Events/MouseEvent.h"
 #include "Buckshot/Events/KeyEvent.h"
