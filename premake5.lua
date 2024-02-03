@@ -109,6 +109,7 @@ project "Sandbox"
 	{
 		"Buckshot/vendor/spdlog/include",
 		"Buckshot/src",
+		"Buckshot/vendor",
 		"%{IncludeDir.glm}"
 	}
 

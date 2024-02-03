@@ -18,6 +18,7 @@ public:
 	{
 	}
 
+
 };
 
 class Sandbox : public Buckshot::Application
@@ -26,7 +27,6 @@ public:
   Sandbox()
   {
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Buckshot::ImGuiLayer());
   }
 
   ~Sandbox()
