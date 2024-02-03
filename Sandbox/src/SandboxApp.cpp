@@ -8,6 +8,12 @@ public:
 	{
 	}
 
+	void OnUpdate() override
+	{
+		if (Buckshot::Input::IsKeyPressed(BS_KEY_TAB))
+			BS_TRACE("Tab key is pressed (poll)!");
+	}
+
 	void OnEvent(Buckshot::Event& event) override
 	{
 	}

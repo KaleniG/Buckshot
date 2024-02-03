@@ -162,9 +162,11 @@
     <ClInclude Include="src\Buckshot\Events\MouseEvent.h" />
     <ClInclude Include="src\Buckshot\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Buckshot\Input.h" />
+    <ClInclude Include="src\Buckshot\KeyCodes.h" />
     <ClInclude Include="src\Buckshot\Layer.h" />
     <ClInclude Include="src\Buckshot\LayerStack.h" />
     <ClInclude Include="src\Buckshot\Log.h" />
+    <ClInclude Include="src\Buckshot\MouseButtonCodes.h" />
     <ClInclude Include="src\Buckshot\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />

@@ -71,6 +71,8 @@
       <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\bspch.h" />
+    <ClInclude Include="src\Buckshot\KeyCodes.h" />
+    <ClInclude Include="src\Buckshot\MouseButtonCodes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buckshot\Application.cpp">
