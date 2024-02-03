@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 
 #include "Application.h"
 #include "Input.h"
@@ -66,6 +67,7 @@ namespace Buckshot {
   bool Application::OnWindowClose(WindowCloseEvent& e)
   {
     m_Running = false;
+    BS_INFO("Closing window \"{0}\" ({1}, {2})", m_Window->GetName(), m_Window->GetWidth(), m_Window->GetHeight());
     return true;
   }
 
