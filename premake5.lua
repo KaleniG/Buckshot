@@ -23,8 +23,10 @@ include "Buckshot/vendor/ImGui"
 
 project "Buckshot"
 	location "Buckshot"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
+	cppdialect "C++latest"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -59,9 +61,6 @@ project "Buckshot"
 	}
 
 	filter "system:windows"
-		cppdialect "C++latest"
-		staticruntime "off"
-		
 		systemversion "latest"
 
 		defines
@@ -71,30 +70,27 @@ project "Buckshot"
 			"GLFW_INCLUDE_NONE"
 		}
 
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
-		}
-
 	filter "configurations:Debug"
 		runtime "Debug"
 		defines { "BS_ENABLE_ASSERTS", "BS_DEBUG"}
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"
 		defines { "BS_ENABLE_ASSERTS", "BS_RELEASE"}
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		runtime "Release"
-		defines "BS_DIST"
-		optimize "On"
+		defines { "BS_DIST" }
+		optimize "on"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	cppdialect "C++latest"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -119,8 +115,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++latest"
-		staticruntime "off"
 		systemversion "latest"
 
 		defines
@@ -131,14 +125,14 @@ project "Sandbox"
 	filter "configurations:Debug"
 		runtime "Debug"
 		defines { "BS_ENABLE_ASSERTS", "BS_DEBUG"}
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"
 		defines { "BS_ENABLE_ASSERTS", "BS_RELEASE"}
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		runtime "Release"
 		defines "BS_DIST"
-		optimize "On"
+		optimize "on"

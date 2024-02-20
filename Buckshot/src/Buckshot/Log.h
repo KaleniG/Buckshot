@@ -8,7 +8,7 @@
 
 namespace Buckshot {
 
-  class BS_API Log
+  class Log
   {
   public:
     static void Init();

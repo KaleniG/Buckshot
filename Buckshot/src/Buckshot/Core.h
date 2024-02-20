@@ -1,11 +1,6 @@
 #pragma once
 
 #ifdef BS_PLATFORM_WINDOWS
-  #ifdef BS_BUILD_DLL
-    #define BS_API __declspec(dllexport)
-  #else
-    #define BS_API __declspec(dllimport)
-  #endif
 #else
   #error Buckshot supports only Windows!
 #endif
@@ -19,4 +14,4 @@
 #endif
 
 #define BIT(x) (1 << x)
-#define BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+#define BS_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)

@@ -1,5 +1,7 @@
 #include <Buckshot.h>
 
+#include "ImGui/imgui.h"
+
 class ExampleLayer : public Buckshot::Layer
 {
 public:
@@ -14,8 +16,11 @@ public:
 			BS_TRACE("Tab key is pressed (poll)!");
 	}
 
-	void OnEvent(Buckshot::Event& event) override
+	virtual void OnImGuiRender()
 	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello!");
+		ImGui::End();
 	}
 
 

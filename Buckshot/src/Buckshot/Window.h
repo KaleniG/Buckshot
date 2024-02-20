@@ -17,7 +17,7 @@ namespace Buckshot {
 			: Title(title), Width(width), Height(height){}
 	};
 
-	class BS_API Window
+	class Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;

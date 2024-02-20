@@ -9,7 +9,7 @@
 
 namespace Buckshot {
 
-  class BS_API ImGuiLayer : public Layer
+  class ImGuiLayer : public Layer
   {
   public:
     ImGuiLayer();

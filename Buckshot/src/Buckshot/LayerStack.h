@@ -6,7 +6,7 @@
 
 namespace Buckshot {
 
-	class BS_API LayerStack
+	class LayerStack
 	{
 	public:
 		LayerStack();
