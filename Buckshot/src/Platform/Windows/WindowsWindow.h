@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Buckshot/Window.h"
+#include "Buckshot/Renderer/GraphicsContext.h"
 
 namespace Buckshot {
 
@@ -28,6 +29,7 @@ namespace Buckshot {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{

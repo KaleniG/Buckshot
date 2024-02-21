@@ -1,12 +1,11 @@
 #include <bspch.h>
 
-#include <glad/glad.h>
-
 #include "WindowsWindow.h"
 #include "Buckshot/Window.h"
 #include "Buckshot/Events/ApplicationEvent.h"
 #include "Buckshot/Events/MouseEvent.h"
 #include "Buckshot/Events/KeyEvent.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Buckshot { 
 
@@ -50,10 +49,11 @@ namespace Buckshot {
 		}
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		int glad_status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		BS_ASSERT(glad_status, "Failed to initialize GLAD!")
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
+
 		SetVSync(true);
 
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
@@ -154,7 +154,7 @@ namespace Buckshot {
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
