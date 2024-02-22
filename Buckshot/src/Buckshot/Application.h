@@ -6,6 +6,7 @@
 #include "ImGui/ImGuiLayer.h"
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
+#include "Renderer/Shader.h"
 
 namespace Buckshot {
 
@@ -33,6 +34,12 @@ namespace Buckshot {
     ImGuiLayer* m_ImGuiLayer;
     LayerStack m_LayerStack;
     bool m_Running = true;
+
+    // TEMP
+    unsigned int m_VAO, m_VBO, m_IBO;
+    std::unique_ptr<Shader> m_Shader;
+
+
   };
 
   Application* CreateApplication();
