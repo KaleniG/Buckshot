@@ -80,6 +80,7 @@ namespace Buckshot {
 	void ImGuiLayer::OnImGuiRender()
 	{
 		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		// TEMP
+		//ImGui::ShowDemoWindow(&show);
 	}
 }

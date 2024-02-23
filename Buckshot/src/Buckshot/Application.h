@@ -8,6 +8,7 @@
 #include "Events/ApplicationEvent.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Buffers.h"
+#include "Renderer/VertexArray.h"
 
 namespace Buckshot {
 
@@ -37,12 +38,12 @@ namespace Buckshot {
     bool m_Running = true;
 
     // TEMP
-    unsigned int m_VAO, m_VBO, m_IBO;
-    std::unique_ptr<Shader> m_Shader;
-    std::unique_ptr<VertexBuffer> m_VertexBuffer;
-    std::unique_ptr<IndexBuffer> m_IndexBuffer;
+    std::shared_ptr<Shader> m_Shader;
+    std::shared_ptr<VertexBuffer> m_VertexBuffer;
+    std::shared_ptr<IndexBuffer> m_IndexBuffer;
+    std::shared_ptr<VertexArray> m_VertexArray;
 
-
+    std::shared_ptr<VertexArray> m_SquareVertexArray;
   };
 
   Application* CreateApplication();

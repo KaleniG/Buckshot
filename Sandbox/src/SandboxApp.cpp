@@ -18,9 +18,6 @@ public:
 
 	virtual void OnImGuiRender()
 	{
-		ImGui::Begin("Test");
-		ImGui::Text("Hello!");
-		ImGui::End();
 	}
 
 
