@@ -1,11 +1,12 @@
 #include <Buckshot.h>
 #include <ImGui/imgui.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 class ExampleLayer : public Buckshot::Layer
 {
 public:
-	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPos(0.0f)
+  ExampleLayer()
+    : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPos(0.0f)
 	{
     m_VertexArray.reset(Buckshot::VertexArray::Create());
 
@@ -78,12 +79,13 @@ public:
     out vec4 v_Color;
 
     uniform mat4 u_ViewProjectionMatrix;
+    uniform mat4 u_Transform;
     
     void main()
     {
       v_Position = a_Position;
       v_Color = a_Color;
-      gl_Position = u_ViewProjectionMatrix * vec4(a_Position, 1.0f); 
+      gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0f); 
     }
     )";
 
@@ -107,19 +109,20 @@ public:
 	void OnUpdate(Buckshot::Timestep timestep) override
 	{
     if (Buckshot::Input::IsKeyPressed(BS_KEY_LEFT))
-      m_CameraPos.x -= 0.1f * timestep.GetSeconds();
+      m_CameraPos.x -= m_MovementSpeed * timestep.GetSeconds();
     else if (Buckshot::Input::IsKeyPressed(BS_KEY_RIGHT))
-      m_CameraPos.x += 0.1f * timestep.GetSeconds();
+      m_CameraPos.x += m_MovementSpeed * timestep.GetSeconds();
 
     if (Buckshot::Input::IsKeyPressed(BS_KEY_UP))
-      m_CameraPos.y += 0.1f * timestep.GetSeconds();
+      m_CameraPos.y += m_MovementSpeed * timestep.GetSeconds();
     else if (Buckshot::Input::IsKeyPressed(BS_KEY_DOWN))
-      m_CameraPos.y -= 0.1f * timestep.GetSeconds();
+      m_CameraPos.y -= m_MovementSpeed * timestep.GetSeconds();
 
     Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
     Buckshot::RenderCommand::Clear();
 
     m_Camera.SetPosition(m_CameraPos);
+
 
     Buckshot::Renderer::BeginScene(m_Camera);
     Buckshot::Renderer::Submit(m_Shader, m_SquareVertexArray);
@@ -149,6 +152,9 @@ private:
   std::shared_ptr<Buckshot::IndexBuffer> m_IndexBuffer;
   std::shared_ptr<Buckshot::VertexArray> m_VertexArray;
   std::shared_ptr<Buckshot::VertexArray> m_SquareVertexArray;
+
+  float m_MovementSpeed = 2.0f;
+
   Buckshot::OrthographicCamera m_Camera;
   glm::vec3 m_CameraPos;
 };
