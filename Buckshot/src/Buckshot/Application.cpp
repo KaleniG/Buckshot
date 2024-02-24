@@ -1,10 +1,7 @@
 #include <bspch.h>
-
 #include <glm/glm.hpp>
 
-#include "Buckshot/Renderer/Renderer.h"
 #include "Buckshot/Application.h"
-#include "Buckshot/Input.h"
 
 namespace Buckshot {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -12,7 +9,6 @@ namespace Buckshot {
   Application* Application::s_Instance = nullptr;
 
   Application::Application()
-    : m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
   {
     BS_ASSERT(!s_Instance, "Application already exists!");
     s_Instance = this;
@@ -22,110 +18,6 @@ namespace Buckshot {
 
     m_ImGuiLayer = new ImGuiLayer();
     PushOverlay(m_ImGuiLayer);
-
-    /////////////////////////////////////////////////////////////
-    m_VertexArray.reset(VertexArray::Create());
-
-    float vertices[] =
-    {
-      -0.5f, -0.5f, 0.0f, 0.1f, 0.2f, 0.3f, 1.0f,
-       0.5f, -0.5f, 0.0f, 0.4f, 0.5f, 0.6f, 1.0f,
-       0.0f,  0.5f, 0.0f, 0.7f, 0.8f, 0.9f, 1.0f
-    };
-
-
-    m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-    m_VertexBuffer->Bind();
-
-    {
-      BufferLayout layout = {
-            { ShaderDataType::Float3, "a_Position" },
-            { ShaderDataType::Float4, "a_Color" }
-      };
-      m_VertexBuffer->SetLayout(layout);
-    }
-
-    uint32_t indices[] =
-    {
-      0, 1, 2
-    };
-
-    m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-
-    m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-    m_VertexArray->SetIndexBuffer(m_IndexBuffer);
-
-    //////////////////////////////////////////
-
-    m_SquareVertexArray.reset(VertexArray::Create());
-
-    float verticesSquare[] =
-    {
-      -0.5f, -0.5f, 0.0f, 0.1f, 0.1f, 0.1f, 1.0f,
-       0.5f, -0.5f, 0.0f, 0.4f, 0.4f, 0.4f, 1.0f,
-       0.5f,  0.5f, 0.0f, 0.7f, 0.7f, 0.7f, 1.0f,
-      -0.5f,  0.5f, 0.0f, 0.9f, 0.9f, 0.9f, 1.0f
-    };
-
-    std::shared_ptr<VertexBuffer> m_SquareVertexBuffer;
-    m_SquareVertexBuffer.reset(VertexBuffer::Create(verticesSquare, sizeof(verticesSquare)));
-
-    {
-      BufferLayout layout = {
-            { ShaderDataType::Float3, "a_Position" },
-            { ShaderDataType::Float4, "a_Color" }
-      };
-      m_SquareVertexBuffer->SetLayout(layout);
-    }
-
-    uint32_t indicesSquare[] =
-    {
-      0, 1, 2, 2, 3, 0
-    };
-
-    std::shared_ptr<IndexBuffer> m_IndexBufferSquare;
-    m_IndexBufferSquare.reset(IndexBuffer::Create(indicesSquare, sizeof(indicesSquare) / sizeof(uint32_t)));
-
-    m_SquareVertexArray->AddVertexBuffer(m_SquareVertexBuffer);
-    m_SquareVertexArray->SetIndexBuffer(m_IndexBufferSquare);
-
-
-    std::string vertexSrc = R"(
-    #version 330 core
-    layout (location = 0) in vec3 a_Position;   
-    layout (location = 1) in vec4 a_Color;     
-    
-    out vec3 v_Position;
-    out vec4 v_Color;
-
-    uniform mat4 u_ViewProjectionMatrix;
-    
-    void main()
-    {
-      v_Position = a_Position;
-      v_Color = a_Color;
-      gl_Position = u_ViewProjectionMatrix * vec4(a_Position, 1.0f); 
-    }
-    )";
-
-    std::string fragmentSrc = R"(
-    #version 330 core
-
-    in vec3 v_Position;
-    in vec4 v_Color;
-
-    out vec4 a_Color;  
-    
-    void main()
-    {
-      a_Color = v_Color;
-    }
-    )";
-
-
-    m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
-
-    /////////////////////////////////////////////////////////////
   }
 
   Application::~Application()
@@ -162,17 +54,6 @@ namespace Buckshot {
   {
     while (m_Running)
     {
-      RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
-      RenderCommand::Clear();
-
-      m_Camera.SetPosition(glm::vec3(0.25f, 0.25f, 0.4f));
-      m_Camera.SetRotation(45.0f);
-
-      Renderer::BeginScene(m_Camera);
-      Renderer::Submit(m_Shader, m_SquareVertexArray);
-      Renderer::Submit(m_Shader, m_VertexArray);
-      Renderer::EndScene();
-
       for (Layer* layer : m_LayerStack)
         layer->OnUpdate();
 
