@@ -8,6 +8,7 @@
 #include "Buckshot/Renderer/Shader.h"
 #include "Buckshot/Renderer/Buffers.h"
 #include "Buckshot/Renderer/VertexArray.h"
+#include "Buckshot/Renderer/OrthographicCamera.h"
 
 namespace Buckshot {
 
@@ -41,8 +42,9 @@ namespace Buckshot {
     std::shared_ptr<VertexBuffer> m_VertexBuffer;
     std::shared_ptr<IndexBuffer> m_IndexBuffer;
     std::shared_ptr<VertexArray> m_VertexArray;
-
     std::shared_ptr<VertexArray> m_SquareVertexArray;
+
+    OrthographicCamera m_Camera;
   };
 
   Application* CreateApplication();

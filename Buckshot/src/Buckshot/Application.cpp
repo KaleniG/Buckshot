@@ -12,6 +12,7 @@ namespace Buckshot {
   Application* Application::s_Instance = nullptr;
 
   Application::Application()
+    : m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
   {
     BS_ASSERT(!s_Instance, "Application already exists!");
     s_Instance = this;
@@ -31,6 +32,7 @@ namespace Buckshot {
        0.5f, -0.5f, 0.0f, 0.4f, 0.5f, 0.6f, 1.0f,
        0.0f,  0.5f, 0.0f, 0.7f, 0.8f, 0.9f, 1.0f
     };
+
 
     m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
     m_VertexBuffer->Bind();
@@ -95,12 +97,14 @@ namespace Buckshot {
     
     out vec3 v_Position;
     out vec4 v_Color;
+
+    uniform mat4 u_ViewProjectionMatrix;
     
     void main()
     {
       v_Position = a_Position;
       v_Color = a_Color;
-      gl_Position = vec4(a_Position, 1.0f); 
+      gl_Position = u_ViewProjectionMatrix * vec4(a_Position, 1.0f); 
     }
     )";
 
@@ -161,10 +165,12 @@ namespace Buckshot {
       RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
       RenderCommand::Clear();
 
-      Renderer::BeginScene();
-      m_Shader->Bind();
-      Renderer::Submit(m_SquareVertexArray);
-      Renderer::Submit(m_VertexArray);
+      m_Camera.SetPosition(glm::vec3(0.25f, 0.25f, 0.4f));
+      m_Camera.SetRotation(45.0f);
+
+      Renderer::BeginScene(m_Camera);
+      Renderer::Submit(m_Shader, m_SquareVertexArray);
+      Renderer::Submit(m_Shader, m_VertexArray);
       Renderer::EndScene();
 
       for (Layer* layer : m_LayerStack)

@@ -7,18 +7,17 @@ public:
 	ExampleLayer()
 		: Layer("Example")
 	{
+
 	}
 
 	void OnUpdate() override
 	{
-		if (Buckshot::Input::IsKeyPressed(BS_KEY_TAB))
-			BS_TRACE("Tab key is pressed (poll)!");
+		
 	}
 
-	virtual void OnImGuiRender()
+	void OnImGuiRender() override
 	{
 	}
-
 
 };
 
@@ -34,6 +33,8 @@ public:
   {
 
   }
+
+
 };
 
 Buckshot::Application* Buckshot::CreateApplication()
