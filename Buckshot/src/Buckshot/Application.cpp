@@ -1,11 +1,10 @@
 #include <bspch.h>
 
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include "Application.h"
-#include "Input.h"
+#include "Buckshot/Renderer/Renderer.h"
+#include "Buckshot/Application.h"
+#include "Buckshot/Input.h"
 
 namespace Buckshot {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -159,16 +158,14 @@ namespace Buckshot {
   {
     while (m_Running)
     {
-      glClearColor(0.1f, 0.1f, 0.1f, 1);
-      glClear(GL_COLOR_BUFFER_BIT);
+      RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+      RenderCommand::Clear();
 
+      Renderer::BeginScene();
       m_Shader->Bind();
-      m_SquareVertexArray->Bind();
-      glDrawElements(GL_TRIANGLES, m_SquareVertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-      m_VertexArray->Bind();
-      glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-
-
+      Renderer::Submit(m_SquareVertexArray);
+      Renderer::Submit(m_VertexArray);
+      Renderer::EndScene();
 
       for (Layer* layer : m_LayerStack)
         layer->OnUpdate();

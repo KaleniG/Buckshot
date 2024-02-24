@@ -6,7 +6,6 @@
 #include "Buckshot/Events/KeyEvent.h"
 #include "Buckshot/Events/MouseEvent.h"
 
-
 namespace Buckshot {
 
   class ImGuiLayer : public Layer

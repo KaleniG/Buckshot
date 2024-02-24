@@ -1,15 +1,13 @@
 #include <bspch.h>
-
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
-#include "ImGuiLayer.h"
 #include "Buckshot/Core.h"
 #include "Buckshot/Application.h"
-
+#include "Buckshot/ImGui/ImGuiLayer.h"
 
 namespace Buckshot {
 

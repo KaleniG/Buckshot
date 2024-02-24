@@ -1,8 +1,8 @@
 #include <bspch.h>
 
 #include "Platform/OpenGL/OpenGLVertexArray.h"
-#include "VertexArray.h"
-#include "Renderer.h"
+#include "Buckshot/Renderer/VertexArray.h"
+#include "Buckshot/Renderer/Renderer.h"
 
 namespace Buckshot {
 
@@ -10,11 +10,11 @@ namespace Buckshot {
   {
     switch (Renderer::GetAPI())
     {
-    case RendererAPI::None:
+    case RendererAPI::API::None:
       BS_ASSERT(false, "RendererAPI::None is not supported")
       return nullptr;
       break;
-    case RendererAPI::OpenGL:
+    case RendererAPI::API::OpenGL:
       return new OpenGLVertexArray();
       break;
     default:

@@ -1,8 +1,7 @@
 #include <bspch.h>
-
 #include <glad/glad.h>
 
-#include "Shader.h"
+#include "Buckshot/Renderer/Shader.h"
 
 namespace Buckshot {
 

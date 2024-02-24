@@ -1,11 +1,11 @@
 #include <bspch.h>
 
-#include "WindowsWindow.h"
 #include "Buckshot/Window.h"
-#include "Buckshot/Events/ApplicationEvent.h"
-#include "Buckshot/Events/MouseEvent.h"
 #include "Buckshot/Events/KeyEvent.h"
+#include "Buckshot/Events/MouseEvent.h"
+#include "Buckshot/Events/ApplicationEvent.h"
 #include "Platform/OpenGL/OpenGLContext.h"
+#include "Platform/Windows/WindowsWindow.h"
 
 namespace Buckshot { 
 

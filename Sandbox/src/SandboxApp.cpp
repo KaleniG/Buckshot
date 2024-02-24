@@ -1,6 +1,5 @@
 #include <Buckshot.h>
-
-#include "ImGui/imgui.h"
+#include <ImGui/imgui.h>
 
 class ExampleLayer : public Buckshot::Layer
 {

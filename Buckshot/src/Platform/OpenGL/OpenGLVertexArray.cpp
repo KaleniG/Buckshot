@@ -1,9 +1,8 @@
 #include <bspch.h>
-
 #include <glad/glad.h>
 
-#include "OpenGLVertexArray.h"
-#include "OpenGLUtils.h"
+#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include "Platform/OpenGL/OpenGLUtils.h"
 
 namespace Buckshot {
 

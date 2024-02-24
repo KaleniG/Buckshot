@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "Buffers.h"
+#include "Buckshot/Renderer/Buffers.h"
 
 namespace Buckshot {
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
+
 #include "Buckshot/Log.h"
 #include "Buckshot/Core.h"
 #include "Buckshot/Renderer/Buffers.h"

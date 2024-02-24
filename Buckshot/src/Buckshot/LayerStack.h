@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core.h"
-#include "Layer.h"
+#include "Buckshot/Core.h"
+#include "Buckshot/Layer.h"
 
 
 namespace Buckshot {

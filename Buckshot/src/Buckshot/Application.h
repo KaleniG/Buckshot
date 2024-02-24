@@ -1,14 +1,13 @@
 #pragma once
 
-#include "Core.h"
-#include "Window.h"
-#include "LayerStack.h"
-#include "ImGui/ImGuiLayer.h"
-#include "Events/Event.h"
-#include "Events/ApplicationEvent.h"
-#include "Renderer/Shader.h"
-#include "Renderer/Buffers.h"
-#include "Renderer/VertexArray.h"
+#include "Buckshot/Core.h"
+#include "Buckshot/Window.h"
+#include "Buckshot/LayerStack.h"
+#include "Buckshot/Events/Event.h"
+#include "Buckshot/ImGui/ImGuiLayer.h"
+#include "Buckshot/Renderer/Shader.h"
+#include "Buckshot/Renderer/Buffers.h"
+#include "Buckshot/Renderer/VertexArray.h"
 
 namespace Buckshot {
 

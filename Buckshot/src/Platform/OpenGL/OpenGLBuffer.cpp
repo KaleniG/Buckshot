@@ -1,8 +1,7 @@
 #include <bspch.h>
-
 #include <glad/glad.h>
 
-#include "OpenGLBuffer.h"
+#include "Platform/OpenGL/OpenGLBuffer.h"
 
 namespace Buckshot
 {

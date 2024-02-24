@@ -1,8 +1,8 @@
 #include <bspch.h>
 
-#include "Buffers.h"
+#include "Buckshot/Renderer/Buffers.h"
+#include "Buckshot/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
-#include "Renderer.h"
 
 namespace Buckshot {
 
@@ -10,11 +10,11 @@ namespace Buckshot {
   {
     switch (Renderer::GetAPI())
     {
-    case RendererAPI::None:
+    case RendererAPI::API::None:
       BS_ASSERT(false, "RendererAPI::None is not supported")
       return nullptr;
       break;
-    case RendererAPI::OpenGL:
+    case RendererAPI::API::OpenGL:
       return new OpenGLVertexBuffer(vertices, size);
       break;
     default:
@@ -27,11 +27,11 @@ namespace Buckshot {
   {
     switch (Renderer::GetAPI())
     {
-    case RendererAPI::None:
+    case RendererAPI::API::None:
       BS_ASSERT(false, "RendererAPI::None is not supported")
         return nullptr;
       break;
-    case RendererAPI::OpenGL:
+    case RendererAPI::API::OpenGL:
       return new OpenGLIndexBuffer(indicies, count);
       break;
     default:
