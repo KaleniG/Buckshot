@@ -104,17 +104,17 @@ public:
     m_Shader.reset(new Buckshot::Shader(vertexSrc, fragmentSrc));
 	}
 
-	void OnUpdate() override
+	void OnUpdate(Buckshot::Timestep timestep) override
 	{
     if (Buckshot::Input::IsKeyPressed(BS_KEY_LEFT))
-      m_CameraPos.x -= 0.1f;
+      m_CameraPos.x -= 0.1f * timestep.GetSeconds();
     else if (Buckshot::Input::IsKeyPressed(BS_KEY_RIGHT))
-      m_CameraPos.x += 0.1f;
+      m_CameraPos.x += 0.1f * timestep.GetSeconds();
 
     if (Buckshot::Input::IsKeyPressed(BS_KEY_UP))
-      m_CameraPos.y += 0.1f;
+      m_CameraPos.y += 0.1f * timestep.GetSeconds();
     else if (Buckshot::Input::IsKeyPressed(BS_KEY_DOWN))
-      m_CameraPos.y -= 0.1f;
+      m_CameraPos.y -= 0.1f * timestep.GetSeconds();
 
     Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
     Buckshot::RenderCommand::Clear();
@@ -127,8 +127,20 @@ public:
     Buckshot::Renderer::EndScene();
 	}
 
-  void OnEvent(Buckshot::Event& event)
-  {
+  void OnImGuiRender() {
+    ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f));
+    ImGui::SetNextWindowBgAlpha(0.5f);
+    ImGuiWindowFlags window_flags =
+      ImGuiWindowFlags_NoFocusOnAppearing | 
+      ImGuiWindowFlags_NoSavedSettings | 
+      ImGuiWindowFlags_NoDecoration | 
+      ImGuiWindowFlags_AlwaysAutoResize | 
+      ImGuiWindowFlags_NoDocking | 
+      ImGuiWindowFlags_NoMove | 
+      ImGuiWindowFlags_NoNav;
+    ImGui::Begin("Overlay", (bool*)true, window_flags);
+    ImGui::Text("Camera Position: %1.2f, %1.2f\n", m_CameraPos.x, m_CameraPos.y);
+    ImGui::End();
   }
 
 private:

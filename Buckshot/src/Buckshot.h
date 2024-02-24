@@ -8,6 +8,8 @@
 #include "Buckshot/ImGui/ImGuiLayer.h"
 #include "Buckshot/Layer.h"
 
+#include "Buckshot/Core/Timestep.h"
+
 #include "Buckshot/MouseButtonCodes.h"
 #include "Buckshot/KeyCodes.h"
 #include "Buckshot/Input.h"

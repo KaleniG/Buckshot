@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Buckshot/Core.h"
+#include "Buckshot/Core/Timestep.h"
 #include "Buckshot/Events/Event.h"
 
 namespace Buckshot {
@@ -13,7 +14,7 @@ namespace Buckshot {
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Timestep timestep) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 

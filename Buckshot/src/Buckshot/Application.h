@@ -27,11 +27,14 @@ namespace Buckshot {
     bool OnWindowClose(WindowCloseEvent& e);
 
   private:
-    static Application* s_Instance;
     std::unique_ptr<Window> m_Window;
     ImGuiLayer* m_ImGuiLayer;
     LayerStack m_LayerStack;
     bool m_Running = true;
+    float m_LastFrameTime = 0.0f;
+
+  private:
+    static Application* s_Instance;
   };
 
   Application* CreateApplication();

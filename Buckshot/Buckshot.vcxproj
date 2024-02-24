@@ -146,6 +146,7 @@
     <ClInclude Include="src\Buckshot.h" />
     <ClInclude Include="src\Buckshot\Application.h" />
     <ClInclude Include="src\Buckshot\Core.h" />
+    <ClInclude Include="src\Buckshot\Core\Timestep.h" />
     <ClInclude Include="src\Buckshot\EntryPoint.h" />
     <ClInclude Include="src\Buckshot\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Buckshot\Events\Event.h" />
