@@ -23,6 +23,9 @@
     <Image Include="assets\textures\Checkerboard.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="assets\textures\ChernoLogo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

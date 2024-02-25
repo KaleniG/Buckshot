@@ -7,6 +7,11 @@ namespace Buckshot {
   class RenderCommand
   {
   public:
+    inline static void Init()
+    {
+      m_RendererAPI->Init();
+    }
+
     inline static void ClearColor(const glm::vec4& color)
     {
       m_RendererAPI->ClearColor(color);

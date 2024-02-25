@@ -8,7 +8,8 @@ public:
   ExampleLayer()
     : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPos(0.0f)
 	{
-    m_Texture2D = Buckshot::Texture2D::Create("assets/textures/Checkerboard.png");
+    m_Texture1 = Buckshot::Texture2D::Create("assets/textures/Checkerboard.png");
+    m_Texture2 = Buckshot::Texture2D::Create("assets/textures/ChernoLogo.png");
     m_SquareVertexArray = Buckshot::VertexArray::Create();
 
     float verticesSquare[] =
@@ -76,7 +77,7 @@ public:
     m_Shader = Buckshot::Shader::Create(vertexSrc, fragmentSrc);
 
     std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->Bind();
-    std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->UploadUniformInt("u_Texture", 0);
+    std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->UploadUniformInt("u_Texture1", 0);
 	}
 
 	void OnUpdate(Buckshot::Timestep timestep) override
@@ -101,7 +102,9 @@ public:
 
     std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->Bind();
 
-    m_Texture2D->Bind();
+    m_Texture1->Bind();
+    Buckshot::Renderer::Submit(m_Shader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+    m_Texture2->Bind();
     Buckshot::Renderer::Submit(m_Shader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
     Buckshot::Renderer::EndScene();
@@ -128,7 +131,8 @@ private:
   Buckshot::Ref<Buckshot::VertexBuffer> m_VertexBuffer;
   Buckshot::Ref<Buckshot::IndexBuffer> m_IndexBuffer;
   Buckshot::Ref<Buckshot::VertexArray> m_SquareVertexArray;
-  Buckshot::Ref<Buckshot::Texture2D> m_Texture2D;
+  Buckshot::Ref<Buckshot::Texture2D> m_Texture1;
+  Buckshot::Ref<Buckshot::Texture2D> m_Texture2;
 
   float m_MovementSpeed = 2.0f;
 
