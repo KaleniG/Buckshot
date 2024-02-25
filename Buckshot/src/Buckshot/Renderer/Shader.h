@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <glm/glm.hpp>
 
 namespace Buckshot
 {
@@ -9,17 +8,12 @@ namespace Buckshot
   class Shader
   {
   public:
-    Shader(const std::string& vertSource, const std::string& fragSource);
-    ~Shader();
+    virtual ~Shader() = default;
 
-    void Bind() const;
-    void Unbind() const;
+    virtual void Bind() const = 0;
+    virtual void Unbind() const = 0;
 
-    void UploadUniformMat4(const std::string& name, const glm::mat4& matrix);
-
-  private:
-    uint32_t m_RendererID;
-
+    static Shader* Create(const std::string& vertSource, const std::string& fragSource);
   };
 
 }

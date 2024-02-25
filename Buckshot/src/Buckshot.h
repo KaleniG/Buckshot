@@ -14,6 +14,8 @@
 #include "Buckshot/KeyCodes.h"
 #include "Buckshot/Input.h"
 
+#include "Platform/OpenGL/OpenGLShader.h" // TEMP
+
 #include "Buckshot/Renderer/OrthographicCamera.h"
 #include "Buckshot/Renderer/RenderCommand.h"
 #include "Buckshot/Renderer/VertexArray.h"

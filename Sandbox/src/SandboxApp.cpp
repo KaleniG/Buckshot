@@ -6,7 +6,7 @@ class ExampleLayer : public Buckshot::Layer
 {
 public:
   ExampleLayer()
-    : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPos(0.0f)
+    : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPos(0.0f), m_Color1(1.0f, 0.2f, 0.2f, 1.0f), m_Color2(0.2f, 0.2f, 1.0f, 1.0f)
 	{
     m_VertexArray.reset(Buckshot::VertexArray::Create());
 
@@ -97,13 +97,15 @@ public:
 
     out vec4 a_Color;  
     
+    uniform vec4 u_Color;
+
     void main()
     {
-      a_Color = v_Color;
+      a_Color = u_Color;
     }
     )";
 
-    m_Shader.reset(new Buckshot::Shader(vertexSrc, fragmentSrc));
+    m_Shader.reset(Buckshot::Shader::Create(vertexSrc, fragmentSrc));
 	}
 
 	void OnUpdate(Buckshot::Timestep timestep) override
@@ -118,19 +120,40 @@ public:
     else if (Buckshot::Input::IsKeyPressed(BS_KEY_DOWN))
       m_CameraPos.y -= m_MovementSpeed * timestep.GetSeconds();
 
-    Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
-    Buckshot::RenderCommand::Clear();
-
     m_Camera.SetPosition(m_CameraPos);
 
-
+    Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+    Buckshot::RenderCommand::Clear();
     Buckshot::Renderer::BeginScene(m_Camera);
-    Buckshot::Renderer::Submit(m_Shader, m_SquareVertexArray);
-    Buckshot::Renderer::Submit(m_Shader, m_VertexArray);
+
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+    std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->Bind();
+
+    for (int i = 0; i < 10; i++)
+    {
+      for (int j = 0; j < 10; j++)
+      {
+        glm::vec3 shapesPos(i * 0.11f, j * 0.11f, 0.0f);
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), shapesPos) * scale;
+
+        if (i % 2 == 0)
+          std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->UploadUniformFloat4("u_Color", m_Color1);
+        else
+          std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->UploadUniformFloat4("u_Color", m_Color2);
+
+        Buckshot::Renderer::Submit(m_Shader, m_SquareVertexArray, transform);
+        Buckshot::Renderer::Submit(m_Shader, m_VertexArray, transform);
+      }
+    }
+
     Buckshot::Renderer::EndScene();
 	}
 
   void OnImGuiRender() {
+    float color1[3] = { m_Color1.r, m_Color1.g, m_Color1.b};
+    float color2[3] = { m_Color2.r, m_Color2.g, m_Color2.b};
+
     ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f));
     ImGui::SetNextWindowBgAlpha(0.5f);
     ImGuiWindowFlags window_flags =
@@ -143,7 +166,14 @@ public:
       ImGuiWindowFlags_NoNav;
     ImGui::Begin("Overlay", (bool*)true, window_flags);
     ImGui::Text("Camera Position: %1.2f, %1.2f\n", m_CameraPos.x, m_CameraPos.y);
+    ImGui::Separator();
+    ImGuiColorEditFlags coloredit_flags = ImGuiColorEditFlags_NoInputs;
+    ImGui::ColorEdit3("Color 1", color1, coloredit_flags);
+    ImGui::ColorEdit3("Color 2", color2, coloredit_flags);
     ImGui::End();
+
+    m_Color1 = glm::vec4(color1[0], color1[1], color1[2], 1.0f);
+    m_Color2 = glm::vec4(color2[0], color2[1], color2[2], 1.0f);
   }
 
 private:
@@ -157,6 +187,9 @@ private:
 
   Buckshot::OrthographicCamera m_Camera;
   glm::vec3 m_CameraPos;
+
+  glm::vec4 m_Color1;
+  glm::vec4 m_Color2;
 };
 
 class Sandbox : public Buckshot::Application
