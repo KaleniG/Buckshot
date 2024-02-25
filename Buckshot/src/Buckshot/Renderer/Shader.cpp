@@ -6,7 +6,7 @@
 
 namespace Buckshot {
 
-  Shader* Shader::Create(const std::string& vertSource, const std::string& fragSource)
+  Ref<Shader> Shader::Create(const std::string& vertSource, const std::string& fragSource)
   {
     switch (Renderer::GetAPI())
     {
@@ -15,7 +15,7 @@ namespace Buckshot {
         return nullptr;
       break;
     case RendererAPI::API::OpenGL:
-      return new OpenGLShader(vertSource, fragSource);
+      return std::make_shared<OpenGLShader>(vertSource, fragSource);
       break;
     default:
       BS_ASSERT(false, "Unknown RendererAPI")

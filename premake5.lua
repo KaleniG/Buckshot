@@ -12,10 +12,11 @@ workspace "Buckshot"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
-IncludeDir["GLFW"] = "Buckshot/vendor/GLFW/include"
-IncludeDir["GLAD"] = "Buckshot/vendor/GLAD/include"
-IncludeDir["ImGui"] = "Buckshot/vendor/ImGui"
-IncludeDir["glm"] = "Buckshot/vendor/glm"
+IncludeDir["GLFW"] 		= "Buckshot/vendor/GLFW/include"
+IncludeDir["GLAD"] 		= "Buckshot/vendor/GLAD/include"
+IncludeDir["ImGui"] 	= "Buckshot/vendor/ImGui"
+IncludeDir["glm"] 		= "Buckshot/vendor/glm"
+IncludeDir["stb_image"] = "Buckshot/vendor/stb_image"
 
 include "Buckshot/vendor/GLFW"
 include "Buckshot/vendor/GLAD"
@@ -38,6 +39,8 @@ project "Buckshot"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
@@ -49,7 +52,8 @@ project "Buckshot"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links 

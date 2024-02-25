@@ -6,7 +6,7 @@
 
 namespace Buckshot {
 
-  VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
+  Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
   {
     switch (Renderer::GetAPI())
     {
@@ -15,7 +15,7 @@ namespace Buckshot {
       return nullptr;
       break;
     case RendererAPI::API::OpenGL:
-      return new OpenGLVertexBuffer(vertices, size);
+      return std::make_shared<OpenGLVertexBuffer>(vertices, size);
       break;
     default:
       BS_ASSERT(false, "Unknown RendererAPI")
@@ -23,7 +23,7 @@ namespace Buckshot {
     }
   }
 
-  IndexBuffer* IndexBuffer::Create(uint32_t* indicies, uint32_t count)
+  Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indicies, uint32_t count)
   {
     switch (Renderer::GetAPI())
     {
@@ -32,7 +32,7 @@ namespace Buckshot {
         return nullptr;
       break;
     case RendererAPI::API::OpenGL:
-      return new OpenGLIndexBuffer(indicies, count);
+      return std::make_shared<OpenGLIndexBuffer>(indicies, count);
       break;
     default:
       BS_ASSERT(false, "Unknown RendererAPI")

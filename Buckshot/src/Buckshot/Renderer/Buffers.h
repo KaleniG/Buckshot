@@ -36,7 +36,7 @@ namespace Buckshot {
     uint32_t Size;
     bool Normalized;
 
-    BufferElement() {}
+    BufferElement() = default;
 
     BufferElement(ShaderDataType type, const std::string name, bool normalized = false)
     {
@@ -117,7 +117,7 @@ namespace Buckshot {
     virtual const BufferLayout& GetLayout() = 0;
     virtual void SetLayout(const BufferLayout& layout) = 0;
 
-    static VertexBuffer* Create(float* vertices, uint32_t size);
+    static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
   };
 
   class IndexBuffer
@@ -129,7 +129,7 @@ namespace Buckshot {
     virtual void Unbind() const = 0;
     virtual uint32_t GetCount() const = 0;
 
-    static IndexBuffer* Create(uint32_t* indicies, uint32_t count);
+    static Ref<IndexBuffer> Create(uint32_t* indicies, uint32_t count);
   };
 
 }
