@@ -48,7 +48,7 @@ public:
       -0.5f,  0.5f, 0.0f, 0.9f, 0.9f, 0.9f, 1.0f
     };
 
-    std::shared_ptr<Buckshot::VertexBuffer> m_SquareVertexBuffer;
+    Buckshot::Ref<Buckshot::VertexBuffer> m_SquareVertexBuffer;
     m_SquareVertexBuffer.reset(Buckshot::VertexBuffer::Create(verticesSquare, sizeof(verticesSquare)));
 
     {
@@ -64,7 +64,7 @@ public:
       0, 1, 2, 2, 3, 0
     };
 
-    std::shared_ptr<Buckshot::IndexBuffer> m_IndexBufferSquare;
+    Buckshot::Ref<Buckshot::IndexBuffer> m_IndexBufferSquare;
     m_IndexBufferSquare.reset(Buckshot::IndexBuffer::Create(indicesSquare, sizeof(indicesSquare) / sizeof(uint32_t)));
 
     m_SquareVertexArray->AddVertexBuffer(m_SquareVertexBuffer);
@@ -177,11 +177,11 @@ public:
   }
 
 private:
-  std::shared_ptr<Buckshot::Shader> m_Shader;
-  std::shared_ptr<Buckshot::VertexBuffer> m_VertexBuffer;
-  std::shared_ptr<Buckshot::IndexBuffer> m_IndexBuffer;
-  std::shared_ptr<Buckshot::VertexArray> m_VertexArray;
-  std::shared_ptr<Buckshot::VertexArray> m_SquareVertexArray;
+  Buckshot::Ref<Buckshot::Shader> m_Shader;
+  Buckshot::Ref<Buckshot::VertexBuffer> m_VertexBuffer;
+  Buckshot::Ref<Buckshot::IndexBuffer> m_IndexBuffer;
+  Buckshot::Ref<Buckshot::VertexArray> m_VertexArray;
+  Buckshot::Ref<Buckshot::VertexArray> m_SquareVertexArray;
 
   float m_MovementSpeed = 2.0f;
 
