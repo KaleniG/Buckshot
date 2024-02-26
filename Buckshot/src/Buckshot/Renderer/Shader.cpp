@@ -23,4 +23,21 @@ namespace Buckshot {
     }
   }
 
+  Ref<Shader> Shader::Create(const std::string& filepath)
+  {
+    switch (Renderer::GetAPI())
+    {
+    case RendererAPI::API::None:
+      BS_ASSERT(false, "RendererAPI::None is not supported")
+        return nullptr;
+      break;
+    case RendererAPI::API::OpenGL:
+      return std::make_shared<OpenGLShader>(filepath);
+      break;
+    default:
+      BS_ASSERT(false, "Unknown RendererAPI")
+        return nullptr;
+    }
+  }
+
 }

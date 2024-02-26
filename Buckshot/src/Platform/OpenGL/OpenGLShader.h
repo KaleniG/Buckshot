@@ -4,12 +4,15 @@
 
 #include "Buckshot/Renderer/Shader.h"
 
+typedef unsigned int GLenum; // TO REMOVE
+
 namespace Buckshot {
 
   class OpenGLShader : public Shader
   {
   public:
     OpenGLShader(const std::string& vertSource, const std::string& fragSource);
+    OpenGLShader(const std::string& filepath);
     ~OpenGLShader() override;
 
     void Bind() const override;
@@ -22,6 +25,11 @@ namespace Buckshot {
     void UploadUniformFloat2(const std::string& name, const glm::vec2& data);
     void UploadUniformFloat3(const std::string& name, const glm::vec3& data);
     void UploadUniformFloat4(const std::string& name, const glm::vec4& data);
+
+  private:
+    std::string ReadFile(const std::string& filepath);
+    std::unordered_map<GLenum, std::string> PreProcess(const std::string& shaderSource);
+    void Compile(const std::unordered_map<GLenum, std::string>& shaderSources );
 
   private:
     uint32_t m_RendererID;

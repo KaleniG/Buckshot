@@ -42,39 +42,7 @@ public:
     m_SquareVertexArray->AddVertexBuffer(m_SquareVertexBuffer);
     m_SquareVertexArray->SetIndexBuffer(m_IndexBufferSquare);
 
-    std::string vertexSrc = R"(
-    #version 330 core
-    layout (location = 0) in vec3 a_Position;
-    layout (location = 1) in vec2 a_TexCoord;     
-    
-    out vec2 v_TexCoord;
-
-    uniform mat4 u_ViewProjectionMatrix;
-    uniform mat4 u_Transform;
-    
-    void main()
-    {
-      v_TexCoord = a_TexCoord;
-      gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0f); 
-    }
-    )";
-
-    std::string fragmentSrc = R"(
-    #version 330 core
-
-    in vec2 v_TexCoord;
-
-    out vec4 a_Color;  
-    
-    uniform sampler2D u_Texture;
-
-    void main()
-    {
-      a_Color = texture(u_Texture, v_TexCoord);
-    }
-    )";
-
-    m_Shader = Buckshot::Shader::Create(vertexSrc, fragmentSrc);
+    m_Shader = Buckshot::Shader::Create("assets/shaders/Texture.glsl");
 
     std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->Bind();
     std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->UploadUniformInt("u_Texture1", 0);

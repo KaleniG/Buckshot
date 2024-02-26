@@ -38,7 +38,7 @@ namespace Buckshot {
     for (const auto& element : layout)
     {
       glEnableVertexAttribArray(index);
-      glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.DataType), (element.Normalized) ? GL_FALSE : GL_TRUE, layout.GetStride(), (const void*)element.Offset);
+      glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.DataType), (element.Normalized) ? GL_FALSE : GL_TRUE, layout.GetStride(), (const void*)(intptr_t)element.Offset);
       index++;
     }
 
