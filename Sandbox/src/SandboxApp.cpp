@@ -115,13 +115,6 @@ public:
   {
 		PushLayer(new ExampleLayer());
   }
-
-  ~Sandbox()
-  {
-
-  }
-
-
 };
 
 Buckshot::Application* Buckshot::CreateApplication()
