@@ -10,8 +10,6 @@ namespace Buckshot {
   {
     if (type == "vertex")
       return GL_VERTEX_SHADER;
-    if (type == "geometry")
-      return GL_GEOMETRY_SHADER;
     if (type == "fragment" || type == "pixel")
       return GL_FRAGMENT_SHADER;
 
@@ -19,12 +17,14 @@ namespace Buckshot {
     return 0;
   }
 
-  OpenGLShader::OpenGLShader(const std::string& vertSource, const std::string& fragSource)
+  OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertSource, const std::string& fragSource)
   {
     std::unordered_map<GLenum, std::string> shaderSources;
     shaderSources[GL_VERTEX_SHADER] = vertSource;
     shaderSources[GL_FRAGMENT_SHADER] = fragSource;
     Compile(shaderSources);
+
+    m_Name = name;
   }
 
   OpenGLShader::OpenGLShader(const std::string& filepath)
@@ -32,6 +32,12 @@ namespace Buckshot {
     std::string shader = ReadFile(filepath);
     auto shaderSources = PreProcess(shader);
     Compile(shaderSources);
+    
+    auto lastSlash = filepath.find_last_of("/\\");
+    lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+    auto lastDot = filepath.rfind('.');
+    auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+    m_Name = filepath.substr(lastSlash, count);
   }
 
   OpenGLShader::~OpenGLShader()
@@ -94,7 +100,7 @@ namespace Buckshot {
   std::string OpenGLShader::ReadFile(const std::string& filepath)
   {
     std::string file_bin;
-    std::ifstream file(filepath, std::ios::in, std::ios::binary);
+    std::ifstream file(filepath, std::ios::in | std::ios::binary);
 
     if (file)
     {
@@ -126,7 +132,7 @@ namespace Buckshot {
       BS_ASSERT(eol != std::string::npos, "SyntaxError in the shader file");
       size_t begin = pos + typeTokenLength + 1;
       std::string shaderType = shaderSource.substr(begin, eol - begin);
-      BS_ASSERT(shaderType == "vertex" || shaderType == "geometry" || shaderType == "fragment" || shaderType == "pixel", "Invalid shader type specified");
+      BS_ASSERT(shaderType == "vertex" || shaderType == "fragment" || shaderType == "pixel", "Invalid shader type specified");
 
       size_t nextLinePos = shaderSource.find_first_not_of("\r\n", eol);
       pos = shaderSource.find(typeToken, nextLinePos);
@@ -138,8 +144,10 @@ namespace Buckshot {
 
   void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
   {
+    BS_ASSERT(shaderSources.size() <= 2, "Only two types of shaders supported for now");
     GLuint program = glCreateProgram();
-    std::vector<GLenum> glShaderIDs(shaderSources.size());
+    std::array<GLenum, 2> glShaderIDs;
+    int glShaderIndex = 0;
 
     for (auto& keyValues : shaderSources)
     {
@@ -181,7 +189,7 @@ namespace Buckshot {
         return;
       }
       glAttachShader(program, shader);
-      glShaderIDs.push_back(shader);
+      glShaderIDs[glShaderIndex++] = shader;
     }
 
     m_RendererID = program;

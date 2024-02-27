@@ -28,7 +28,7 @@ namespace Buckshot {
 
   void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
   {
-    BS_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "VertexBuffer has no layout")
+    BS_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "VertexBuffer has no layout");
     glBindVertexArray(m_RendererID);
     vertexBuffer->Bind();
 

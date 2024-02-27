@@ -11,12 +11,14 @@ namespace Buckshot {
   class OpenGLShader : public Shader
   {
   public:
-    OpenGLShader(const std::string& vertSource, const std::string& fragSource);
+    OpenGLShader(const std::string& name, const std::string& vertSource, const std::string& fragSource);
     OpenGLShader(const std::string& filepath);
     ~OpenGLShader() override;
 
     void Bind() const override;
     void Unbind() const override;
+
+    virtual const std::string& GetName() const override { return m_Name; }
 
     void UploadUniformMat4(const std::string& name, const glm::mat4& data);
     void UploadUniformMat3(const std::string& name, const glm::mat3& data);
@@ -33,7 +35,7 @@ namespace Buckshot {
 
   private:
     uint32_t m_RendererID;
-
+    std::string m_Name;
   };
 
 }

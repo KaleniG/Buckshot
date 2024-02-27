@@ -24,7 +24,7 @@ namespace Buckshot {
     case ShaderDataType::Mat3:    return 36;
     case ShaderDataType::Mat4:    return 64;
     }
-    BS_ASSERT(false, "Unknown ShaderDataType specified")
+    BS_ASSERT(false, "Unknown ShaderDataType specified");
     return 0;
   }
 
@@ -64,7 +64,7 @@ namespace Buckshot {
       case ShaderDataType::Mat3:    return 9;
       case ShaderDataType::Mat4:    return 16;
       }
-      BS_ASSERT(false, "Unknown ShaderDataType specified")
+      BS_ASSERT(false, "Unknown ShaderDataType specified");
       return 0;
     }
   };

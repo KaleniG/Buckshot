@@ -8,14 +8,14 @@ namespace Buckshot {
   OpenGLContext::OpenGLContext(GLFWwindow* windowHandle)
   {
     m_WindowHandle = windowHandle;
-    BS_ASSERT(m_WindowHandle, "WindowHandle is NULL!")
+    BS_ASSERT(m_WindowHandle, "WindowHandle is NULL!");
   }
 
   void OpenGLContext::Init()
   {
     glfwMakeContextCurrent(m_WindowHandle);
     int glad_status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    BS_ASSERT(glad_status, "Failed to initialize GLAD!")
+    BS_ASSERT(glad_status, "Failed to initialize GLAD!");
 
     BS_TRACE("OpenGL Info");
     BS_TRACE("  Vendor:        {0}", (const char*)glGetString(GL_VENDOR));

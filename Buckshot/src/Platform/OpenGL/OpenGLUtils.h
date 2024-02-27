@@ -26,7 +26,7 @@ namespace Buckshot {
     case ShaderDataType::Mat4:    return GL_FLOAT;
     }
 
-    BS_ASSERT(false, "Unknown ShaderDataType specified")
+    BS_ASSERT(false, "Unknown ShaderDataType specified");
     return 0;
   }
 

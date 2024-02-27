@@ -11,14 +11,14 @@ namespace Buckshot {
     switch (Renderer::GetAPI())
     {
     case RendererAPI::API::None:
-      BS_ASSERT(false, "RendererAPI::None is not supported")
+      BS_ASSERT(false, "RendererAPI::None is not supported");
       return nullptr;
       break;
     case RendererAPI::API::OpenGL:
       return std::make_shared<OpenGLVertexBuffer>(vertices, size);
       break;
     default:
-      BS_ASSERT(false, "Unknown RendererAPI")
+      BS_ASSERT(false, "Unknown RendererAPI");
       return nullptr;
     }
   }
@@ -28,15 +28,15 @@ namespace Buckshot {
     switch (Renderer::GetAPI())
     {
     case RendererAPI::API::None:
-      BS_ASSERT(false, "RendererAPI::None is not supported")
-        return nullptr;
+      BS_ASSERT(false, "RendererAPI::None is not supported");
+      return nullptr;
       break;
     case RendererAPI::API::OpenGL:
       return std::make_shared<OpenGLIndexBuffer>(indicies, count);
       break;
     default:
-      BS_ASSERT(false, "Unknown RendererAPI")
-        return nullptr;
+      BS_ASSERT(false, "Unknown RendererAPI");
+      return nullptr;
     }
   }
 
