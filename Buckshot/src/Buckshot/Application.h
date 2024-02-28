@@ -25,12 +25,14 @@ namespace Buckshot {
 
   private:
     bool OnWindowClose(WindowCloseEvent& e);
+    bool OnWindowResize(WindowResizeEvent& e);
 
   private:
     std::unique_ptr<Window> m_Window;
     ImGuiLayer* m_ImGuiLayer;
     LayerStack m_LayerStack;
     bool m_Running = true;
+    bool m_Minimized = false;
     float m_LastFrameTime = 0.0f;
 
   private:

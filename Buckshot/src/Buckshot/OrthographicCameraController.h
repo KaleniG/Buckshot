@@ -17,6 +17,7 @@ namespace Buckshot {
     inline const OrthographicCamera& GetCamera() const { return m_Camera; }
 
     inline float GetZoomLevel() const { return m_ZoomLevel; }
+    inline void SetZoomLevel(float zoom_level) { m_ZoomLevel = zoom_level; }
 
     void OnUpdate(Timestep timestep);
     void OnEvent(Event& event);

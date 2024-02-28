@@ -45,7 +45,7 @@ namespace Buckshot {
   {
     m_ZoomLevel -= event.GetYOffset() * 0.25f;
     m_ZoomLevel = std::max(m_ZoomLevel, 0.10f);
-    m_ZoomLevel = std::min(m_ZoomLevel, 50.0f);
+    m_ZoomLevel = std::min(m_ZoomLevel, 35.0f);
     m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
     return false;
   }

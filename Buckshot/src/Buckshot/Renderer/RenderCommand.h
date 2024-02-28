@@ -28,6 +28,11 @@ namespace Buckshot {
       m_RendererAPI->DrawIndexed(vertexArray);
     }
 
+    inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+    {
+      m_RendererAPI->SetViewport(x, y, width, height);
+    }
+
   private:
     static RendererAPI* m_RendererAPI;
   };

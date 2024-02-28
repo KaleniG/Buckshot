@@ -44,6 +44,7 @@ namespace Buckshot {
   {
     EventDispatcher dispatcher(e);
     dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+    dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
     for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
     {
@@ -61,14 +62,17 @@ namespace Buckshot {
       Timestep timestep = time - m_LastFrameTime;
       m_LastFrameTime = time;
 
+      if (!m_Minimized)
+      {
+        for (Layer* layer : m_LayerStack)
+          layer->OnUpdate(timestep);
 
-      for (Layer* layer : m_LayerStack)
-        layer->OnUpdate(timestep);
+        m_ImGuiLayer->Begin();
+        for (Layer* layer : m_LayerStack)
+          layer->OnImGuiRender();
+        m_ImGuiLayer->End();
+      }
 
-      m_ImGuiLayer->Begin();
-      for (Layer* layer : m_LayerStack)
-        layer->OnImGuiRender();
-      m_ImGuiLayer->End();
 
       m_Window->OnUpdate();
     }
@@ -79,6 +83,21 @@ namespace Buckshot {
     m_Running = false;
     BS_INFO("Closing window \"{0}\" ({1}, {2})", m_Window->GetName(), m_Window->GetWidth(), m_Window->GetHeight());
     return true;
+  }
+
+
+  bool Application::OnWindowResize(WindowResizeEvent& e)
+  {
+    if (e.GetWidth() == 0 || e.GetHeight() == 0)
+    {
+      m_Minimized = true;
+      return false;
+    }
+
+    m_Minimized = false;
+    Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+    return false;
   }
 
 }
