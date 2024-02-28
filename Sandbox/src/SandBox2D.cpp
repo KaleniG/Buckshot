@@ -7,44 +7,10 @@
 void Sandbox2D::OnAttach()
 {
   // VARIABLES
-  m_SquareColor = glm::vec3(0.0f);
+  m_SquareColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
   // CAMERA CONTROLLER
   m_CameraController = Buckshot::OrthographicCameraController(1280.0f / 720.0f);
-
-  // VERTEX BUFFER | VERTEX ARRAY | INDEX BUFFER
-  m_VertexArray = Buckshot::VertexArray::Create();
-
-  float vertices[] =
-  {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.5f,  0.5f, 0.0f,
-    -0.5f,  0.5f, 0.0f
-  };
-
-  Buckshot::Ref<Buckshot::VertexBuffer> m_VertexBuffer;
-  m_VertexBuffer = Buckshot::VertexBuffer::Create(vertices, sizeof(vertices));
-
-  {
-    Buckshot::BufferLayout layout = {
-          { Buckshot::ShaderDataType::Float3, "a_Position" }
-    };
-    m_VertexBuffer->SetLayout(layout);
-  }
-
-  uint32_t indices[] =
-  {
-    0, 1, 2, 2, 3, 0
-  };
-
-  Buckshot::Ref<Buckshot::IndexBuffer> m_IndexBuffer;
-  m_IndexBuffer = Buckshot::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
-
-  m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-  m_VertexArray->SetIndexBuffer(m_IndexBuffer);
-
-  m_Shader = Buckshot::Shader::Create("assets/shaders/FlatColor.glsl");
 }
 
 void Sandbox2D::OnDetach()
@@ -59,13 +25,11 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
   Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
   Buckshot::RenderCommand::Clear();
 
-  Buckshot::Renderer::BeginScene(m_CameraController.GetCamera());
+  Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-  std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->Bind();
-  std::dynamic_pointer_cast<Buckshot::OpenGLShader>(m_Shader)->UploadUniformFloat3("u_Color", m_SquareColor);
-  Buckshot::Renderer::Submit(m_Shader, m_VertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+  Buckshot::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_SquareColor);
 
-  Buckshot::Renderer::EndScene();
+  Buckshot::Renderer2D::EndScene();
 }
 
 void Sandbox2D::OnImGuiRender()

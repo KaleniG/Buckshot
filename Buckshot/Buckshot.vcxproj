@@ -169,6 +169,7 @@
     <ClInclude Include="src\Buckshot\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Buckshot\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Buckshot\Renderer\Renderer.h" />
+    <ClInclude Include="src\Buckshot\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Buckshot\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Buckshot\Renderer\Shader.h" />
     <ClInclude Include="src\Buckshot\Renderer\Texture.h" />
@@ -613,6 +614,7 @@
     <ClCompile Include="src\Buckshot\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Buckshot\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\Shader.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\Texture.cpp" />

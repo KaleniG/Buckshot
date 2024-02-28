@@ -5,6 +5,7 @@
 #include "Buckshot/Core/Application.h"
 #include "Buckshot/Core/Timestep.h"
 #include "Buckshot/Renderer/Renderer.h"
+#include "Buckshot/Renderer/Renderer2D.h"
 
 namespace Buckshot {
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -20,6 +21,7 @@ namespace Buckshot {
     m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
     Renderer::Init();
+    Renderer2D::Init();
 
     m_ImGuiLayer = new ImGuiLayer();
     PushOverlay(m_ImGuiLayer);

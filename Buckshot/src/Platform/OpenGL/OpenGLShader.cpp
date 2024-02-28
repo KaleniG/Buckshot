@@ -220,6 +220,7 @@ namespace Buckshot {
     for (auto id : glShaderIDs)
     {
       glDetachShader(m_RendererID, id);
+      glDeleteShader(id);
     }
   }
 

@@ -20,5 +20,5 @@ private:
   Buckshot::Ref<Buckshot::VertexArray> m_VertexArray;
   Buckshot::OrthographicCameraController m_CameraController;
 
-  glm::vec3 m_SquareColor;
+  glm::vec4 m_SquareColor;
 };
