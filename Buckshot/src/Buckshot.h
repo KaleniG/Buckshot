@@ -14,8 +14,6 @@
 #include "Buckshot/Renderer/OrthographicCameraController.h"
 #include "Buckshot/ImGui/ImGuiLayer.h"
 
-#include "Platform/OpenGL/OpenGLShader.h" // TEMP
-
 #include "Buckshot/Renderer/OrthographicCamera.h"
 #include "Buckshot/Renderer/RenderCommand.h"
 #include "Buckshot/Renderer/VertexArray.h"

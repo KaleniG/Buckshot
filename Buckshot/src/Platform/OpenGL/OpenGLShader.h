@@ -18,6 +18,10 @@ namespace Buckshot {
     void Bind() const override;
     void Unbind() const override;
 
+    virtual void SetMat4(const std::string& name, const glm::mat4& data) override;
+    virtual void SetFloat3(const std::string& name, const glm::vec3& data) override;
+    virtual void SetFloat4(const std::string& name, const glm::vec4& data) override;
+
     virtual const std::string& GetName() const override { return m_Name; }
 
     void UploadUniformMat4(const std::string& name, const glm::mat4& data);
