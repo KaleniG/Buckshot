@@ -6,8 +6,10 @@ class ExampleLayer : public Buckshot::Layer
 {
 public:
   ExampleLayer()
-    : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPos(0.0f)
+    : Layer("Example")
 	{
+    m_CameraController = Buckshot::OrthographicCameraController(1280.0f / 720.0f);
+
     m_Texture1 = Buckshot::Texture2D::Create("assets/textures/Checkerboard.png");
     m_Texture2 = Buckshot::Texture2D::Create("assets/textures/ChernoLogo.png");
     m_SquareVertexArray = Buckshot::VertexArray::Create();
@@ -43,34 +45,22 @@ public:
     m_SquareVertexArray->SetIndexBuffer(m_IndexBufferSquare);
 
     auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
-    //m_Shader = Buckshot::Shader::Create("assets/shaders/Texture.glsl");
 
     std::dynamic_pointer_cast<Buckshot::OpenGLShader>(textureShader)->Bind();
     std::dynamic_pointer_cast<Buckshot::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture1", 0);
 	}
 
-	void OnUpdate(Buckshot::Timestep timestep) override
+	void OnUpdate(Buckshot::Timestep timestep)
 	{
-    if (Buckshot::Input::IsKeyPressed(BS_KEY_LEFT))
-      m_CameraPos.x -= m_MovementSpeed * timestep.GetSeconds();
-    else if (Buckshot::Input::IsKeyPressed(BS_KEY_RIGHT))
-      m_CameraPos.x += m_MovementSpeed * timestep.GetSeconds();
-
-    if (Buckshot::Input::IsKeyPressed(BS_KEY_UP))
-      m_CameraPos.y += m_MovementSpeed * timestep.GetSeconds();
-    else if (Buckshot::Input::IsKeyPressed(BS_KEY_DOWN))
-      m_CameraPos.y -= m_MovementSpeed * timestep.GetSeconds();
-
-    m_Camera.SetPosition(m_CameraPos);
+    m_CameraController.OnUpdate(timestep);
 
     Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
     Buckshot::RenderCommand::Clear();
-    Buckshot::Renderer::BeginScene(m_Camera);
+
+    Buckshot::Renderer::BeginScene(m_CameraController.GetCamera());
 
     glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
-
     auto textureShader = m_ShaderLibrary.Get("Texture");
-
     std::dynamic_pointer_cast<Buckshot::OpenGLShader>(textureShader)->Bind();
 
     m_Texture1->Bind();
@@ -93,23 +83,22 @@ public:
       ImGuiWindowFlags_NoMove | 
       ImGuiWindowFlags_NoNav;
     ImGui::Begin("Overlay", (bool*)true, window_flags);
-    ImGui::Text("Camera Position: x:%1.2f y:%1.2f\n", m_CameraPos.x, m_CameraPos.y);
+    ImGui::Text("Camera Position: x:%1.2f y:%1.2f\n", m_CameraController.GetCamera().GetPosition().x, m_CameraController.GetCamera().GetPosition().y);
+    ImGui::Text("Camera ZoomLevel: %1.2f\n", m_CameraController.GetZoomLevel());
     ImGui::End();
+  }
+
+  void OnEvent(Buckshot::Event& event)
+  {
+    m_CameraController.OnEvent(event);
   }
 
 private:
   Buckshot::ShaderLibrary m_ShaderLibrary;
-  //Buckshot::Ref<Buckshot::Shader> m_Shader;
-  Buckshot::Ref<Buckshot::VertexBuffer> m_VertexBuffer;
-  Buckshot::Ref<Buckshot::IndexBuffer> m_IndexBuffer;
   Buckshot::Ref<Buckshot::VertexArray> m_SquareVertexArray;
   Buckshot::Ref<Buckshot::Texture2D> m_Texture1;
   Buckshot::Ref<Buckshot::Texture2D> m_Texture2;
-
-  float m_MovementSpeed = 2.0f;
-
-  Buckshot::OrthographicCamera m_Camera;
-  glm::vec3 m_CameraPos;
+  Buckshot::OrthographicCameraController m_CameraController;
 };
 
 class Sandbox : public Buckshot::Application

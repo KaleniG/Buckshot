@@ -163,6 +163,7 @@
     <ClInclude Include="src\Buckshot\LayerStack.h" />
     <ClInclude Include="src\Buckshot\Log.h" />
     <ClInclude Include="src\Buckshot\MouseButtonCodes.h" />
+    <ClInclude Include="src\Buckshot\OrthographicCameraController.h" />
     <ClInclude Include="src\Buckshot\Renderer\Buffers.h" />
     <ClInclude Include="src\Buckshot\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Buckshot\Renderer\OrthographicCamera.h" />
@@ -607,6 +608,7 @@
     <ClCompile Include="src\Buckshot\Layer.cpp" />
     <ClCompile Include="src\Buckshot\LayerStack.cpp" />
     <ClCompile Include="src\Buckshot\Log.cpp" />
+    <ClCompile Include="src\Buckshot\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\Buffers.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\RenderCommand.cpp" />
