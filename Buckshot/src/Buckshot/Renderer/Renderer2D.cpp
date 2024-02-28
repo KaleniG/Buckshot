@@ -12,6 +12,7 @@ namespace Buckshot {
   {
     Ref<VertexArray> vertexArray;
     Ref<Shader> flatColorShader;
+    Ref<Shader> textureShader;
   };
 
   static Renderer2DStorage* s_Data;
@@ -25,10 +26,10 @@ namespace Buckshot {
 
     float vertices[] =
     {
-      -0.5f, -0.5f, 0.0f,
-       0.5f, -0.5f, 0.0f,
-       0.5f,  0.5f, 0.0f,
-      -0.5f,  0.5f, 0.0f
+      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+       0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+       0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+      -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
     };
 
     Ref<VertexBuffer> m_VertexBuffer;
@@ -36,7 +37,8 @@ namespace Buckshot {
 
     {
       BufferLayout layout = {
-            { ShaderDataType::Float3, "a_Position" }
+        { ShaderDataType::Float3, "a_Position" },
+        { ShaderDataType::Float2, "a_TexCoord" }
       };
       m_VertexBuffer->SetLayout(layout);
     }
@@ -53,6 +55,9 @@ namespace Buckshot {
     s_Data->vertexArray->SetIndexBuffer(m_IndexBuffer);
 
     s_Data->flatColorShader = Shader::Create("assets/shaders/FlatColor.glsl");
+    s_Data->textureShader = Shader::Create("assets/shaders/Texture.glsl");
+    s_Data->textureShader->Bind();
+    s_Data->textureShader->SetInt("u_Texture", 0);
   }
 
   void Renderer2D::Shutdown()
@@ -64,6 +69,9 @@ namespace Buckshot {
   {
     s_Data->flatColorShader->Bind();
     s_Data->flatColorShader->SetMat4("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
+
+    s_Data->textureShader->Bind();
+    s_Data->textureShader->SetMat4("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
   }
 
   void Renderer2D::EndScene()
@@ -86,6 +94,26 @@ namespace Buckshot {
 
 
     s_Data->flatColorShader->SetMat4("u_Transform", transform);
+
+    s_Data->vertexArray->Bind();
+    RenderCommand::DrawIndexed(s_Data->vertexArray);
+  }
+
+  void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+  {
+    DrawQuad({ position.x, position.y, 0.0f }, size, texture);
+  }
+
+  void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+  {
+    s_Data->textureShader->Bind();
+
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
+    transform = glm::scale(transform, glm::vec3(size.x, size.y, 0.0f));
+
+    s_Data->textureShader->SetMat4("u_Transform", transform);
+
+    texture->Bind();
 
     s_Data->vertexArray->Bind();
     RenderCommand::DrawIndexed(s_Data->vertexArray);

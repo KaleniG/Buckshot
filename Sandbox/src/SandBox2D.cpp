@@ -11,6 +11,9 @@ void Sandbox2D::OnAttach()
 
   // CAMERA CONTROLLER
   m_CameraController = Buckshot::OrthographicCameraController(1280.0f / 720.0f);
+
+  // TEXTURES
+  m_Texture = Buckshot::Texture2D::Create("assets/textures/Checkerboard.png");
 }
 
 void Sandbox2D::OnDetach()
@@ -27,8 +30,9 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
 
   Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-  Buckshot::Renderer2D::DrawQuad({ 1.0f, 1.0f }, { 0.50f, 0.75f }, m_SquareColor);
-  Buckshot::Renderer2D::DrawQuad({ -1.0f, -1.0f }, { 0.50f, 0.75f }, m_SquareColor);
+  Buckshot::Renderer2D::DrawQuad({  1.0f, 0.0f,  0.0f}, { 0.7f, 0.7f }, m_SquareColor);
+  Buckshot::Renderer2D::DrawQuad({ -1.0f, 0.0f,  0.0f}, { 0.7f, 0.7f }, m_SquareColor);
+  Buckshot::Renderer2D::DrawQuad({  0.0f, 0.0f, -0.5f}, { 5.0f, 5.0f }, m_Texture);
 
   Buckshot::Renderer2D::EndScene();
 }

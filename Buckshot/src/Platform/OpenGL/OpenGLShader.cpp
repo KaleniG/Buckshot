@@ -70,6 +70,11 @@ namespace Buckshot {
     UploadUniformFloat4(name, data);
   }
 
+  void OpenGLShader::SetInt(const std::string& name, int data)
+  {
+    UploadUniformInt(name, data);
+  }
+
   void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& data)
   {
     uint32_t location = glGetUniformLocation(m_RendererID, name.c_str());
