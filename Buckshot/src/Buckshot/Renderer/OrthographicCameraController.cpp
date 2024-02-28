@@ -1,9 +1,9 @@
 #include <bspch.h>
 
-#include "Buckshot/Input.h"
-#include "Buckshot/KeyCodes.h"
-#include "Buckshot/MouseButtonCodes.h"
-#include "Buckshot/OrthographicCameraController.h"
+#include "Buckshot/Core/Input.h"
+#include "Buckshot/Core/KeyCodes.h"
+#include "Buckshot/Core/MouseButtonCodes.h"
+#include "Buckshot/Renderer/OrthographicCameraController.h"
 #include "Buckshot/Renderer/OrthographicCamera.h"
 
 namespace Buckshot {

@@ -2,18 +2,18 @@
 
 // For use by Buckshot applications
 
-#include "Buckshot/Application.h"
-#include "Buckshot/Log.h"
+#include "Buckshot/Core/Application.h"
+#include "Buckshot/Core/Log.h"
 
 #include "Buckshot/ImGui/ImGuiLayer.h"
-#include "Buckshot/Layer.h"
+#include "Buckshot/Core/Layer.h"
 
 #include "Buckshot/Core/Timestep.h"
 
-#include "Buckshot/OrthographicCameraController.h"
-#include "Buckshot/MouseButtonCodes.h"
-#include "Buckshot/KeyCodes.h"
-#include "Buckshot/Input.h"
+#include "Buckshot/Renderer/OrthographicCameraController.h"
+#include "Buckshot/Core/MouseButtonCodes.h"
+#include "Buckshot/Core/KeyCodes.h"
+#include "Buckshot/Core/Input.h"
 
 #include "Platform/OpenGL/OpenGLShader.h" // TEMP
 
@@ -25,4 +25,4 @@
 #include "Buckshot/Renderer/Shader.h"
 #include "Buckshot/Renderer/Texture.h"
 
-#include "Buckshot/EntryPoint.h"
+#include "Buckshot/Core/EntryPoint.h"

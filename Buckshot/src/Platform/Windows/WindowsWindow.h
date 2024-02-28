@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Buckshot/Window.h"
+#include "Buckshot/Core/Window.h"
 #include "Buckshot/Renderer/GraphicsContext.h"
 
 namespace Buckshot {

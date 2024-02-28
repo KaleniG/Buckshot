@@ -5,8 +5,8 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
-#include "Buckshot/Core.h"
-#include "Buckshot/Application.h"
+#include "Buckshot/Core/Core.h"
+#include "Buckshot/Core/Application.h"
 #include "Buckshot/ImGui/ImGuiLayer.h"
 
 namespace Buckshot {

@@ -20,7 +20,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Buckshot/Log.h"
+#include "Buckshot/Core/Log.h"
 
 #ifdef BS_PLATFORM_WINDOWS
   #include <windows.h>

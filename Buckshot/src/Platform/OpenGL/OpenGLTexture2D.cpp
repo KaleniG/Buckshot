@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <stb_image.h>
 
-#include "OpenGLTexture2D.h"
+#include "Platform/OpenGL/OpenGLTexture2D.h"
 
 namespace Buckshot {
 

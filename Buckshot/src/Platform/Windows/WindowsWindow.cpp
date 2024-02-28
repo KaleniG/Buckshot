@@ -1,6 +1,6 @@
 #include <bspch.h>
 
-#include "Buckshot/Window.h"
+#include "Buckshot/Core/Window.h"
 #include "Buckshot/Events/KeyEvent.h"
 #include "Buckshot/Events/MouseEvent.h"
 #include "Buckshot/Events/ApplicationEvent.h"

@@ -148,22 +148,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Buckshot.h" />
-    <ClInclude Include="src\Buckshot\Application.h" />
-    <ClInclude Include="src\Buckshot\Core.h" />
+    <ClInclude Include="src\Buckshot\Core\Application.h" />
+    <ClInclude Include="src\Buckshot\Core\Core.h" />
     <ClInclude Include="src\Buckshot\Core\Timestep.h" />
-    <ClInclude Include="src\Buckshot\EntryPoint.h" />
+    <ClInclude Include="src\Buckshot\Core\EntryPoint.h" />
     <ClInclude Include="src\Buckshot\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Buckshot\Events\Event.h" />
     <ClInclude Include="src\Buckshot\Events\KeyEvent.h" />
     <ClInclude Include="src\Buckshot\Events\MouseEvent.h" />
     <ClInclude Include="src\Buckshot\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Buckshot\Input.h" />
-    <ClInclude Include="src\Buckshot\KeyCodes.h" />
-    <ClInclude Include="src\Buckshot\Layer.h" />
-    <ClInclude Include="src\Buckshot\LayerStack.h" />
-    <ClInclude Include="src\Buckshot\Log.h" />
-    <ClInclude Include="src\Buckshot\MouseButtonCodes.h" />
-    <ClInclude Include="src\Buckshot\OrthographicCameraController.h" />
+    <ClInclude Include="src\Buckshot\Core\Input.h" />
+    <ClInclude Include="src\Buckshot\Core\KeyCodes.h" />
+    <ClInclude Include="src\Buckshot\Core\Layer.h" />
+    <ClInclude Include="src\Buckshot\Core\LayerStack.h" />
+    <ClInclude Include="src\Buckshot\Core\Log.h" />
+    <ClInclude Include="src\Buckshot\Core\MouseButtonCodes.h" />
+    <ClInclude Include="src\Buckshot\Renderer\OrthographicCameraController.h" />
     <ClInclude Include="src\Buckshot\Renderer\Buffers.h" />
     <ClInclude Include="src\Buckshot\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Buckshot\Renderer\OrthographicCamera.h" />
@@ -173,7 +173,7 @@
     <ClInclude Include="src\Buckshot\Renderer\Shader.h" />
     <ClInclude Include="src\Buckshot\Renderer\Texture.h" />
     <ClInclude Include="src\Buckshot\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Buckshot\Window.h" />
+    <ClInclude Include="src\Buckshot\Core\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
@@ -602,13 +602,13 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Buckshot\Application.cpp" />
+    <ClCompile Include="src\Buckshot\Core\Application.cpp" />
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayerBuild.cpp" />
-    <ClCompile Include="src\Buckshot\Layer.cpp" />
-    <ClCompile Include="src\Buckshot\LayerStack.cpp" />
-    <ClCompile Include="src\Buckshot\Log.cpp" />
-    <ClCompile Include="src\Buckshot\OrthographicCameraController.cpp" />
+    <ClCompile Include="src\Buckshot\Core\Layer.cpp" />
+    <ClCompile Include="src\Buckshot\Core\LayerStack.cpp" />
+    <ClCompile Include="src\Buckshot\Core\Log.cpp" />
+    <ClCompile Include="src\Buckshot\Renderer\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\Buffers.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\RenderCommand.cpp" />

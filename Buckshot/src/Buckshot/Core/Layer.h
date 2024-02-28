@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Buckshot/Core.h"
+#include "Buckshot/Core/Core.h"
 #include "Buckshot/Core/Timestep.h"
 #include "Buckshot/Events/Event.h"
 

@@ -2,8 +2,8 @@
 
 #include <glad/glad.h>
 
-#include "Buckshot/Log.h"
-#include "Buckshot/Core.h"
+#include "Buckshot/Core/Log.h"
+#include "Buckshot/Core/Core.h"
 #include "Buckshot/Renderer/Buffers.h"
 
 namespace Buckshot {

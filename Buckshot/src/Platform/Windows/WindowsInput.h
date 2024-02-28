@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Buckshot/Input.h"
+#include "Buckshot/Core/Input.h"
 
 namespace Buckshot {
 

@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
-#include "Buckshot/Application.h"
+#include "Buckshot/Core/Application.h"
 #include "Buckshot/Core/Timestep.h"
 #include "Buckshot/Renderer/Renderer.h"
 

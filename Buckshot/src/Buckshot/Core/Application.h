@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Buckshot/Core.h"
-#include "Buckshot/Window.h"
-#include "Buckshot/LayerStack.h"
+#include "Buckshot/Core/Core.h"
+#include "Buckshot/Core/Window.h"
+#include "Buckshot/Core/LayerStack.h"
 #include "Buckshot/Events/Event.h"
 #include "Buckshot/ImGui/ImGuiLayer.h"
 

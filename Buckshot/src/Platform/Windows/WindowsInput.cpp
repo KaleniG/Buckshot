@@ -1,7 +1,7 @@
 #include <bspch.h>
 #include <GLFW/glfw3.h>
 
-#include "Buckshot/Application.h"
+#include "Buckshot/Core/Application.h"
 #include "Platform/Windows/WindowsInput.h"
 
 namespace Buckshot{

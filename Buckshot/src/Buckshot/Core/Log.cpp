@@ -1,6 +1,6 @@
 #include <bspch.h>
 
-#include "Buckshot/Log.h"
+#include "Buckshot/Core/Log.h"
 
 namespace Buckshot {
 

@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "OpenGLShader.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Buckshot {
 
