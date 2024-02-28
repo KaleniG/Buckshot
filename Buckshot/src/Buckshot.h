@@ -24,5 +24,3 @@
 #include "Buckshot/Renderer/Buffers.h"
 #include "Buckshot/Renderer/Shader.h"
 #include "Buckshot/Renderer/Texture.h"
-
-#include "Buckshot/Core/EntryPoint.h"
