@@ -34,6 +34,6 @@ namespace Buckshot {
     RenderCommand::DrawIndexed(vertexArray);
   }
 
-  Scope<Renderer::SceneData> Renderer::m_SceneData = std::make_unique<Renderer::SceneData>();
+  Scope<Renderer::SceneData> Renderer::m_SceneData = CreateScope<Renderer::SceneData>();
 
 }

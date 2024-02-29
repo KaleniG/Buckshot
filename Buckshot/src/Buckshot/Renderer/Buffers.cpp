@@ -15,7 +15,7 @@ namespace Buckshot {
       return nullptr;
       break;
     case RendererAPI::API::OpenGL:
-      return std::make_shared<OpenGLVertexBuffer>(vertices, size);
+      return CreateRef<OpenGLVertexBuffer>(vertices, size);
       break;
     default:
       BS_ASSERT(false, "Unknown RendererAPI");
@@ -32,7 +32,7 @@ namespace Buckshot {
       return nullptr;
       break;
     case RendererAPI::API::OpenGL:
-      return std::make_shared<OpenGLIndexBuffer>(indicies, count);
+      return CreateRef<OpenGLIndexBuffer>(indicies, count);
       break;
     default:
       BS_ASSERT(false, "Unknown RendererAPI");

@@ -15,7 +15,7 @@ namespace Buckshot {
       return nullptr;
       break;
     case RendererAPI::API::OpenGL:
-      return std::make_shared<OpenGLVertexArray>();
+      return CreateRef<OpenGLVertexArray>();
       break;
     default:
       BS_ASSERT(false, "Unknown RendererAPI");

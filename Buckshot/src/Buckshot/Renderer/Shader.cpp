@@ -15,7 +15,7 @@ namespace Buckshot {
       return nullptr;
       break;
     case RendererAPI::API::OpenGL:
-      return std::make_shared<OpenGLShader>(filepath);
+      return CreateRef<OpenGLShader>(filepath);
       break;
     default:
       BS_ASSERT(false, "Unknown RendererAPI");
@@ -32,7 +32,7 @@ namespace Buckshot {
       return nullptr;
       break;
     case RendererAPI::API::OpenGL:
-      return std::make_shared<OpenGLShader>(name, vertSource, fragSource);
+      return CreateRef<OpenGLShader>(name, vertSource, fragSource);
       break;
     default:
       BS_ASSERT(false, "Unknown RendererAPI");
