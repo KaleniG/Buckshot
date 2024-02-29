@@ -11,8 +11,8 @@ namespace Buckshot {
   struct Renderer2DStorage
   {
     Ref<VertexArray> vertexArray;
-    Ref<Shader> flatColorShader;
     Ref<Shader> textureShader;
+    Ref<Texture2D> whiteTexture;
   };
 
   static Renderer2DStorage* s_Data;
@@ -21,6 +21,8 @@ namespace Buckshot {
   {
     s_Data = new Renderer2DStorage;
 
+    // TEXTURES
+    
     // VERTEX BUFFER | VERTEX ARRAY | INDEX BUFFER
     s_Data->vertexArray = VertexArray::Create();
 
@@ -54,7 +56,10 @@ namespace Buckshot {
     s_Data->vertexArray->AddVertexBuffer(m_VertexBuffer);
     s_Data->vertexArray->SetIndexBuffer(m_IndexBuffer);
 
-    s_Data->flatColorShader = Shader::Create("assets/shaders/FlatColor.glsl");
+    s_Data->whiteTexture = Texture2D::Create(1, 1);
+    uint32_t whiteTextureData = 0xffffffff;
+    s_Data->whiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+
     s_Data->textureShader = Shader::Create("assets/shaders/Texture.glsl");
     s_Data->textureShader->Bind();
     s_Data->textureShader->SetInt("u_Texture", 0);
@@ -67,9 +72,6 @@ namespace Buckshot {
 
   void Renderer2D::BeginScene(const OrthographicCamera& camera)
   {
-    s_Data->flatColorShader->Bind();
-    s_Data->flatColorShader->SetMat4("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
-
     s_Data->textureShader->Bind();
     s_Data->textureShader->SetMat4("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
   }
@@ -86,14 +88,13 @@ namespace Buckshot {
 
   void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
   {
-    s_Data->flatColorShader->Bind();
-    s_Data->flatColorShader->SetFloat4("u_Color", color);
+    s_Data->textureShader->SetFloat4("u_Color", color);
+
+    s_Data->whiteTexture->Bind();
 
     glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
     transform = glm::scale(transform, glm::vec3(size.x, size.y, 0.0f));
-
-
-    s_Data->flatColorShader->SetMat4("u_Transform", transform);
+    s_Data->textureShader->SetMat4("u_Transform", transform);
 
     s_Data->vertexArray->Bind();
     RenderCommand::DrawIndexed(s_Data->vertexArray);
@@ -106,14 +107,12 @@ namespace Buckshot {
 
   void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
   {
-    s_Data->textureShader->Bind();
+    s_Data->textureShader->SetFloat4("u_Color", glm::vec4(1.0f));
+    texture->Bind();
 
     glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
     transform = glm::scale(transform, glm::vec3(size.x, size.y, 0.0f));
-
     s_Data->textureShader->SetMat4("u_Transform", transform);
-
-    texture->Bind();
 
     s_Data->vertexArray->Bind();
     RenderCommand::DrawIndexed(s_Data->vertexArray);

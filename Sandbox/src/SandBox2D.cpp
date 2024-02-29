@@ -30,9 +30,9 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
 
   Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-  Buckshot::Renderer2D::DrawQuad({  1.0f, 0.0f,  0.0f}, { 0.7f, 0.7f }, m_SquareColor);
-  Buckshot::Renderer2D::DrawQuad({ -1.0f, 0.0f,  0.0f}, { 0.7f, 0.7f }, m_SquareColor);
-  Buckshot::Renderer2D::DrawQuad({  0.0f, 0.0f, -0.5f}, { 5.0f, 5.0f }, m_Texture);
+  Buckshot::Renderer2D::DrawQuad({  1.0f,  0.0f,  0.0f }, { 0.7f, 0.7f }, m_SquareColor);
+  Buckshot::Renderer2D::DrawQuad({ -1.0f,  0.0f,  0.0f }, { 0.7f, 0.7f }, m_SquareColor);
+  Buckshot::Renderer2D::DrawQuad({  0.0f,  0.0f, -0.5f }, { 5.0f, 5.0f }, m_Texture);
 
   Buckshot::Renderer2D::EndScene();
 }
