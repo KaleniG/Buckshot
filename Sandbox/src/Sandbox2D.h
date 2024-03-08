@@ -22,12 +22,4 @@ private:
 
   Buckshot::Ref<Buckshot::Texture2D> m_Texture;
   glm::vec4 m_SquareColor;
-
-  struct ProfileResult
-  {
-    const char* Name;
-    float Time;
-  };
-
-  std::vector<ProfileResult> m_ProfileResults;
 };
