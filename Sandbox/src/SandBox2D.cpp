@@ -6,6 +6,8 @@
 
 void Sandbox2D::OnAttach()
 {
+  BS_PROFILE_FUNCTION();
+
   // VARIABLES
   m_SquareColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -18,37 +20,30 @@ void Sandbox2D::OnAttach()
 
 void Sandbox2D::OnDetach()
 {
-
+  BS_PROFILE_FUNCTION();
 }
 
 void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
 {
   BS_PROFILE_FUNCTION();
 
-  BS_PROFILE_SCOPE("Sandbox2D::OnUpdate");
   m_CameraController.OnUpdate(timestep);
-
 
   {
     BS_PROFILE_SCOPE("Sandbox2::Startup");
     Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
     Buckshot::RenderCommand::Clear();
-  }
-
-  {
-    BS_PROFILE_SCOPE("Sandbox2::BeginScene");
     Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
   }
-
 
   {
     BS_PROFILE_SCOPE("Sandbox2::Drawing");
     Buckshot::Renderer2D::DrawQuad({ 1.0f,  0.0f,  0.0f }, { 0.7f, 0.7f }, m_SquareColor);
     Buckshot::Renderer2D::DrawQuad({ -1.0f,  0.0f,  0.0f }, { 0.7f, 0.7f }, m_SquareColor);
     Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f, -0.5f }, { 5.0f, 5.0f }, m_Texture);
+    Buckshot::Renderer2D::EndScene();
   }
 
-  Buckshot::Renderer2D::EndScene();
 }
 
 void Sandbox2D::OnImGuiRender()
