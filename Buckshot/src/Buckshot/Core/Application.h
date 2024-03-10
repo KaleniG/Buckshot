@@ -6,6 +6,8 @@
 #include "Buckshot/Events/Event.h"
 #include "Buckshot/ImGui/ImGuiLayer.h"
 
+int main(int argc, char** argv);
+
 namespace Buckshot {
 
   class Application
@@ -13,7 +15,6 @@ namespace Buckshot {
   public:
     Application();
     virtual ~Application();
-    void Run();
 
     void OnEvent(Event& e);
 
@@ -24,6 +25,8 @@ namespace Buckshot {
     inline static Application& Get() { return *s_Instance; }
 
   private:
+    void Run();
+
     bool OnWindowClose(WindowCloseEvent& e);
     bool OnWindowResize(WindowResizeEvent& e);
 
@@ -37,6 +40,7 @@ namespace Buckshot {
 
   private:
     static Application* s_Instance;
+    friend int ::main(int argc, char** argv);
   };
 
   Application* CreateApplication();

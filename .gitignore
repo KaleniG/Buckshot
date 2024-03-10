@@ -1,7 +1,10 @@
-# Binsaries
+# Binaries
 **/bin/
 !vendor/bin/premake/
 bin-int/
+
+# Buckshot Files
+*.log
 
 # Visual Studio
 .vs/

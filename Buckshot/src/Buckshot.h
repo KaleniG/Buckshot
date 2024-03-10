@@ -8,7 +8,7 @@
 #include "Buckshot/Core/Core.h"
 #include "Buckshot/Core/Log.h"
 
-#include "Buckshot/Core/MouseButtonCodes.h"
+#include "Buckshot/Core/MouseCodes.h"
 #include "Buckshot/Core/KeyCodes.h"
 #include "Buckshot/Core/Input.h"
 

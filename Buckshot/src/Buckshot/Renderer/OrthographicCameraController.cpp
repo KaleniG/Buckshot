@@ -2,7 +2,7 @@
 
 #include "Buckshot/Core/Input.h"
 #include "Buckshot/Core/KeyCodes.h"
-#include "Buckshot/Core/MouseButtonCodes.h"
+#include "Buckshot/Core/MouseCodes.h"
 #include "Buckshot/Renderer/OrthographicCameraController.h"
 #include "Buckshot/Renderer/OrthographicCamera.h"
 
