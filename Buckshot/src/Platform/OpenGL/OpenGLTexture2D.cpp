@@ -7,13 +7,20 @@ namespace Buckshot {
 
   OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
   {
+    BS_PROFILE_FUNCTION();
+
     m_Path = path;
 
     int width;
     int height;
     int channels;
     stbi_set_flip_vertically_on_load(true);
-    stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    stbi_uc* data = nullptr;
+    {
+      BS_PROFILE_SCOPE("OpenGLTexture2D::OpenGLTexture2D(std::string) | stbi_load()");
+
+      data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    }
     BS_ASSERT(data, "Failed to load image \"{0}\"", path);
     m_Width = width;
     m_Height = height;
@@ -59,6 +66,8 @@ namespace Buckshot {
 
   OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height)
   {
+    BS_PROFILE_FUNCTION();
+
     m_Width = width;
     m_Height = height;
 
@@ -77,11 +86,15 @@ namespace Buckshot {
 
   OpenGLTexture2D::~OpenGLTexture2D()
   {
+    BS_PROFILE_FUNCTION();
+
     glDeleteTextures(1, &m_RendererID);
   }
 
   void OpenGLTexture2D::SetData(void* data, uint32_t size)
   {
+    BS_PROFILE_FUNCTION();
+
     uint32_t bytes_per_pixel = (m_DataFormat == GL_RGBA) ? 4 : 3;
     BS_ASSERT(size == m_Width * m_Height * bytes_per_pixel, "Data must be entire texture");
     glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
@@ -89,6 +102,8 @@ namespace Buckshot {
 
   void OpenGLTexture2D::Bind(uint32_t slot) const
   {
+    BS_PROFILE_FUNCTION();
+
     glBindTextureUnit(slot, m_RendererID);
   }
 

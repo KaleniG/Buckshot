@@ -23,8 +23,9 @@ namespace Buckshot {
 
     inline static API GetAPI() { return m_API; }
 
+    static Scope<RendererAPI> Create();
   private:
-      static API m_API;
+    static API m_API;
   };
 
 }

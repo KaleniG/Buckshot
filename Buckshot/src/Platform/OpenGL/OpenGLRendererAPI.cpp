@@ -7,6 +7,8 @@ namespace Buckshot {
 
   void OpenGLRendererAPI::Init()
   {
+    BS_PROFILE_FUNCTION();
+
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

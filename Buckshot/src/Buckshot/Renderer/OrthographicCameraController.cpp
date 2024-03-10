@@ -19,6 +19,8 @@ namespace Buckshot {
 
   void OrthographicCameraController::OnUpdate(Timestep timestep)
   {
+    BS_PROFILE_FUNCTION();
+
     if (Input::IsKeyPressed(BS_KEY_A))
       m_CameraPosition.x -= m_CameraTranslationSpeed * timestep.GetSeconds();
     else if (Input::IsKeyPressed(BS_KEY_D))
@@ -43,6 +45,8 @@ namespace Buckshot {
 
   bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& event)
   {
+    BS_PROFILE_FUNCTION();
+
     m_ZoomLevel -= event.GetYOffset() * 0.25f;
     m_ZoomLevel = std::max(m_ZoomLevel, 0.10f);
     m_ZoomLevel = std::min(m_ZoomLevel, 35.0f);
@@ -52,6 +56,8 @@ namespace Buckshot {
 
   bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& event)
   {
+    BS_PROFILE_FUNCTION();
+
     m_AspectRatio = (float)event.GetWidth() / (float)event.GetHeight();
     m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
     return false;
@@ -59,6 +65,8 @@ namespace Buckshot {
 
   bool OrthographicCameraController::OnMouseButtonPressed(MouseButtonPressedEvent& event)
   {
+    BS_PROFILE_FUNCTION();
+
     if (event.GetMouseButton() == BS_MOUSE_BUTTON_MIDDLE)
     {
       m_ZoomLevel = 1.0f;

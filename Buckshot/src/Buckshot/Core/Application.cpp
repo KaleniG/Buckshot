@@ -5,23 +5,24 @@
 #include "Buckshot/Core/Application.h"
 #include "Buckshot/Core/Timestep.h"
 #include "Buckshot/Renderer/Renderer.h"
-#include "Buckshot/Renderer/Renderer2D.h"
+
 
 namespace Buckshot {
-#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
   Application* Application::s_Instance = nullptr;
 
   Application::Application()
   {
+    BS_PROFILE_FUNCTION();
+
     BS_ASSERT(!s_Instance, "Application already exists!");
     s_Instance = this;
 
     m_Window = std::unique_ptr<Window>(Window::Create());
-    m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+    m_Window->SetEventCallback(BS_BIND_EVENT_FN(Application::OnEvent));
 
     Renderer::Init();
-    Renderer2D::Init();
+    
 
     m_ImGuiLayer = new ImGuiLayer();
     PushOverlay(m_ImGuiLayer);
@@ -29,24 +30,34 @@ namespace Buckshot {
 
   Application::~Application()
   {
+    BS_PROFILE_FUNCTION();
 
+    Renderer::Shutdown();
   }
 
   void Application::PushLayer(Layer* layer)
   {
+    BS_PROFILE_FUNCTION();
+
     m_LayerStack.PushLayer(layer);
+    layer->OnAttach();
   }
 
-  void Application::PushOverlay(Layer* layer)
+  void Application::PushOverlay(Layer* overlay)
   {
-    m_LayerStack.PushOverlay(layer);
+    BS_PROFILE_FUNCTION();
+
+    m_LayerStack.PushOverlay(overlay);
+    overlay->OnAttach();
   }
 
   void Application::OnEvent(Event& e)
   {
+    BS_PROFILE_FUNCTION();
+
     EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-    dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+    dispatcher.Dispatch<WindowCloseEvent>(BS_BIND_EVENT_FN(Application::OnWindowClose));
+    dispatcher.Dispatch<WindowResizeEvent>(BS_BIND_EVENT_FN(Application::OnWindowResize));
 
     for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
     {
@@ -58,20 +69,34 @@ namespace Buckshot {
 
   void Application::Run()
   {
+    BS_PROFILE_FUNCTION();
+
     while (m_Running)
     {
+      BS_PROFILE_SCOPE("Application::Run() | RunLoop");
+
       float time = (float)glfwGetTime(); // TEMPORARY
       Timestep timestep = time - m_LastFrameTime;
       m_LastFrameTime = time;
 
       if (!m_Minimized)
       {
-        for (Layer* layer : m_LayerStack)
-          layer->OnUpdate(timestep);
+        {
+          BS_PROFILE_SCOPE("Application::Run() | LayersOnUpdate");
+
+          for (Layer* layer : m_LayerStack)
+            layer->OnUpdate(timestep);
+        }
 
         m_ImGuiLayer->Begin();
-        for (Layer* layer : m_LayerStack)
-          layer->OnImGuiRender();
+
+        {
+          BS_PROFILE_SCOPE("Application::Run() | LayersOnImGuiRender");
+
+          for (Layer* layer : m_LayerStack)
+            layer->OnImGuiRender();
+        }
+
         m_ImGuiLayer->End();
       }
 
@@ -90,6 +115,8 @@ namespace Buckshot {
 
   bool Application::OnWindowResize(WindowResizeEvent& e)
   {
+    BS_PROFILE_FUNCTION();
+
     if (e.GetWidth() == 0 || e.GetHeight() == 0)
     {
       m_Minimized = true;

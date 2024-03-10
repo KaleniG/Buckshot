@@ -9,7 +9,7 @@ namespace Buckshot {
   class OpenGLContext : public GraphicsContext
   {
   public:
-    OpenGLContext(GLFWwindow* windowHandle);
+    OpenGLContext(void* windowHandle);
 
     virtual void Init() override;
     virtual void SwapBuffers() override;

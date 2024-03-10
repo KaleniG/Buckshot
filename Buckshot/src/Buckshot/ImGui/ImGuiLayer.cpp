@@ -18,11 +18,13 @@ namespace Buckshot {
 
 	ImGuiLayer::~ImGuiLayer()
 	{
-
+		BS_PROFILE_FUNCTION();
 	}
 
 	void ImGuiLayer::OnAttach()
 	{
+		BS_PROFILE_FUNCTION();
+
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -47,6 +49,8 @@ namespace Buckshot {
 
 	void ImGuiLayer::OnDetach()
 	{
+		BS_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -54,6 +58,8 @@ namespace Buckshot {
 
 	void ImGuiLayer::Begin()
 	{
+		BS_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -61,6 +67,8 @@ namespace Buckshot {
 
 	void ImGuiLayer::End()
 	{
+		BS_PROFILE_FUNCTION();
+
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
@@ -77,6 +85,8 @@ namespace Buckshot {
 
 	void ImGuiLayer::OnImGuiRender()
 	{
+		BS_PROFILE_FUNCTION();
+
 		static bool show = true;
 		// TEMP
 		//ImGui::ShowDemoWindow(&show);

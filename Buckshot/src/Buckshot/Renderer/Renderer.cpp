@@ -1,7 +1,7 @@
 #include <bspch.h>
 
 #include "Buckshot/Renderer/Renderer.h"
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "Buckshot/Renderer/Renderer2D.h"
 
 namespace Buckshot {
 
@@ -12,24 +12,38 @@ namespace Buckshot {
 
   void Renderer::Init()
   {
+    BS_PROFILE_FUNCTION();
+
     RenderCommand::Init();
+    Renderer2D::Init();
+  }
+
+  void Renderer::Shutdown()
+  {
+    BS_PROFILE_FUNCTION();
+
+    Renderer2D::Shutdown();
   }
 
   void Renderer::BeginScene(OrthographicCamera& camera)
   {
+    BS_PROFILE_FUNCTION();
+
     m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
   }
 
   void Renderer::EndScene()
   {
-
+    BS_PROFILE_FUNCTION();
   }
 
   void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
   {
+    BS_PROFILE_FUNCTION();
+
     shader->Bind();
-    std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjectionMatrix", m_SceneData->ViewProjectionMatrix);
-    std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Transform", transform);
+    shader->SetMat4("u_ViewProjectionMatrix", m_SceneData->ViewProjectionMatrix);
+    shader->SetMat4("u_Transform", transform);
     vertexArray->Bind();
     RenderCommand::DrawIndexed(vertexArray);
   }

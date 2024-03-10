@@ -9,6 +9,8 @@ namespace Buckshot {
   public:
     inline static void Init()
     {
+      BS_PROFILE_FUNCTION();
+
       m_RendererAPI->Init();
     }
 
@@ -34,7 +36,7 @@ namespace Buckshot {
     }
 
   private:
-    static RendererAPI* m_RendererAPI;
+    static Scope<RendererAPI> m_RendererAPI;
   };
 
 }

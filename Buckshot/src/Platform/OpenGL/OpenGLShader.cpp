@@ -19,6 +19,8 @@ namespace Buckshot {
 
   OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertSource, const std::string& fragSource)
   {
+    BS_PROFILE_FUNCTION();
+
     std::unordered_map<GLenum, std::string> shaderSources;
     shaderSources[GL_VERTEX_SHADER] = vertSource;
     shaderSources[GL_FRAGMENT_SHADER] = fragSource;
@@ -29,6 +31,8 @@ namespace Buckshot {
 
   OpenGLShader::OpenGLShader(const std::string& filepath)
   {
+    BS_PROFILE_FUNCTION();
+
     std::string shader = ReadFile(filepath);
     auto shaderSources = PreProcess(shader);
     Compile(shaderSources);
@@ -42,36 +46,50 @@ namespace Buckshot {
 
   OpenGLShader::~OpenGLShader()
   {
+    BS_PROFILE_FUNCTION();
+
     glDeleteProgram(m_RendererID);
   }
 
   void OpenGLShader::Bind() const
   {
+    BS_PROFILE_FUNCTION();
+
     glUseProgram(m_RendererID);
   }
 
   void OpenGLShader::Unbind() const
   {
+    BS_PROFILE_FUNCTION();
+
     glUseProgram(0);
   }
 
   void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& data)
   {
+    BS_PROFILE_FUNCTION();
+
     UploadUniformMat4(name, data);
   }
 
   void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& data)
   {
+    BS_PROFILE_FUNCTION();
+
     UploadUniformFloat3(name, data);
   }
 
   void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& data)
   {
+    BS_PROFILE_FUNCTION();
+
     UploadUniformFloat4(name, data);
   }
 
   void OpenGLShader::SetInt(const std::string& name, int data)
   {
+    BS_PROFILE_FUNCTION();
+
     UploadUniformInt(name, data);
   }
 
@@ -119,6 +137,8 @@ namespace Buckshot {
 
   std::string OpenGLShader::ReadFile(const std::string& filepath)
   {
+    BS_PROFILE_FUNCTION();
+
     std::string file_bin;
     std::ifstream file(filepath, std::ios::in | std::ios::binary);
 
@@ -140,6 +160,8 @@ namespace Buckshot {
 
   std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& shaderSource)
   {
+    BS_PROFILE_FUNCTION();
+
     std::unordered_map<GLenum, std::string> shaderSources;
 
     const char* typeToken = "#type";
@@ -164,6 +186,8 @@ namespace Buckshot {
 
   void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
   {
+    BS_PROFILE_FUNCTION();
+
     BS_ASSERT(shaderSources.size() <= 2, "Only two types of shaders supported for now");
     GLuint program = glCreateProgram();
     std::array<GLenum, 2> glShaderIDs;

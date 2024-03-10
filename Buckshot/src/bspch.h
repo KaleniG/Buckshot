@@ -22,6 +22,7 @@
 #include <unordered_set>
 
 #include "Buckshot/Core/Log.h"
+#include "Buckshot/Debug/Instrumentor.h"
 
 #ifdef BS_PLATFORM_WINDOWS
   #include <windows.h>

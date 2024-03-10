@@ -19,6 +19,8 @@ namespace Buckshot {
 
   void Renderer2D::Init()
   {
+    BS_PROFILE_FUNCTION();
+
     s_Data = new Renderer2DStorage;
 
     // TEXTURES
@@ -67,18 +69,22 @@ namespace Buckshot {
 
   void Renderer2D::Shutdown()
   {
+    BS_PROFILE_FUNCTION();
+
     delete s_Data;
   }
 
   void Renderer2D::BeginScene(const OrthographicCamera& camera)
   {
+    BS_PROFILE_FUNCTION();
+
     s_Data->textureShader->Bind();
     s_Data->textureShader->SetMat4("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
   }
 
   void Renderer2D::EndScene()
   {
-
+    BS_PROFILE_FUNCTION();
   }
 
   void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -88,6 +94,8 @@ namespace Buckshot {
 
   void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
   {
+    BS_PROFILE_FUNCTION();
+
     s_Data->textureShader->SetFloat4("u_Color", color);
 
     s_Data->whiteTexture->Bind();
@@ -107,6 +115,8 @@ namespace Buckshot {
 
   void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
   {
+    BS_PROFILE_FUNCTION();
+
     s_Data->textureShader->SetFloat4("u_Color", glm::vec4(1.0f));
     texture->Bind();
 
