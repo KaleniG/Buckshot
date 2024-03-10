@@ -10,6 +10,9 @@
     <Filter Include="src\Buckshot\Core">
       <UniqueIdentifier>{D7CF64BE-43E6-6254-8C5D-EE75F8B233DC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Buckshot\Debug">
+      <UniqueIdentifier>{D5250B8B-C109-CCE0-2A6A-C633166DB662}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Buckshot\Events">
       <UniqueIdentifier>{2333FAEF-8F94-D7FD-1802-1EB084620EBD}</UniqueIdentifier>
     </Filter>
@@ -58,16 +61,40 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Core\Application.h">
-      <Filter>src\Buckshot</Filter>
+      <Filter>src\Buckshot\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Core\Core.h">
-      <Filter>src\Buckshot</Filter>
+      <Filter>src\Buckshot\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Core\EntryPoint.h">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Core\Input.h">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Core\KeyCodes.h">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Core\Layer.h">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Core\LayerStack.h">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Core\Log.h">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Core\MouseButtonCodes.h">
+      <Filter>src\Buckshot\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Core\Timestep.h">
       <Filter>src\Buckshot\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Buckshot\Core\EntryPoint.h">
-      <Filter>src\Buckshot</Filter>
+    <ClInclude Include="src\Buckshot\Core\Window.h">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Debug\Instrumentor.h">
+      <Filter>src\Buckshot\Debug</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Events\ApplicationEvent.h">
       <Filter>src\Buckshot\Events</Filter>
@@ -84,27 +111,6 @@
     <ClInclude Include="src\Buckshot\ImGui\ImGuiLayer.h">
       <Filter>src\Buckshot\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Buckshot\Core\Input.h">
-      <Filter>src\Buckshot</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Buckshot\Core\KeyCodes.h">
-      <Filter>src\Buckshot</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Buckshot\Core\Layer.h">
-      <Filter>src\Buckshot</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Buckshot\Core\LayerStack.h">
-      <Filter>src\Buckshot</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Buckshot\Core\Log.h">
-      <Filter>src\Buckshot</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Buckshot\Core\MouseButtonCodes.h">
-      <Filter>src\Buckshot</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Buckshot\Renderer\OrthographicCameraController.h">
-      <Filter>src\Buckshot</Filter>
-    </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\Buffers.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
@@ -114,10 +120,16 @@
     <ClInclude Include="src\Buckshot\Renderer\OrthographicCamera.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buckshot\Renderer\OrthographicCameraController.h">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\RenderCommand.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\Renderer.h">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Renderer\Renderer2D.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\RendererAPI.h">
@@ -131,9 +143,6 @@
     </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\VertexArray.h">
       <Filter>src\Buckshot\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Buckshot\Core\Window.h">
-      <Filter>src\Buckshot</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
@@ -1413,12 +1422,19 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Buckshot\Renderer\Renderer2D.h" />
-    <ClInclude Include="src\Buckshot\Debug\Instrumentor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buckshot\Core\Application.cpp">
-      <Filter>src\Buckshot</Filter>
+      <Filter>src\Buckshot\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Core\Layer.cpp">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Core\LayerStack.cpp">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Core\Log.cpp">
+      <Filter>src\Buckshot\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayer.cpp">
       <Filter>src\Buckshot\ImGui</Filter>
@@ -1426,28 +1442,25 @@
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayerBuild.cpp">
       <Filter>src\Buckshot\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Buckshot\Core\Layer.cpp">
-      <Filter>src\Buckshot</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Buckshot\Core\LayerStack.cpp">
-      <Filter>src\Buckshot</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Buckshot\Core\Log.cpp">
-      <Filter>src\Buckshot</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Buckshot\Renderer\OrthographicCameraController.cpp">
-      <Filter>src\Buckshot</Filter>
-    </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\Buffers.cpp">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Buckshot\Renderer\GraphicsContext.cpp">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Renderer\OrthographicCameraController.cpp">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\RenderCommand.cpp">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\Renderer.cpp">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Renderer\Renderer2D.cpp">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\RendererAPI.cpp">
@@ -1492,7 +1505,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Buckshot\Renderer\Renderer2D.cpp" />
-    <ClCompile Include="src\Buckshot\Renderer\GraphicsContext.cpp" />
   </ItemGroup>
 </Project>

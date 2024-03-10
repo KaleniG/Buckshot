@@ -19,6 +19,8 @@ namespace Buckshot {
     void Unbind() const override;
 
     virtual void SetMat4(const std::string& name, const glm::mat4& data) override;
+    virtual void SetFloat(const std::string& name, float data) override;
+    virtual void SetFloat2(const std::string& name, const glm::vec2& data) override;
     virtual void SetFloat3(const std::string& name, const glm::vec3& data) override;
     virtual void SetFloat4(const std::string& name, const glm::vec4& data) override;
     virtual void SetInt(const std::string& name, int data) override;

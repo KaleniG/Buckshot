@@ -72,6 +72,20 @@ namespace Buckshot {
     UploadUniformMat4(name, data);
   }
 
+  void OpenGLShader::SetFloat(const std::string& name, float data)
+  {
+    BS_PROFILE_FUNCTION();
+
+    UploadUniformFloat(name, data);
+  }
+
+  void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& data)
+  {
+    BS_PROFILE_FUNCTION();
+
+    UploadUniformFloat2(name, data);
+  }
+
   void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& data)
   {
     BS_PROFILE_FUNCTION();
@@ -145,10 +159,18 @@ namespace Buckshot {
     if (file)
     {
       file.seekg(0, std::ios::end);
-      file_bin.resize(file.tellg());
-      file.seekg(0, std::ios::beg);
-      file.read(&file_bin[0], file_bin.size());
-      file.close();
+      size_t size = file.tellg();
+      if (size != -1)
+      {
+        file_bin.resize(size);
+        file.seekg(0, std::ios::beg);
+        file.read(&file_bin[0], size);
+        file.close();
+      }
+      else
+      {
+        BS_ERROR("Could not read from file '{0}'", filepath);
+      }
     }
     else
     {
