@@ -107,6 +107,11 @@ namespace Buckshot {
     UploadUniformInt(name, data);
   }
 
+  void OpenGLShader::SetIntArray(const std::string& name, int* data, uint32_t count)
+  {
+    UploadUniformIntArray(name, data, count);
+  }
+
   void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& data)
   {
     uint32_t location = glGetUniformLocation(m_RendererID, name.c_str());
@@ -147,6 +152,12 @@ namespace Buckshot {
   {
     uint32_t location = glGetUniformLocation(m_RendererID, name.c_str());
     glUniform4f(location, data.x, data.y, data.z, data.w);
+  }
+
+  void OpenGLShader::UploadUniformIntArray(const std::string& name, int* data, uint32_t count)
+  {
+    uint32_t location = glGetUniformLocation(m_RendererID, name.c_str());
+    glUniform1iv(location, count, data);
   }
 
   std::string OpenGLShader::ReadFile(const std::string& filepath)

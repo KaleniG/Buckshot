@@ -24,12 +24,14 @@ namespace Buckshot {
     virtual void SetFloat3(const std::string& name, const glm::vec3& data) override;
     virtual void SetFloat4(const std::string& name, const glm::vec4& data) override;
     virtual void SetInt(const std::string& name, int data) override;
+    virtual void SetIntArray(const std::string& name, int* data, uint32_t count) override;
 
     virtual const std::string& GetName() const override { return m_Name; }
 
     void UploadUniformMat4(const std::string& name, const glm::mat4& data);
     void UploadUniformMat3(const std::string& name, const glm::mat3& data);
     void UploadUniformInt(const std::string& name, int data);
+    void UploadUniformIntArray(const std::string& name, int* data, uint32_t count);
     void UploadUniformFloat(const std::string& name, float data);
     void UploadUniformFloat2(const std::string& name, const glm::vec2& data);
     void UploadUniformFloat3(const std::string& name, const glm::vec3& data);

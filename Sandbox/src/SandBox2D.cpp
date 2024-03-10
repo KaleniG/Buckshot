@@ -33,14 +33,13 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
     BS_PROFILE_SCOPE("Sandbox2::Startup");
     Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
     Buckshot::RenderCommand::Clear();
-    Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
   }
 
   {
     BS_PROFILE_SCOPE("Sandbox2::Drawing");
-    Buckshot::Renderer2D::DrawQuad({ 1.0f,  0.0f,  0.0f }, { 0.7f, 0.7f }, m_SquareColor);
-    //Buckshot::Renderer2D::DrawQuad({ -1.0f,  0.0f,  0.0f }, { 0.7f, 0.7f }, m_SquareColor);
-    //Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f, -0.5f }, { 5.0f, 5.0f }, m_Texture, 10.0f);
+    Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
+    Buckshot::Renderer2D::DrawQuad({ -0.5f,  -0.5f}, { 1.0f, 1.0f }, m_SquareColor);
+    Buckshot::Renderer2D::DrawQuad({ -5.0f,  -5.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture, 10.0f);
     Buckshot::Renderer2D::EndScene();
   }
 
