@@ -6,6 +6,23 @@
 
 namespace Buckshot {
 
+  Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+  {
+    switch (Renderer::GetAPI())
+    {
+    case RendererAPI::API::None:
+      BS_ASSERT(false, "RendererAPI::None is not supported");
+      return nullptr;
+      break;
+    case RendererAPI::API::OpenGL:
+      return CreateRef<OpenGLVertexBuffer>(size);
+      break;
+    default:
+      BS_ASSERT(false, "Unknown RendererAPI");
+      return nullptr;
+    }
+  }
+
   Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
   {
     switch (Renderer::GetAPI())

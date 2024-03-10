@@ -39,8 +39,8 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
   {
     BS_PROFILE_SCOPE("Sandbox2::Drawing");
     Buckshot::Renderer2D::DrawQuad({ 1.0f,  0.0f,  0.0f }, { 0.7f, 0.7f }, m_SquareColor);
-    Buckshot::Renderer2D::DrawQuad({ -1.0f,  0.0f,  0.0f }, { 0.7f, 0.7f }, m_SquareColor);
-    Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f, -0.5f }, { 5.0f, 5.0f }, m_Texture, 10.0f);
+    //Buckshot::Renderer2D::DrawQuad({ -1.0f,  0.0f,  0.0f }, { 0.7f, 0.7f }, m_SquareColor);
+    //Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f, -0.5f }, { 5.0f, 5.0f }, m_Texture, 10.0f);
     Buckshot::Renderer2D::EndScene();
   }
 

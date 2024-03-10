@@ -52,7 +52,7 @@ namespace Buckshot {
       index++;
     }
 
-    m_VertexBuffers.push_back(vertexBuffer);
+    quadVBs.push_back(vertexBuffer);
   }
 
   void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
@@ -62,7 +62,7 @@ namespace Buckshot {
     glBindVertexArray(m_RendererID);
     indexBuffer->Bind();
 
-    m_IndexBuffer = indexBuffer;
+    quadIB = indexBuffer;
   }
 
 }
