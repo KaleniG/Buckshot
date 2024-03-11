@@ -1,7 +1,7 @@
 #include <bspch.h>
 #include <stb_image.h>
 
-#include "Platform/OpenGL/OpenGLTexture2D.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace Buckshot {
 

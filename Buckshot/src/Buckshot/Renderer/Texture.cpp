@@ -1,6 +1,6 @@
 #include <bspch.h>
 
-#include "Platform/OpenGL/OpenGLTexture2D.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
 #include "Buckshot/Renderer/Texture.h"
 #include "Buckshot/Renderer/Renderer.h"
 
