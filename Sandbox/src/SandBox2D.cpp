@@ -29,6 +29,7 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
 
   m_CameraController.OnUpdate(timestep);
 
+  Buckshot::Renderer2D::ResetStats();
   {
     BS_PROFILE_SCOPE("Sandbox2::Startup");
     Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
@@ -36,15 +37,25 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
   }
 
   {
+    BS_PROFILE_SCOPE("Sandbox2::Drawing");
     static float rotation = 0.0f;
     rotation += timestep * 20.0f;
 
-    BS_PROFILE_SCOPE("Sandbox2::Drawing");
     Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
-    Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f,  0.5f}, { 1.0f, 1.0f }, m_SquareColor);
-    Buckshot::Renderer2D::DrawRotatedQuad({ 0.0f,  0.0f,  0.5f}, { 1.0f, 1.0f }, 45.0f, m_SquareColor);
+    Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f,  0.5f }, { 1.0f, 1.0f }, m_SquareColor);
     Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture, 10.0f);
+    Buckshot::Renderer2D::DrawRotatedQuad({ 0.0f,  0.0f,  0.5f }, { 1.0f, 1.0f }, rotation, m_SquareColor);
     Buckshot::Renderer2D::DrawRotatedQuad({ 0.0f,  0.0f,  0.0f }, { 5.0f, 5.0f }, rotation, m_Texture, 10.0f);
+    Buckshot::Renderer2D::EndScene();
+
+    Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
+    for (float y = -5.0f; y < 5.0f; y += 0.5f)
+    {
+      for (float x = -5.0f; x < 5.0f; x += 0.5f)
+      {
+        Buckshot::Renderer2D::DrawQuad({ x, y, 0.5f }, { 0.45f, 0.45f }, m_SquareColor);
+      }
+    }
     Buckshot::Renderer2D::EndScene();
   }
 
@@ -70,6 +81,14 @@ void Sandbox2D::OnImGuiRender()
   ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor), ImGuiColorEditFlags_NoInputs);
 
   ImGui::Separator();
+
+  auto stats = Buckshot::Renderer2D::GetStats();
+  ImGui::Text("Renderer Stats:");
+  ImGui::Text(" Draw Calls: %i", stats.DrawCalls);
+  ImGui::Text(" Quad Count: %i", stats.QuadCount);
+  ImGui::Text(" Total Vertecies: %i", stats.GetTotalVertexCount());
+  ImGui::Text(" Total Indecies: %i", stats.GetTotalIndexCount());
+
   ImGui::End();
 }
 
