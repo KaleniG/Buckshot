@@ -5,7 +5,7 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
-#include "Buckshot/Core/Core.h"
+#include "Buckshot/Core/Base.h"
 #include "Buckshot/Core/Application.h"
 #include "Buckshot/ImGui/ImGuiLayer.h"
 
@@ -91,4 +91,12 @@ namespace Buckshot {
 		// TEMP
 		//ImGui::ShowDemoWindow(&show);
 	}
+
+  void ImGuiLayer::OnEvent(Event& e)
+  {
+    ImGuiIO& io = ImGui::GetIO();
+    e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+    e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+  }
+
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Buckshot/Core/Core.h"
+#include "Buckshot/Core/Base.h"
 #include "Buckshot/Core/KeyCodes.h"
 #include "Buckshot/Core/MouseCodes.h"
 

@@ -3,7 +3,7 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
 
-#include "Buckshot/Core/Core.h"
+#include "Buckshot/Core/Base.h"
 
 namespace Buckshot {
 

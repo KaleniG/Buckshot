@@ -2,7 +2,7 @@
 
 #include <bspch.h>
 
-#include "Buckshot/Core/Core.h"
+#include "Buckshot/Core/Base.h"
 
 namespace Buckshot {
 

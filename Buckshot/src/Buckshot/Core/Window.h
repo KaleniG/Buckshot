@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Buckshot/Core/Core.h"
+#include "Buckshot/Core/Base.h"
 #include "Buckshot/Events/Event.h"
 
 namespace Buckshot {

@@ -75,7 +75,7 @@ namespace Buckshot
       json << ",{";
       json << "\"cat\":\"function\",";
       json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
-      json << "\"name\":\"" << name << "\",";
+      json << "\"name\":\"" << result.Name << "\",";
       json << "\"ph\":\"X\",";
       json << "\"pid\":0,";
       json << "\"tid\":" << result.ThreadID << ",";
@@ -149,6 +149,35 @@ namespace Buckshot
     bool m_Stopped;
   };
 
+  namespace InstrumentorUtils {
+
+    template <size_t N>
+    struct ChangeResult
+    {
+      char Data[N];
+    };
+
+    template <size_t N, size_t K>
+    constexpr auto CleanupOutputString(const char(&expr)[N], const char(&remove)[K])
+    {
+      ChangeResult<N> result = {};
+
+      size_t srcIndex = 0;
+      size_t dstIndex = 0;
+      while (srcIndex < N)
+      {
+        size_t matchIndex = 0;
+        while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1 && expr[srcIndex + matchIndex] == remove[matchIndex])
+          matchIndex++;
+        if (matchIndex == K - 1)
+          srcIndex += matchIndex;
+        result.Data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
+        srcIndex++;
+      }
+      return result;
+    }
+  }
+
 }
 
 
@@ -159,7 +188,7 @@ namespace Buckshot
     #define BS_FUNC_SIG __PRETTY_FUNCTION__
   #elif defined(__DMC__) && (__DMC__ >= 0x810)
     #define BS_FUNC_SIG __PRETTY_FUNCTION__
-  #elif defined(__FUNCSIG__)
+  #elif (defined(__FUNCSIG__) || (_MSC_VER))
     #define BS_FUNC_SIG __FUNCSIG__
   #elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMCPP__) && (__IBMCPP__ >= 500))
     #define BS_FUNC_SIG __FUNCTION__
@@ -173,12 +202,10 @@ namespace Buckshot
     #define BS_FUNC_SIG "BS_FUNC_SIG unknown!"
   #endif
 
-  #define C(x, y) x ## y
-  #define CONCAT(x, y) C(x, y)
-
   #define BS_PROFILE_BEGIN_SESSION(name, filepath) ::Buckshot::Instrumentor::Get().BeginSession(name, filepath)
   #define BS_PROFILE_END_SESSION() ::Buckshot::Instrumentor::Get().EndSession()
-  #define BS_PROFILE_SCOPE(name) ::Buckshot::InstrumentationTimer CONCAT(timer, __LINE__)(name)
+  #define BS_PROFILE_SCOPE(name) constexpr auto fixedName = ::Buckshot::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
+									::Buckshot::InstrumentationTimer timer##__LINE__(fixedName.Data)
   #define BS_PROFILE_FUNCTION() BS_PROFILE_SCOPE(BS_FUNC_SIG)
 #else
   #define BS_PROFILE_BEGIN_SESSION(name, filepath)

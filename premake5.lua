@@ -14,6 +14,15 @@ workspace "Buckshot"
 		"MultiProcessorCompile"
 	}
 
+	defines
+	{
+		"_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
+		"_SILENCE_ALL_MS_EXT_DEPRECATION_WARNINGS",
+		"_CRT_SECURE_NO_WARNINGS",
+		"_CRT_SECURE_NO_DEPRECATE",
+		"_CRT_NONSTDC_NO_DEPRECATE"
+	}
+
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
@@ -75,23 +84,22 @@ project "Buckshot"
 		defines
 		{
 			"BS_PLATFORM_WINDOWS",
-			"BS_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
 
 	filter "configurations:Debug"
 		runtime "Debug"
-		defines { "BS_ENABLE_ASSERTS", "BS_DEBUG"}
+		defines "BS_DEBUG"
 		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"
-		defines { "BS_ENABLE_ASSERTS", "BS_RELEASE"}
+		defines "BS_RELEASE"
 		optimize "on"
 
 	filter "configurations:Dist"
 		runtime "Release"
-		defines { "BS_DIST" }
+		defines "BS_DIST"
 		optimize "on"
 
 project "Sandbox"
@@ -133,12 +141,12 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		runtime "Debug"
-		defines { "BS_ENABLE_ASSERTS", "BS_DEBUG"}
+		defines "BS_DEBUG"
 		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"
-		defines { "BS_ENABLE_ASSERTS", "BS_RELEASE"}
+		defines "BS_RELEASE"
 		optimize "on"
 
 	filter "configurations:Dist"
