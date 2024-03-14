@@ -21,5 +21,9 @@ private:
   Buckshot::OrthographicCameraController m_CameraController;
 
   Buckshot::Ref<Buckshot::Texture2D> m_Texture;
+  Buckshot::Ref<Buckshot::Texture2D> m_SpriteSheet;
+  Buckshot::Ref<Buckshot::SubTexture2D> m_StairsTexture;
+  Buckshot::Ref<Buckshot::SubTexture2D> m_TreeTexture;
+
   glm::vec4 m_SquareColor;
 };

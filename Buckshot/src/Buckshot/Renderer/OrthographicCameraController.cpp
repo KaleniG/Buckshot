@@ -12,7 +12,8 @@ namespace Buckshot {
     : m_AspectRatio(aspect_ratio)
   {
     m_ZoomLevel = 1.0f;
-    m_Camera = OrthographicCamera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+    m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
+    m_Camera = OrthographicCamera(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
     m_CameraTranslationSpeed = 2.0f;
     m_CameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
   }
@@ -50,7 +51,8 @@ namespace Buckshot {
     m_ZoomLevel -= event.GetYOffset() * 0.25f;
     m_ZoomLevel = std::max(m_ZoomLevel, 0.10f);
     m_ZoomLevel = std::min(m_ZoomLevel, 35.0f);
-    m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+    m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
+    m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
     return false;
   }
 
@@ -59,7 +61,8 @@ namespace Buckshot {
     BS_PROFILE_FUNCTION();
 
     m_AspectRatio = (float)event.GetWidth() / (float)event.GetHeight();
-    m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+    m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
+    m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
     return false;
   }
 
@@ -70,7 +73,8 @@ namespace Buckshot {
     if (event.GetMouseButton() == BS_MOUSE_BUTTON_MIDDLE)
     {
       m_ZoomLevel = 1.0f;
-      m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+      m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
+      m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
     }
     return false;
   }

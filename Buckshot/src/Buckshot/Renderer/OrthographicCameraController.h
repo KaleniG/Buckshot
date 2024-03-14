@@ -7,6 +7,17 @@
 
 namespace Buckshot {
 
+  struct OrthographicCameraBounds
+  {
+    float Left;
+    float Right;
+    float Bottom;
+    float Top;
+
+    float GetWidth() { return Right - Left; }
+    float GetHeight() { return Top - Bottom; }
+  };
+
   class OrthographicCameraController
   {
   public:
@@ -16,6 +27,7 @@ namespace Buckshot {
     inline OrthographicCamera& GetCamera() { return m_Camera; }
     inline const OrthographicCamera& GetCamera() const { return m_Camera; }
 
+    inline const OrthographicCameraBounds& GetCameraBounds() const { return m_Bounds; }
     inline float GetZoomLevel() const { return m_ZoomLevel; }
     inline void SetZoomLevel(float zoom_level) { m_ZoomLevel = zoom_level; }
 
@@ -33,6 +45,7 @@ namespace Buckshot {
     float m_CameraTranslationSpeed;
     glm::vec3 m_CameraPosition;
 
+    OrthographicCameraBounds m_Bounds;
     OrthographicCamera m_Camera;
   };
 

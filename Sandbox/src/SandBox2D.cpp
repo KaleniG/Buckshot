@@ -16,6 +16,8 @@ void Sandbox2D::OnAttach()
 
   // TEXTURES
   m_Texture = Buckshot::Texture2D::Create("assets/textures/Checkerboard.png");
+  m_SpriteSheet = Buckshot::Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
+  m_TreeTexture = Buckshot::SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(2.0f, 1.0f), glm::vec2(128.0f), glm::vec2(1.0f, 2.0f));
 }
 
 void Sandbox2D::OnDetach()
@@ -45,9 +47,10 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
       for (float x = -5.0f; x < 5.0f; x += 0.5f)
       {
         glm::vec4 color((x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f);
-        Buckshot::Renderer2D::DrawQuad({ x, y, 0.5f }, { 0.45f, 0.45f }, color);
+        Buckshot::Renderer2D::DrawQuad({ x, y, 0.5f }, { 0.5f, 0.5f }, color);
       }
     }
+    Buckshot::Renderer2D::DrawQuad({ 2.0f, 0.5f , 1.0f}, { 1.0f, 2.0f }, m_TreeTexture, m_SquareColor);
     Buckshot::Renderer2D::EndScene();
   }
 
