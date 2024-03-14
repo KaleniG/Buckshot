@@ -4,6 +4,24 @@
 
 #include "Sandbox2D.h"
 
+static const char* m_MapTiles =
+{
+  "WWWWWWWWWWWWWWWWWWWWWWWW"
+  "WWWWWDDDDDDDDWWWWWWWWWWW"
+  "WWWDDDDDDDDDDDDDDWWWWWWW"
+  "WWDDDDDDDDDDDDDDDDWWWWWW"
+  "WWWDDDDDDDDDDDDDDDDWWWWW"
+  "WWWWDDDDDDDDDDDDDDDWWWWW"
+  "WWWDDDDDDDDDDDDDDDDDWWWW"
+  "WWWDDDDDDDDDWWDDDDDDWWWW"
+  "WWWDDDDDDDDDWWWDDDDDWWWW"
+  "WWWWDDDDDDDDWWWWDDDDWWWW"
+  "WWWDDDDDDDDWWWWWWDDWWWWW"
+  "WWWWDDDDDDWWWWWWWWWWWWWW"
+  "WWWWWWWWWWWWWWWWWWWWWWWW"
+  "WWWWWWWWWWWWWWWWWWWWWWWW"
+};
+
 void Sandbox2D::OnAttach()
 {
   BS_PROFILE_FUNCTION();
@@ -17,7 +35,10 @@ void Sandbox2D::OnAttach()
   // TEXTURES
   m_Texture = Buckshot::Texture2D::Create("assets/textures/Checkerboard.png");
   m_SpriteSheet = Buckshot::Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
-  m_TreeTexture = Buckshot::SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(2.0f, 1.0f), glm::vec2(128.0f), glm::vec2(1.0f, 2.0f));
+  m_BarrelTexture = Buckshot::SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(8.0f, 1.0f), glm::vec2(128.0f));
+
+  m_TextureMap['W'] = Buckshot::SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(11.0f, 11.0f), glm::vec2(128.0f));
+  m_TextureMap['D'] = Buckshot::SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(6.0f, 11.0f), glm::vec2(128.0f));
 }
 
 void Sandbox2D::OnDetach()
@@ -41,16 +62,29 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
   {
     BS_PROFILE_SCOPE("Sandbox2::Drawing");
     Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
-    Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f, -0.1f }, { 20.0f, 20.0f }, m_Texture, 10.0f);
-    for (float y = -5.0f; y < 5.0f; y += 0.5f)
+//     Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f, -0.1f }, { 20.0f, 20.0f }, m_Texture, 10.0f);
+//     for (float y = -5.0f; y < 5.0f; y += 0.5f)
+//     {
+//       for (float x = -5.0f; x < 5.0f; x += 0.5f)
+//       {
+//         glm::vec4 color((x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f);
+//         Buckshot::Renderer2D::DrawQuad({ x, y, 0.5f }, { 0.5f, 0.5f }, color);
+//       }
+//     }
+    for (uint32_t y = 0; y < m_MapHeight; y++)
     {
-      for (float x = -5.0f; x < 5.0f; x += 0.5f)
+      for (uint32_t x = 0; x < m_MapWidth; x++)
       {
-        glm::vec4 color((x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f);
-        Buckshot::Renderer2D::DrawQuad({ x, y, 0.5f }, { 0.5f, 0.5f }, color);
+        char tile_type = m_MapTiles[x + y * m_MapWidth];
+        Buckshot::Ref<Buckshot::SubTexture2D> texture;
+        if (m_TextureMap.find(tile_type) != m_TextureMap.end())
+          texture = m_TextureMap[tile_type];
+        else
+          texture = m_BarrelTexture;
+
+        Buckshot::Renderer2D::DrawQuad({ x - m_MapWidth / 2.0f, m_MapHeight - y - m_MapHeight / 2.0f, 0.5f }, { 1.0f, 1.0f }, texture);
       }
     }
-    Buckshot::Renderer2D::DrawQuad({ 2.0f, 0.5f , 1.0f}, { 1.0f, 2.0f }, m_TreeTexture, m_SquareColor);
     Buckshot::Renderer2D::EndScene();
   }
 

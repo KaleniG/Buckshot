@@ -29,12 +29,14 @@ namespace Buckshot {
 
     inline const OrthographicCameraBounds& GetCameraBounds() const { return m_Bounds; }
     inline float GetZoomLevel() const { return m_ZoomLevel; }
-    inline void SetZoomLevel(float zoom_level) { m_ZoomLevel = zoom_level; }
+    inline void SetZoomLevel(float zoom_level) { m_ZoomLevel = zoom_level; CalculateView(); }
 
     void OnUpdate(Timestep timestep);
     void OnEvent(Event& event);
 
   private:
+    void CalculateView();
+
     bool OnMouseScrolled(MouseScrolledEvent& event);
     bool OnWindowResized(WindowResizeEvent& event);
     bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
