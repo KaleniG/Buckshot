@@ -39,8 +39,6 @@ namespace Buckshot {
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		BS_INFO("Creating window \"{0}\" ({1}, {2})", props.Title, props.Width, props.Height);
-
 		if (!s_GLFWInitialized)
     {
       BS_PROFILE_SCOPE("WindowsWindow::Init | glfwInit()");

@@ -35,6 +35,11 @@ namespace Buckshot {
     Renderer::Shutdown();
   }
 
+  void Application::Close()
+  {
+    m_Running = false;
+  }
+
   void Application::PushLayer(Layer* layer)
   {
     BS_PROFILE_FUNCTION();
@@ -108,7 +113,6 @@ namespace Buckshot {
   bool Application::OnWindowClose(WindowCloseEvent& e)
   {
     m_Running = false;
-    BS_INFO("Closing window \"{0}\" ({1}, {2})", m_Window->GetName(), m_Window->GetWidth(), m_Window->GetHeight());
     return true;
   }
 

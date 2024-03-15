@@ -94,31 +94,80 @@ void Sandbox2D::OnImGuiRender()
 {
   BS_PROFILE_FUNCTION();
 
-  ImGui::SetNextWindowPos(ImVec2(20.0f, 20.0f));
-  ImGui::SetNextWindowBgAlpha(0.5f);
-  ImGuiWindowFlags window_flags =
-    ImGuiWindowFlags_NoFocusOnAppearing |
-    ImGuiWindowFlags_NoSavedSettings |
-    ImGuiWindowFlags_NoDecoration |
-    ImGuiWindowFlags_AlwaysAutoResize |
-    ImGuiWindowFlags_NoDocking |
-    ImGuiWindowFlags_NoMove |
-    ImGuiWindowFlags_NoNav;
-  ImGui::Begin("Overlay", (bool*)true, window_flags);
-  ImGui::Text("Camera Position: x:%1.2f y:%1.2f\n", m_CameraController.GetCamera().GetPosition().x, m_CameraController.GetCamera().GetPosition().y);
-  ImGui::Text("Camera ZoomLevel: %1.2f\n", m_CameraController.GetZoomLevel());
-  ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor), ImGuiColorEditFlags_NoInputs);
+  static bool docking_enabled = true;
 
-  ImGui::Separator();
+  if (docking_enabled)
+  {
+    static bool dockspace_open = true;
+    static bool opt_fullscreen_persistant = true;
+    bool opt_fullscreen = opt_fullscreen_persistant;
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-  auto stats = Buckshot::Renderer2D::GetStats();
-  ImGui::Text("Renderer Stats:");
-  ImGui::Text(" Draw Calls: %i", stats.DrawCalls);
-  ImGui::Text(" Quad Count: %i", stats.QuadCount);
-  ImGui::Text(" Total Vertecies: %i", stats.GetTotalVertexCount());
-  ImGui::Text(" Total Indecies: %i", stats.GetTotalIndexCount());
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    if (opt_fullscreen)
+    {
+      ImGuiViewport* viewport = ImGui::GetMainViewport();
+      ImGui::SetNextWindowPos(viewport->Pos);
+      ImGui::SetNextWindowSize(viewport->Size);
+      ImGui::SetNextWindowViewport(viewport->ID);
+      ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+      ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+      window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+      window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    }
 
-  ImGui::End();
+    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+      window_flags |= ImGuiWindowFlags_NoBackground;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::Begin("DockSpace Demo", &dockspace_open, window_flags);
+    ImGui::PopStyleVar();
+
+    if (opt_fullscreen)
+      ImGui::PopStyleVar(2);
+
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+    {
+      ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+      ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+    }
+
+    if (ImGui::BeginMenuBar())
+    {
+      if (ImGui::BeginMenu("File"))
+      {
+        if (ImGui::MenuItem("Exit")) Buckshot::Application::Get().Close();
+        ImGui::EndMenu();
+      }
+      ImGui::EndMenuBar();
+    }
+
+    ImGui::Begin("2D Renderer", (bool*)true, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+    auto stats = Buckshot::Renderer2D::GetStats();
+    ImGui::Text("Draw Calls: %i", stats.DrawCalls);
+    ImGui::Text("Quad Count: %i", stats.QuadCount);
+    ImGui::Text("Total Vertices: %i", stats.GetTotalVertexCount());
+    ImGui::Text("Total Indices: %i", stats.GetTotalIndexCount());
+    ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor), ImGuiColorEditFlags_NoInputs);
+    ImGui::End();
+
+    ImGui::End();
+  }
+  else
+  {
+    ImGui::Begin("2D Renderer", (bool*)true, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+    auto stats = Buckshot::Renderer2D::GetStats();
+    ImGui::Text("Draw Calls: %i", stats.DrawCalls);
+    ImGui::Text("Quad Count: %i", stats.QuadCount);
+    ImGui::Text("Total Vertices: %i", stats.GetTotalVertexCount());
+    ImGui::Text("Total Indices: %i", stats.GetTotalIndexCount());
+    ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor), ImGuiColorEditFlags_NoInputs);
+    ImGui::End();
+  }
+
 }
 
 void Sandbox2D::OnEvent(Buckshot::Event& event)

@@ -6,6 +6,9 @@ bin-int/
 # Buckshot Files
 *.log
 
+# Sandbox Files
+Sandbox/*.json
+
 # Visual Studio
 .vs/
 **.sln

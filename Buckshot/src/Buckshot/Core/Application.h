@@ -16,6 +16,8 @@ namespace Buckshot {
     Application();
     virtual ~Application();
 
+    void Close();
+
     void OnEvent(Event& e);
 
     void PushLayer(Layer* layer);
