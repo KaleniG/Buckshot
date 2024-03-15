@@ -7,6 +7,7 @@ class Sandbox : public Buckshot::Application
 {
 public:
   Sandbox()
+    : Application("SandboxApp")
   {
 		PushLayer(new Sandbox2D());
   }

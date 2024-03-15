@@ -32,9 +32,11 @@ IncludeDir["ImGui"] 	= "Buckshot/vendor/ImGui"
 IncludeDir["glm"] 		= "Buckshot/vendor/glm"
 IncludeDir["stb_image"] = "Buckshot/vendor/stb_image"
 
-include "Buckshot/vendor/GLFW"
-include "Buckshot/vendor/GLAD"
-include "Buckshot/vendor/ImGui"
+group "Dependencies"
+	include "Buckshot/vendor/GLFW"
+	include "Buckshot/vendor/GLAD"
+	include "Buckshot/vendor/ImGui"
+group ""
 
 project "Buckshot"
 	location "Buckshot"
@@ -102,8 +104,8 @@ project "Buckshot"
 		defines "BS_DIST"
 		optimize "on"
 
-project "Sandbox"
-	location "Sandbox"
+project "BuckshotEditor"
+	location "BuckshotEditor"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++latest"
@@ -126,6 +128,58 @@ project "Sandbox"
 		"%{IncludeDir.glm}"
 	}
 
+	links
+	{
+		"Buckshot"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines
+		{
+			"BS_PLATFORM_WINDOWS"
+		}
+
+	filter "configurations:Debug"
+		runtime "Debug"
+		defines "BS_DEBUG"
+		symbols "on"
+
+	filter "configurations:Release"
+		runtime "Release"
+		defines "BS_RELEASE"
+		optimize "on"
+
+	filter "configurations:Dist"
+		runtime "Release"
+		defines "BS_DIST"
+		optimize "on"
+
+project "Sandbox"
+	location "Sandbox"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++latest"
+	staticruntime "on"
+	
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+	
+	includedirs
+	{
+		"Buckshot/vendor/spdlog/include",
+		"Buckshot/src",
+		"Buckshot/vendor",
+		"%{IncludeDir.glm}"
+	}
+	
 	links
 	{
 		"Buckshot"

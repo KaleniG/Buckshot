@@ -16,10 +16,7 @@ public:
   void OnEvent(Buckshot::Event& event) override;
 
 private:
-  Buckshot::Ref<Buckshot::Shader> m_Shader;
-  Buckshot::Ref<Buckshot::VertexArray> m_VertexArray;
   Buckshot::OrthographicCameraController m_CameraController;
-  Buckshot::Ref<Buckshot::Framebuffer> m_Framebuffer;
 
   Buckshot::Ref<Buckshot::Texture2D> m_Texture;
   Buckshot::Ref<Buckshot::Texture2D> m_SpriteSheet;

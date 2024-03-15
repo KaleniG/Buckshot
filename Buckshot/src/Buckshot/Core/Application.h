@@ -13,7 +13,7 @@ namespace Buckshot {
   class Application
   {
   public:
-    Application();
+    Application(const std::string& name = "BushApp");
     virtual ~Application();
 
     void Close();
