@@ -18,6 +18,13 @@ namespace Buckshot {
     m_CameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
   }
 
+  void OrthographicCameraController::OnResize(float width, float height)
+  {
+    BS_PROFILE_FUNCTION();
+    m_AspectRatio = width / height;
+    CalculateView();
+  }
+
   void OrthographicCameraController::OnUpdate(Timestep timestep)
   {
     BS_PROFILE_FUNCTION();
@@ -49,6 +56,7 @@ namespace Buckshot {
     m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
     m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
   }
+
 
   bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& event)
   {

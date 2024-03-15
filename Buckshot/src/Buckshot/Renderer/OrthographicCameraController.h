@@ -24,19 +24,20 @@ namespace Buckshot {
     OrthographicCameraController() = default;
     OrthographicCameraController(float aspect_ratio);
 
-    inline OrthographicCamera& GetCamera() { return m_Camera; }
-    inline const OrthographicCamera& GetCamera() const { return m_Camera; }
+    void OnResize(float width, float height);
 
-    inline const OrthographicCameraBounds& GetCameraBounds() const { return m_Bounds; }
-    inline float GetZoomLevel() const { return m_ZoomLevel; }
-    inline void SetZoomLevel(float zoom_level) { m_ZoomLevel = zoom_level; CalculateView(); }
+    OrthographicCamera& GetCamera() { return m_Camera; }
+    const OrthographicCamera& GetCamera() const { return m_Camera; }
+
+    const OrthographicCameraBounds& GetCameraBounds() const { return m_Bounds; }
+    float GetZoomLevel() const { return m_ZoomLevel; }
+    void SetZoomLevel(float zoom_level) { m_ZoomLevel = zoom_level; CalculateView(); }
 
     void OnUpdate(Timestep timestep);
     void OnEvent(Event& event);
 
   private:
     void CalculateView();
-
     bool OnMouseScrolled(MouseScrolledEvent& event);
     bool OnWindowResized(WindowResizeEvent& event);
     bool OnMouseButtonPressed(MouseButtonPressedEvent& event);

@@ -1,6 +1,6 @@
 workspace "Buckshot"
 	architecture "x86_64"
-	startproject "Sandbox"
+	startproject "BuckshotEditor"
 	
 	configurations
 	{

@@ -24,6 +24,8 @@ namespace Buckshot {
     Ref<Texture2D> m_Texture;
     Ref<Texture2D> m_SpriteSheet;
     Ref<SubTexture2D> m_BarrelTexture;
+
+    glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
   };
 
 }

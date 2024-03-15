@@ -88,12 +88,12 @@ namespace Buckshot {
 		BS_PROFILE_FUNCTION();
 
 		static bool show = true;
-		// TEMP
-		//ImGui::ShowDemoWindow(&show);
 	}
 
   void ImGuiLayer::OnEvent(Event& e)
   {
+		BS_PROFILE_FUNCTION();
+
     ImGuiIO& io = ImGui::GetIO();
     e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
     e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;

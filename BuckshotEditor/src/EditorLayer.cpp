@@ -118,10 +118,19 @@ namespace Buckshot {
     ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
     ImGui::End();
 
-    ImGui::Begin("Renderer", nullptr);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0, });
+    ImGui::Begin("Game");
+    ImVec2 viewport_size = ImGui::GetContentRegionAvail();
+    if (m_ViewportSize != *(glm::vec2*)&viewport_size)
+    {
+      m_ViewportSize = glm::vec2(viewport_size.x, viewport_size.y);
+      m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+      m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+    }
     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-    ImGui::Image((void*)textureID, ImVec2{ 1280, 720 }, { 0, 1 }, { 1, 0 });
+    ImGui::Image((void*)textureID, {m_ViewportSize.x, m_ViewportSize.y}, {0, 1}, {1, 0});
     ImGui::End();
+    ImGui::PopStyleVar();
 
     ImGui::End();
   }
