@@ -18,6 +18,7 @@
 #include "Buckshot/Renderer/OrthographicCamera.h"
 #include "Buckshot/Renderer/RenderCommand.h"
 #include "Buckshot/Renderer/SubTexture2D.h"
+#include "Buckshot/Renderer/Framebuffer.h"
 #include "Buckshot/Renderer/VertexArray.h"
 #include "Buckshot/Renderer/Renderer2D.h"
 #include "Buckshot/Renderer/Renderer.h"

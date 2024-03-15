@@ -4,10 +4,9 @@
 bin-int/
 
 # Buckshot Files
-*.log
-
-# Sandbox Files
-Sandbox/*.json
+**.log
+**.json
+**.ini
 
 # Visual Studio
 .vs/

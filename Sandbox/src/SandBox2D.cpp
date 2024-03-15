@@ -4,30 +4,9 @@
 
 #include "Sandbox2D.h"
 
-static const char* m_MapTiles =
-{
-  "WWWWWWWWWWWWWWWWWWWWWWWW"
-  "WWWWWDDDDDDDDWWWWWWWWWWW"
-  "WWWDDDDDDDDDDDDDDWWWWWWW"
-  "WWDDDDDDDDDDDDDDDDWWWWWW"
-  "WWWDDDDDDDDDDDDDDDDWWWWW"
-  "WWWWDDDDDDDDDDDDDDDWWWWW"
-  "WWWDDDDDDDDDDDDDDDDDWWWW"
-  "WWWDDDDDDDDDWWDDDDDDWWWW"
-  "WWWDDDDDDDDDWWWDDDDDWWWW"
-  "WWWWDDDDDDDDWWWWDDDDWWWW"
-  "WWWDDDDDDDDWWWWWWDDWWWWW"
-  "WWWWDDDDDDWWWWWWWWWWWWWW"
-  "WWWWWWWWWWWWWWWWWWWWWWWW"
-  "WWWWWWWWWWWWWWWWWWWWWWWW"
-};
-
 void Sandbox2D::OnAttach()
 {
   BS_PROFILE_FUNCTION();
-
-  // VARIABLES
-  m_SquareColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
   // CAMERA CONTROLLER
   m_CameraController = Buckshot::OrthographicCameraController(1280.0f / 720.0f);
@@ -37,8 +16,11 @@ void Sandbox2D::OnAttach()
   m_SpriteSheet = Buckshot::Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
   m_BarrelTexture = Buckshot::SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(8.0f, 1.0f), glm::vec2(128.0f));
 
-  m_TextureMap['W'] = Buckshot::SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(11.0f, 11.0f), glm::vec2(128.0f));
-  m_TextureMap['D'] = Buckshot::SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(6.0f, 11.0f), glm::vec2(128.0f));
+  // FRAMEBUFFER
+  Buckshot::FramebufferSpecification fbSpec;
+  fbSpec.Width = 1280;
+  fbSpec.Height = 720;
+  m_Framebuffer = Buckshot::Framebuffer::Create(fbSpec);
 }
 
 void Sandbox2D::OnDetach()
@@ -55,6 +37,7 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
   Buckshot::Renderer2D::ResetStats();
   {
     BS_PROFILE_SCOPE("Sandbox2::Startup");
+    m_Framebuffer->Bind();
     Buckshot::RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
     Buckshot::RenderCommand::Clear();
   }
@@ -62,30 +45,12 @@ void Sandbox2D::OnUpdate(Buckshot::Timestep timestep)
   {
     BS_PROFILE_SCOPE("Sandbox2::Drawing");
     Buckshot::Renderer2D::BeginScene(m_CameraController.GetCamera());
-//     Buckshot::Renderer2D::DrawQuad({ 0.0f,  0.0f, -0.1f }, { 20.0f, 20.0f }, m_Texture, 10.0f);
-//     for (float y = -5.0f; y < 5.0f; y += 0.5f)
-//     {
-//       for (float x = -5.0f; x < 5.0f; x += 0.5f)
-//       {
-//         glm::vec4 color((x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f);
-//         Buckshot::Renderer2D::DrawQuad({ x, y, 0.5f }, { 0.5f, 0.5f }, color);
-//       }
-//     }
-    for (uint32_t y = 0; y < m_MapHeight; y++)
-    {
-      for (uint32_t x = 0; x < m_MapWidth; x++)
-      {
-        char tile_type = m_MapTiles[x + y * m_MapWidth];
-        Buckshot::Ref<Buckshot::SubTexture2D> texture;
-        if (m_TextureMap.find(tile_type) != m_TextureMap.end())
-          texture = m_TextureMap[tile_type];
-        else
-          texture = m_BarrelTexture;
-
-        Buckshot::Renderer2D::DrawQuad({ x - m_MapWidth / 2.0f, m_MapHeight - y - m_MapHeight / 2.0f, 0.5f }, { 1.0f, 1.0f }, texture);
-      }
-    }
+    Buckshot::Renderer2D::DrawQuad({ 0,0 }, { 1,1 }, m_BarrelTexture);
+    Buckshot::Renderer2D::DrawQuad({ 0,1 }, { 1,1 }, m_BarrelTexture);
+    Buckshot::Renderer2D::DrawQuad({ 0,2 }, { 1,1 }, m_BarrelTexture);
+    Buckshot::Renderer2D::DrawQuad({ 0,3 }, { 1,1 }, m_BarrelTexture);
     Buckshot::Renderer2D::EndScene();
+    m_Framebuffer->Unbind();
   }
 
 }
@@ -94,15 +59,15 @@ void Sandbox2D::OnImGuiRender()
 {
   BS_PROFILE_FUNCTION();
 
-  static bool docking_enabled = true;
-
-  if (docking_enabled)
+  static bool dockingEnabled = true;
+  if (dockingEnabled)
   {
-    static bool dockspace_open = true;
+    static bool dockspaceOpen = true;
     static bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
+    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+    // because it would be confusing to have two docking targets within each others.
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
     if (opt_fullscreen)
     {
@@ -115,59 +80,68 @@ void Sandbox2D::OnImGuiRender()
       window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
       window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
     }
-
+    // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
     if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
       window_flags |= ImGuiWindowFlags_NoBackground;
-
+    // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+    // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive, 
+    // all active windows docked into it will lose their parent and become undocked.
+    // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise 
+    // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("DockSpace Demo", &dockspace_open, window_flags);
+    ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
     ImGui::PopStyleVar();
-
     if (opt_fullscreen)
       ImGui::PopStyleVar(2);
-
+    // DockSpace
     ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
     {
       ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
       ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
-
     if (ImGui::BeginMenuBar())
     {
       if (ImGui::BeginMenu("File"))
       {
+        // Disabling fullscreen would allow the window to be moved to the front of other windows, 
+        // which we can't undo at the moment without finer window depth/z control.
+        //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
         if (ImGui::MenuItem("Exit")) Buckshot::Application::Get().Close();
         ImGui::EndMenu();
       }
       ImGui::EndMenuBar();
     }
-
-    ImGui::Begin("2D Renderer", (bool*)true, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
-
+    ImGui::Begin("Settings");
     auto stats = Buckshot::Renderer2D::GetStats();
-    ImGui::Text("Draw Calls: %i", stats.DrawCalls);
-    ImGui::Text("Quad Count: %i", stats.QuadCount);
-    ImGui::Text("Total Vertices: %i", stats.GetTotalVertexCount());
-    ImGui::Text("Total Indices: %i", stats.GetTotalIndexCount());
-    ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor), ImGuiColorEditFlags_NoInputs);
+    ImGui::Text("Renderer2D Stats:");
+    ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+    ImGui::Text("Quads: %d", stats.QuadCount);
+    ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+    ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+    ImGui::End();
+
+    ImGui::Begin("Renderer");
+    uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+    ImGui::Image((void*)textureID, ImVec2{ 1280, 720 });
     ImGui::End();
 
     ImGui::End();
   }
   else
   {
-    ImGui::Begin("2D Renderer", (bool*)true, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
-
+    ImGui::Begin("Settings");
     auto stats = Buckshot::Renderer2D::GetStats();
-    ImGui::Text("Draw Calls: %i", stats.DrawCalls);
-    ImGui::Text("Quad Count: %i", stats.QuadCount);
-    ImGui::Text("Total Vertices: %i", stats.GetTotalVertexCount());
-    ImGui::Text("Total Indices: %i", stats.GetTotalIndexCount());
-    ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor), ImGuiColorEditFlags_NoInputs);
+    ImGui::Text("Renderer2D Stats:");
+    ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+    ImGui::Text("Quads: %d", stats.QuadCount);
+    ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+    ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
+    uint32_t textureID = m_Texture->GetRendererID();
+    ImGui::Image((void*)textureID, ImVec2{ 1280, 720 });
     ImGui::End();
   }
-
 }
 
 void Sandbox2D::OnEvent(Buckshot::Event& event)
