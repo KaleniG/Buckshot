@@ -29,10 +29,12 @@ namespace Buckshot {
 
     // SCENE
     m_ActiveScene = CreateRef<Scene>();
-    auto square = m_ActiveScene->CreateEntity("Square");
-    square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
 
-    m_SquareEntity = square;
+    m_SquareEntity = m_ActiveScene->CreateEntity("Square");
+    m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+
+    m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
+    m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
   }
 
   void EditorLayer::OnDetach()
@@ -55,10 +57,7 @@ namespace Buckshot {
     m_Framebuffer->Bind();
     RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
     RenderCommand::Clear();
-
-    Renderer2D::BeginScene(m_CameraController.GetCamera());
     m_ActiveScene->OnUpdate(timestep);
-    Renderer2D::EndScene();
     m_Framebuffer->Unbind();
   }
 

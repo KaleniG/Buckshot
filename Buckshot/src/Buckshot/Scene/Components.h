@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Buckshot/Renderer/Camera.h"
+
 namespace Buckshot {
 
   struct TagComponent
@@ -30,6 +32,17 @@ namespace Buckshot {
     SpriteRendererComponent() = default;
     SpriteRendererComponent(const SpriteRendererComponent&) = default;
     SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
+  };
+
+  struct CameraComponent
+  {
+    Buckshot::Camera Camera;
+    bool Primary = true;
+
+    CameraComponent() = default;
+    CameraComponent(const CameraComponent&) = default;
+    CameraComponent(const Buckshot::Camera& camera) : Camera(camera) {}
+    CameraComponent(const glm::mat4& projection) : Camera(projection) {}
   };
 
 }

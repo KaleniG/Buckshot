@@ -3,6 +3,7 @@
 #include "Buckshot/Renderer/OrthographicCamera.h"
 #include "Buckshot/Renderer/SubTexture2D.h"
 #include "Buckshot/Renderer/Texture.h"
+#include "Buckshot/Renderer/Camera.h"
 
 namespace Buckshot {
 
@@ -12,6 +13,7 @@ namespace Buckshot {
     static void Init();
     static void Shutdown();
 
+    static void BeginScene(const Camera& camera, const glm::mat4& transform);
     static void BeginScene(const OrthographicCamera& camera);
     static void Flush();
     static void EndScene();

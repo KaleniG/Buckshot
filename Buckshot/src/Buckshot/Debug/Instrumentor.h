@@ -32,10 +32,8 @@ namespace Buckshot
     InstrumentationSession* m_CurrentSession;
     std::ofstream m_OutputStream;
   public:
-    Instrumentor()
-      : m_CurrentSession(nullptr)
-    {
-    }
+    Instrumentor(const Instrumentor&) = delete;
+    Instrumentor(Instrumentor&&) = delete;
 
     void BeginSession(const std::string& name, const std::string& filepath = "results.json")
     {
@@ -95,6 +93,15 @@ namespace Buckshot
     }
 
   private:
+    Instrumentor()
+      : m_CurrentSession(nullptr) {}
+
+    ~Instrumentor()
+    {
+      EndSession();
+    }
+
+
     void WriteHeader()
     {
       m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
@@ -204,8 +211,10 @@ namespace Buckshot
 
   #define BS_PROFILE_BEGIN_SESSION(name, filepath) ::Buckshot::Instrumentor::Get().BeginSession(name, filepath)
   #define BS_PROFILE_END_SESSION() ::Buckshot::Instrumentor::Get().EndSession()
-  #define BS_PROFILE_SCOPE(name) constexpr auto fixedName = ::Buckshot::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
-									::Buckshot::InstrumentationTimer timer##__LINE__(fixedName.Data)
+  #define BS_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Buckshot::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
+											                       ::Buckshot::InstrumentationTimer timer##line(fixedName##line.Data)
+  #define BS_PROFILE_SCOPE_LINE(name, line) BS_PROFILE_SCOPE_LINE2(name, line)
+  #define BS_PROFILE_SCOPE(name) BS_PROFILE_SCOPE_LINE(name, __LINE__)
   #define BS_PROFILE_FUNCTION() BS_PROFILE_SCOPE(BS_FUNC_SIG)
 #else
   #define BS_PROFILE_BEGIN_SESSION(name, filepath)

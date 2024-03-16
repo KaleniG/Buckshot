@@ -29,13 +29,37 @@ namespace Buckshot {
 
   void Scene::OnUpdate(Timestep timestep)
   {
-    auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+    Camera* main_camera = nullptr;
+    glm::mat4* camera_transform = nullptr;
+
+    auto group = m_Registry.view<TransformComponent, CameraComponent>();
     for (auto entity : group)
     {
       auto transform = group.get<TransformComponent>(entity);
-      auto sprite = group.get<SpriteRendererComponent>(entity);
+      auto camera = group.get<CameraComponent>(entity);
 
-      Renderer2D::DrawQuad(transform, sprite.Color);
+      if (camera.Primary)
+      {
+        main_camera = &camera.Camera;
+        camera_transform = &transform.Transform;
+        break;
+      }
+    }
+
+    if (main_camera)
+    {
+      Renderer2D::BeginScene(main_camera->GetProjection(), *camera_transform);
+
+      auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+      for (auto entity : group)
+      {
+        auto transform = group.get<TransformComponent>(entity);
+        auto sprite = group.get<SpriteRendererComponent>(entity);
+
+        Renderer2D::DrawQuad(transform, sprite.Color);
+      }
+
+      Renderer2D::EndScene();
     }
   }
 
