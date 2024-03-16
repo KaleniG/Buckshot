@@ -30,6 +30,7 @@ IncludeDir["GLFW"] 		= "Buckshot/vendor/GLFW/include"
 IncludeDir["GLAD"] 		= "Buckshot/vendor/GLAD/include"
 IncludeDir["ImGui"] 	= "Buckshot/vendor/ImGui"
 IncludeDir["glm"] 		= "Buckshot/vendor/glm"
+IncludeDir["EnTT"]		= "Buckshot/vendor/EnTT/include"
 IncludeDir["stb_image"] = "Buckshot/vendor/stb_image"
 
 group "Dependencies"
@@ -68,6 +69,7 @@ project "Buckshot"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}"
 	}
@@ -125,6 +127,7 @@ project "BuckshotEditor"
 		"Buckshot/vendor/spdlog/include",
 		"Buckshot/src",
 		"Buckshot/vendor",
+		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.glm}"
 	}
 
@@ -177,6 +180,7 @@ project "Sandbox"
 		"Buckshot/vendor/spdlog/include",
 		"Buckshot/src",
 		"Buckshot/vendor",
+		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.glm}"
 	}
 	

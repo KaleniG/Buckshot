@@ -13,8 +13,6 @@ namespace Buckshot {
 
   void EditorLayer::OnAttach()
   {
-    BS_PROFILE_FUNCTION();
-
     // CAMERA CONTROLLER
     m_CameraController = OrthographicCameraController(1280.0f / 720.0f);
 
@@ -28,51 +26,43 @@ namespace Buckshot {
     fbSpec.Width = 1280;
     fbSpec.Height = 720;
     m_Framebuffer = Framebuffer::Create(fbSpec);
+
+    // SCENE
+    m_ActiveScene = CreateRef<Scene>();
+    auto square = m_ActiveScene->CreateEntity();
+    m_ActiveScene->GetRegistry().emplace<TransformComponent>(square);
+    m_ActiveScene->GetRegistry().emplace<SpriteRendererComponent>(square, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
   }
 
   void EditorLayer::OnDetach()
   {
-    BS_PROFILE_FUNCTION();
   }
 
   void EditorLayer::OnUpdate(Timestep timestep)
   {
-    BS_PROFILE_FUNCTION();
-
     if (FramebufferSpecification spec = m_Framebuffer->GetSpecification(); m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
     {
       m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
       m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
     }
 
-    if (m_ViewportFocused || m_ViewportHovered)
+    if (m_ViewportFocused)
       m_CameraController.OnUpdate(timestep);
 
     Renderer2D::ResetStats();
-    {
-      BS_PROFILE_SCOPE("Sandbox2::Startup");
-      m_Framebuffer->Bind();
-      RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
-      RenderCommand::Clear();
-    }
 
-    {
-      BS_PROFILE_SCOPE("Sandbox2::Drawing");
-      Renderer2D::BeginScene(m_CameraController.GetCamera());
-      Renderer2D::DrawQuad({ 0,0 }, { 1,1 }, m_BarrelTexture);
-      Renderer2D::DrawQuad({ 0,1 }, { 1,1 }, m_BarrelTexture);
-      Renderer2D::DrawQuad({ 0,2 }, { 1,1 }, m_BarrelTexture);
-      Renderer2D::DrawQuad({ 0,3 }, { 1,1 }, m_BarrelTexture);
-      Renderer2D::EndScene();
-      m_Framebuffer->Unbind();
-    }
+    m_Framebuffer->Bind();
+    RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+    RenderCommand::Clear();
 
+    Renderer2D::BeginScene(m_CameraController.GetCamera());
+    m_ActiveScene->OnUpdate(timestep);
+    Renderer2D::EndScene();
+    m_Framebuffer->Unbind();
   }
 
   void EditorLayer::OnImGuiRender()
   {
-    BS_PROFILE_FUNCTION();
-    
     bool dockspaceOpen = true;
     bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;

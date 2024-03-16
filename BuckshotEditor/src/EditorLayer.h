@@ -20,6 +20,7 @@ namespace Buckshot {
   private:
     OrthographicCameraController m_CameraController;
 
+    Ref<Scene> m_ActiveScene;
     Ref<Framebuffer> m_Framebuffer;
     Ref<Texture2D> m_Texture;
     Ref<Texture2D> m_SpriteSheet;
