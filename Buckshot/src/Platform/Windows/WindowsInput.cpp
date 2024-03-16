@@ -1,26 +1,26 @@
 #include <bspch.h>
 #include <GLFW/glfw3.h>
 
+#include "Buckshot/Core/Input.h"
 #include "Buckshot/Core/Application.h"
-#include "Platform/Windows/WindowsInput.h"
 
 namespace Buckshot{
 
-  bool WindowsInput::IsKeyPressedImpl(KeyCode keycode)
+  bool Input::IsKeyPressed(KeyCode keycode)
   {
     auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
     auto state = glfwGetKey(window, static_cast<uint32_t>(keycode));
     return state == GLFW_PRESS || state == GLFW_REPEAT;
   }
 
-  bool WindowsInput::IsMouseButtonPressedImpl(MouseCode button)
+  bool Input::IsMouseButtonPressed(MouseCode button)
   {
     auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
     auto state = glfwGetMouseButton(window, static_cast<uint32_t>(button));
     return state == GLFW_PRESS;
   }
 
-  std::pair<float, float> WindowsInput::GetMousePosImpl()
+  std::pair<float, float> Input::GetMousePos()
   {
     auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
     double xPos, yPos;
@@ -28,15 +28,15 @@ namespace Buckshot{
     return {(float)xPos, (float)yPos};
   }
 
-  float WindowsInput::GetMouseXImpl()
+  float Input::GetMouseX()
   {
-    auto[x, y] = GetMousePosImpl();
+    auto[x, y] = GetMousePos();
     return x;
   }
 
-  float WindowsInput::GetMouseYImpl()
+  float Input::GetMouseY()
   {
-    auto [x, y] = GetMousePosImpl();
+    auto [x, y] = GetMousePos();
     return y;
   }
 

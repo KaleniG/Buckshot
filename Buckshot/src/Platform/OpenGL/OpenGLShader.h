@@ -13,7 +13,7 @@ namespace Buckshot {
   public:
     OpenGLShader(const std::string& name, const std::string& vertSource, const std::string& fragSource);
     OpenGLShader(const std::string& filepath);
-    ~OpenGLShader() override;
+    virtual ~OpenGLShader() override;
 
     void Bind() const override;
     void Unbind() const override;

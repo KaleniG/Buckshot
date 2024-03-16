@@ -8,7 +8,7 @@ namespace Buckshot {
   {
   public:
     OpenGLVertexArray();
-    virtual ~OpenGLVertexArray();
+    virtual ~OpenGLVertexArray() override;
 
     virtual void Bind() const override;
     virtual void Unbind() const override;

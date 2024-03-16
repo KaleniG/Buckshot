@@ -8,7 +8,7 @@ namespace Buckshot {
   {
   public:
     OpenGLFramebuffer(const FramebufferSpecification& specification);
-    virtual ~OpenGLFramebuffer();
+    virtual ~OpenGLFramebuffer() override;
 
     virtual void Bind() override;
     virtual void Unbind() override;

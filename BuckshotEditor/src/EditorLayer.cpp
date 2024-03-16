@@ -21,7 +21,7 @@ namespace Buckshot {
     // TEXTURES
     m_Texture = Texture2D::Create("assets/textures/Checkerboard.png");
     m_SpriteSheet = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
-    m_BarrelTexture = SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(8.0f, 1.0f), glm::vec2(128.0f));
+    m_BarrelTexture = SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(8.0f, 2.0f), glm::vec2(128.0f));
 
     // FRAMEBUFFER
     FramebufferSpecification fbSpec;
@@ -39,7 +39,14 @@ namespace Buckshot {
   {
     BS_PROFILE_FUNCTION();
 
-    m_CameraController.OnUpdate(timestep);
+    if (FramebufferSpecification spec = m_Framebuffer->GetSpecification(); m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+    {
+      m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+      m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+    }
+
+    if (m_ViewportFocused || m_ViewportHovered)
+      m_CameraController.OnUpdate(timestep);
 
     Renderer2D::ResetStats();
     {
@@ -66,8 +73,8 @@ namespace Buckshot {
   {
     BS_PROFILE_FUNCTION();
     
-    static bool dockspaceOpen = true;
-    static bool opt_fullscreen_persistant = true;
+    bool dockspaceOpen = true;
+    bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
@@ -111,22 +118,19 @@ namespace Buckshot {
     }
     ImGui::Begin("Settings");
     auto stats = Renderer2D::GetStats();
-    ImGui::Text("Renderer2D Stats:");
     ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-    ImGui::Text("Quads: %d", stats.QuadCount);
-    ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-    ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+    ImGui::Text("Quads Count: %d", stats.QuadCount);
+    ImGui::Text("Vertices Count: %d", stats.GetTotalVertexCount());
+    ImGui::Text("Indices Count: %d", stats.GetTotalIndexCount());
     ImGui::End();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0, });
-    ImGui::Begin("Game");
-    ImVec2 viewport_size = ImGui::GetContentRegionAvail();
-    if (m_ViewportSize != *(glm::vec2*)&viewport_size)
-    {
-      m_ViewportSize = glm::vec2(viewport_size.x, viewport_size.y);
-      m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-      m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-    }
+    ImGui::Begin("Viewport");
+    m_ViewportFocused = ImGui::IsWindowFocused();
+    m_ViewportHovered = ImGui::IsWindowHovered();
+    Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+    ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
+    m_ViewportSize = { viewport_panel_size.x, viewport_panel_size.y };
     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
     ImGui::Image((void*)textureID, {m_ViewportSize.x, m_ViewportSize.y}, {0, 1}, {1, 0});
     ImGui::End();

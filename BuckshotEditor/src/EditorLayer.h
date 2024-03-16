@@ -26,6 +26,8 @@ namespace Buckshot {
     Ref<SubTexture2D> m_BarrelTexture;
 
     glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+    bool m_ViewportFocused = false;
+    bool m_ViewportHovered = false;
   };
 
 }
