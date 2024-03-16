@@ -19,6 +19,7 @@ namespace Buckshot {
 
   private:
     OrthographicCameraController m_CameraController;
+    Entity m_SquareEntity;
 
     Ref<Scene> m_ActiveScene;
     Ref<Framebuffer> m_Framebuffer;

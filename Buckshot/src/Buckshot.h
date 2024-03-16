@@ -31,4 +31,5 @@
 
 // Scene Management
 #include "Buckshot/Scene/Components.h"
+#include "Buckshot/Scene/Entity.h"
 #include "Buckshot/Scene/Scene.h"

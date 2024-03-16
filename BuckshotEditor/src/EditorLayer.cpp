@@ -29,9 +29,10 @@ namespace Buckshot {
 
     // SCENE
     m_ActiveScene = CreateRef<Scene>();
-    auto square = m_ActiveScene->CreateEntity();
-    m_ActiveScene->GetRegistry().emplace<TransformComponent>(square);
-    m_ActiveScene->GetRegistry().emplace<SpriteRendererComponent>(square, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    auto square = m_ActiveScene->CreateEntity("Square");
+    square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+
+    m_SquareEntity = square;
   }
 
   void EditorLayer::OnDetach()
@@ -106,26 +107,38 @@ namespace Buckshot {
       }
       ImGui::EndMenuBar();
     }
+
+    // SETTINGS WINDOW
     ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_NoCollapse);
+
     auto stats = Renderer2D::GetStats();
+    auto name = m_SquareEntity.GetComponent<TagComponent>().Tag;
+
     ImGui::Text("Draw Calls: %d", stats.DrawCalls);
     ImGui::Text("Quads Count: %d", stats.QuadCount);
     ImGui::Text("Vertices Count: %d", stats.GetTotalVertexCount());
     ImGui::Text("Indices Count: %d", stats.GetTotalIndexCount());
+    ImGui::Text("Entity Name: %s", name.c_str());
+
     ImGui::End();
 
+    // VIEWPORT WINDOW
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0, });
     ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
+
     m_ViewportFocused = ImGui::IsWindowFocused();
     m_ViewportHovered = ImGui::IsWindowHovered();
-    Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
     ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
+    Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
     m_ViewportSize = { viewport_panel_size.x, viewport_panel_size.y };
     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+
     ImGui::Image((void*)textureID, {m_ViewportSize.x, m_ViewportSize.y}, {0, 1}, {1, 0});
+
     ImGui::End();
     ImGui::PopStyleVar();
 
+    // END
     ImGui::End();
   }
 
