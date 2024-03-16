@@ -76,7 +76,7 @@ namespace Buckshot {
     bool dockspaceOpen = true;
     bool opt_fullscreen_persistant = true;
     bool opt_fullscreen = opt_fullscreen_persistant;
-    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+    ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
     if (opt_fullscreen)
@@ -95,7 +95,7 @@ namespace Buckshot {
       window_flags |= ImGuiWindowFlags_NoBackground;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+    ImGui::Begin("Dockspace", &dockspaceOpen, window_flags);
     ImGui::PopStyleVar();
 
     if (opt_fullscreen)
@@ -116,7 +116,7 @@ namespace Buckshot {
       }
       ImGui::EndMenuBar();
     }
-    ImGui::Begin("Settings");
+    ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_NoCollapse);
     auto stats = Renderer2D::GetStats();
     ImGui::Text("Draw Calls: %d", stats.DrawCalls);
     ImGui::Text("Quads Count: %d", stats.QuadCount);
@@ -125,7 +125,7 @@ namespace Buckshot {
     ImGui::End();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0, });
-    ImGui::Begin("Viewport");
+    ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
     m_ViewportFocused = ImGui::IsWindowFocused();
     m_ViewportHovered = ImGui::IsWindowHovered();
     Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);

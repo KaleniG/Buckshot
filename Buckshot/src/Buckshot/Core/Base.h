@@ -1,15 +1,49 @@
 #pragma once
 
-#include <memory>
-
-#ifdef BS_PLATFORM_WINDOWS
+#ifdef _WIN32
+	#ifdef _WIN64
+		#define BS_PLATFORM_WINDOWS
+	#else
+		#error Buckshot supports only x64 builds!
+	#endif
+#elif defined(__MACH__) || defined(__APPLE__)
+	#include <TargetConditionals.h>
+	#if TARGET_IPHONE_SIMULATOR == 1
+		#error iOS simulator is not supported!
+	#elif TARGET_OS_IPHONE == 1
+		#define BS_PLATFORM_IOS
+		#error iOS is not supported!
+	#elif TRAGET_OS_MAC == 1
+		#define BS_PLATFORM_MACOS
+		#error MacOS is not supported!
+	#else
+		#error Unknown Apple Platform!
+	#endif
+#elif defined(__ANDROID__)
+	#define BS_PLATFORM_ANDROID
+	#error Android is not supported!
+#elif defined(__linux__)
+	#define BS_PLATFORM_LINUX
+	#error Linux is not supported!
 #else
-  #error Buckshot supports only Windows!
+	#error Unknown Platform!
 #endif
 
 #if defined(BS_DEBUG) || defined(BS_RELEASE)
-  #define BS_ASSERT(x, ...) { if(!(x)) { BS_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-  #define CL_ASSERT(x, ...) { if(!(x)) { CL_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#ifdef BS_PLATFORM_WINDOWS
+		#define BS_DEBUGBREAK() __debugbreak()
+	#elif defined(BS_PLATFORM_LINUX)
+		#error Linux is not supported!
+		#include <signal.h>
+		#define BS_DEBUGBREAK() raise(SIGTRAP)
+	#else
+		#error Platform doesn't support debugbreak!
+	#endif
+#endif
+
+#if defined(BS_DEBUG) || defined(BS_RELEASE)
+  #define BS_ASSERT(x, ...) { if(!(x)) { BS_ERROR("Assertion Failed: {0}", __VA_ARGS__); BS_DEBUGBREAK(); } }
+  #define CL_ASSERT(x, ...) { if(!(x)) { CL_ERROR("Assertion Failed: {0}", __VA_ARGS__); BS_DEBUGBREAK(); } }
 #else
   #define BS_ASSERT(x, ...)
   #define CL_ASSERT(x, ...)
@@ -19,6 +53,7 @@
 #define BS_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 
 
+#include <memory>
 namespace Buckshot {
 
   template<typename T>
