@@ -29,8 +29,36 @@ namespace Buckshot {
     m_CameraEntity.AddComponent<CameraComponent>();
 
     m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
-    auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
-    cc.Primary = false;
+    m_SecondCamera.AddComponent<CameraComponent>().Primary = false;
+
+    class CameraController : public ScriptableEntity
+    {
+    public:
+      void OnCreate()
+      {
+      }
+
+      void OnDestroy()
+      {
+
+      }
+
+      void OnUpdate(Timestep timestep)
+      {
+        auto& transform = GetComponent<TransformComponent>().Transform;
+        float speed = 2.0f;
+        if (Input::IsKeyPressed(KeyCode::A))
+          transform[3][0] -= speed * timestep;
+        if (Input::IsKeyPressed(KeyCode::D))
+          transform[3][0] += speed * timestep;
+        if (Input::IsKeyPressed(KeyCode::W))
+          transform[3][1] += speed * timestep;
+        if (Input::IsKeyPressed(KeyCode::S))
+          transform[3][1] -= speed * timestep;
+      }
+    };
+
+    m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
   }
 
   void EditorLayer::OnDetach()

@@ -29,6 +29,21 @@ namespace Buckshot {
 
   void Scene::OnUpdate(Timestep timestep)
   {
+    // Scripts Update
+    m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+      {
+        if (!nsc.Instance)
+        {
+          nsc.CreateInstanceFunction();
+          nsc.Instance->m_Entity = Entity(entity, this);
+          nsc.OnCreateFunction(nsc.Instance);
+        }
+
+        nsc.OnUpdateFunction(nsc.Instance, timestep);
+      }
+    );
+
+    // Renderer 2D Update
     Camera* main_camera = nullptr;
     glm::mat4* camera_transform = nullptr;
 
@@ -68,7 +83,6 @@ namespace Buckshot {
     m_ViewportWidth = width;
     m_ViewportHeight = height;
 
-    // Resize our non-FixedAspectRatio cameras
     auto view = m_Registry.view<CameraComponent>();
     for (auto entity : view)
     {

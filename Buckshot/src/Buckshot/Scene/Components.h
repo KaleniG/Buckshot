@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Buckshot/Scene/ScriptableEntity.h"
 #include "Buckshot/Scene/SceneCamera.h"
 
 namespace Buckshot {
@@ -43,6 +44,30 @@ namespace Buckshot {
     CameraComponent() = default;
     CameraComponent(const CameraComponent&) = default;
     CameraComponent(const SceneCamera& camera) : Camera(camera) {}
+  };
+
+  struct NativeScriptComponent
+  {
+    ScriptableEntity* Instance = nullptr;
+
+    std::function<void()> CreateInstanceFunction;
+    std::function<void()> DestroyInstanceFunction;
+
+    std::function<void(ScriptableEntity*)> OnCreateFunction;
+    std::function<void(ScriptableEntity*)> OnDestroyFunction;
+    std::function<void(ScriptableEntity*, Timestep)> OnUpdateFunction;
+
+    template<typename T>
+    void Bind()
+    {
+      CreateInstanceFunction = [&]() { Instance = new T; };
+      DestroyInstanceFunction = [&]() { delete (T*)Instance; Instance = nullptr; };
+
+      OnCreateFunction = [](ScriptableEntity* instance) { ((T*)instance)->OnCreate(); };
+      OnDestroyFunction = [](ScriptableEntity* instance) { ((T*)instance)->OnDestroy(); };
+      OnUpdateFunction = [](ScriptableEntity* instance, Timestep timestep) { ((T*)instance)->OnUpdate(timestep); };
+    }
+
   };
 
 }
