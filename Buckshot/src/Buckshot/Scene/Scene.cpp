@@ -32,11 +32,11 @@ namespace Buckshot {
     Camera* main_camera = nullptr;
     glm::mat4* camera_transform = nullptr;
 
-    auto group = m_Registry.view<TransformComponent, CameraComponent>();
-    for (auto entity : group)
+    auto view = m_Registry.view<TransformComponent, CameraComponent>();
+    for (auto entity : view)
     {
-      auto transform = group.get<TransformComponent>(entity);
-      auto camera = group.get<CameraComponent>(entity);
+      auto transform = view.get<TransformComponent>(entity);
+      auto camera = view.get<CameraComponent>(entity);
 
       if (camera.Primary)
       {
@@ -61,6 +61,22 @@ namespace Buckshot {
 
       Renderer2D::EndScene();
     }
+  }
+
+  void Scene::OnViewportResize(uint32_t width, uint32_t height)
+  {
+    m_ViewportWidth = width;
+    m_ViewportHeight = height;
+
+    // Resize our non-FixedAspectRatio cameras
+    auto view = m_Registry.view<CameraComponent>();
+    for (auto entity : view)
+    {
+      auto& cameraComponent = view.get<CameraComponent>(entity);
+      if (!cameraComponent.FixedAspectRatio)
+        cameraComponent.Camera.SetViewportSize(width, height);
+    }
+
   }
 
 }

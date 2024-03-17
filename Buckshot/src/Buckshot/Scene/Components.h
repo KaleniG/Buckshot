@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Buckshot/Renderer/Camera.h"
+#include "Buckshot/Scene/SceneCamera.h"
 
 namespace Buckshot {
 
@@ -36,13 +36,13 @@ namespace Buckshot {
 
   struct CameraComponent
   {
-    Buckshot::Camera Camera;
+    SceneCamera Camera;
     bool Primary = true;
+    bool FixedAspectRatio = false;
 
     CameraComponent() = default;
     CameraComponent(const CameraComponent&) = default;
-    CameraComponent(const Buckshot::Camera& camera) : Camera(camera) {}
-    CameraComponent(const glm::mat4& projection) : Camera(projection) {}
+    CameraComponent(const SceneCamera& camera) : Camera(camera) {}
   };
 
 }

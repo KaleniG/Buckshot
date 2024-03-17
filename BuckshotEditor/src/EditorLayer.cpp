@@ -13,28 +13,24 @@ namespace Buckshot {
 
   void EditorLayer::OnAttach()
   {
-    // CAMERA CONTROLLER
-    m_CameraController = OrthographicCameraController(1280.0f / 720.0f);
-
-    // TEXTURES
     m_Texture = Texture2D::Create("assets/textures/Checkerboard.png");
-    m_SpriteSheet = Texture2D::Create("assets/textures/RPGpack_sheet_2X.png");
-    m_BarrelTexture = SubTexture2D::CreateFromCoords(m_SpriteSheet, glm::vec2(8.0f, 2.0f), glm::vec2(128.0f));
 
-    // FRAMEBUFFER
     FramebufferSpecification fbSpec;
     fbSpec.Width = 1280;
     fbSpec.Height = 720;
     m_Framebuffer = Framebuffer::Create(fbSpec);
-
-    // SCENE
     m_ActiveScene = CreateRef<Scene>();
+    // Entity
+    auto square = m_ActiveScene->CreateEntity("Green Square");
+    square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+    m_SquareEntity = square;
 
-    m_SquareEntity = m_ActiveScene->CreateEntity("Square");
-    m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+    m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+    m_CameraEntity.AddComponent<CameraComponent>();
 
-    m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
-    m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+    m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+    auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
+    cc.Primary = false;
   }
 
   void EditorLayer::OnDetach()
@@ -43,20 +39,24 @@ namespace Buckshot {
 
   void EditorLayer::OnUpdate(Timestep timestep)
   {
-    if (FramebufferSpecification spec = m_Framebuffer->GetSpecification(); m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+    if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+      m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+      (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
     {
       m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
       m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+
+      m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
     }
 
     if (m_ViewportFocused)
       m_CameraController.OnUpdate(timestep);
-
+    // Render
     Renderer2D::ResetStats();
-
     m_Framebuffer->Bind();
-    RenderCommand::ClearColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+    RenderCommand::ClearColor({ 0.1f, 0.1f, 0.1f, 1 });
     RenderCommand::Clear();
+    // Update scene
     m_ActiveScene->OnUpdate(timestep);
     m_Framebuffer->Unbind();
   }
@@ -108,32 +108,50 @@ namespace Buckshot {
     }
 
     // SETTINGS WINDOW
-    ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_NoCollapse);
-
+    ImGui::Begin("Settings");
     auto stats = Renderer2D::GetStats();
-    auto name = m_SquareEntity.GetComponent<TagComponent>().Tag;
-
+    ImGui::Text("Renderer2D Stats:");
     ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-    ImGui::Text("Quads Count: %d", stats.QuadCount);
-    ImGui::Text("Vertices Count: %d", stats.GetTotalVertexCount());
-    ImGui::Text("Indices Count: %d", stats.GetTotalIndexCount());
-    ImGui::Text("Entity Name: %s", name.c_str());
+    ImGui::Text("Quads: %d", stats.QuadCount);
+    ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+    ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+    if (m_SquareEntity)
+    {
+      ImGui::Separator();
+      auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+      ImGui::Text("%s", tag.c_str());
+      auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+      ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+      ImGui::Separator();
+    }
+    ImGui::DragFloat3("Camera Transform",
+      glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+    if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
+    {
+      m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+      m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+    }
+
+    {
+      auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
+      float orthoSize = camera.GetOrthographicSize();
+      if (ImGui::DragFloat("Second Camera Ortho Size", &orthoSize))
+        camera.SetOrthographicSize(orthoSize);
+    }
+
 
     ImGui::End();
 
     // VIEWPORT WINDOW
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0, });
-    ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoCollapse);
-
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+    ImGui::Begin("Viewport");
     m_ViewportFocused = ImGui::IsWindowFocused();
     m_ViewportHovered = ImGui::IsWindowHovered();
-    ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
     Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
-    m_ViewportSize = { viewport_panel_size.x, viewport_panel_size.y };
+    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+    m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-
-    ImGui::Image((void*)textureID, {m_ViewportSize.x, m_ViewportSize.y}, {0, 1}, {1, 0});
-
+    ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
     ImGui::End();
     ImGui::PopStyleVar();
 
