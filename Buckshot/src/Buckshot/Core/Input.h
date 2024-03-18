@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Buckshot/Core/Base.h"
+#include <glm/glm.hpp>
+
 #include "Buckshot/Core/KeyCodes.h"
 #include "Buckshot/Core/MouseCodes.h"
 
@@ -11,9 +12,7 @@ namespace Buckshot {
   public:
     static bool IsKeyPressed(KeyCode key);
     static bool IsMouseButtonPressed(MouseCode button);
-    static std::pair<float, float> GetMousePos();
-    static float GetMouseX();
-    static float GetMouseY();
+    static glm::vec2 GetMousePos();
 
     static Scope<Input> Create();
     Input& operator=(const Input&) = delete;

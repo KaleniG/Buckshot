@@ -6,8 +6,8 @@ namespace Buckshot {
 
   struct FramebufferSpecification
   {
-    uint32_t Width;
-    uint32_t Height;
+    uint32_t Width = 0;
+    uint32_t Height = 0;
     uint32_t Samples = 1;
     bool SwapChainTarget = false;
   };

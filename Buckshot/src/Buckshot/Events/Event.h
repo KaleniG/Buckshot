@@ -1,8 +1,9 @@
 #pragma once
 
-#include <bspch.h>
+#include <functional>
 
 #include "Buckshot/Core/Base.h"
+#include "Buckshot/Debug/Instrumentor.h"
 
 namespace Buckshot {
 

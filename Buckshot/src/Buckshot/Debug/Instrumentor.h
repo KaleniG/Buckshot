@@ -6,6 +6,10 @@
 #include <chrono>
 #include <string>
 #include <thread>
+#include <mutex>
+#include <sstream>
+
+#include "Buckshot/Core/Log.h"
 
 namespace Buckshot
 {

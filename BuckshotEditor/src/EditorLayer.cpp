@@ -47,18 +47,19 @@ namespace Buckshot {
       {
         auto& transform = GetComponent<TransformComponent>().Transform;
         float speed = 2.0f;
-        if (Input::IsKeyPressed(KeyCode::A))
+        if (Input::IsKeyPressed(Key::A))
           transform[3][0] -= speed * timestep;
-        if (Input::IsKeyPressed(KeyCode::D))
+        if (Input::IsKeyPressed(Key::D))
           transform[3][0] += speed * timestep;
-        if (Input::IsKeyPressed(KeyCode::W))
+        if (Input::IsKeyPressed(Key::W))
           transform[3][1] += speed * timestep;
-        if (Input::IsKeyPressed(KeyCode::S))
+        if (Input::IsKeyPressed(Key::S))
           transform[3][1] -= speed * timestep;
       }
     };
 
     m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+    m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
   }
 
   void EditorLayer::OnDetach()

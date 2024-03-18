@@ -635,7 +635,6 @@
     <ClCompile Include="src\Buckshot\Scene\Entity.cpp" />
     <ClCompile Include="src\Buckshot\Scene\Scene.cpp" />
     <ClCompile Include="src\Buckshot\Scene\SceneCamera.cpp" />
-    <ClCompile Include="src\Buckshot\Scene\ScriptableEntity.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />

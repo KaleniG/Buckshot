@@ -50,22 +50,14 @@ namespace Buckshot {
   {
     ScriptableEntity* Instance = nullptr;
 
-    std::function<void()> CreateInstanceFunction;
-    std::function<void()> DestroyInstanceFunction;
-
-    std::function<void(ScriptableEntity*)> OnCreateFunction;
-    std::function<void(ScriptableEntity*)> OnDestroyFunction;
-    std::function<void(ScriptableEntity*, Timestep)> OnUpdateFunction;
+    ScriptableEntity*(*InstanciateScript)();
+    void (*DestroyScript)(NativeScriptComponent*);
 
     template<typename T>
     void Bind()
     {
-      CreateInstanceFunction = [&]() { Instance = new T; };
-      DestroyInstanceFunction = [&]() { delete (T*)Instance; Instance = nullptr; };
-
-      OnCreateFunction = [](ScriptableEntity* instance) { ((T*)instance)->OnCreate(); };
-      OnDestroyFunction = [](ScriptableEntity* instance) { ((T*)instance)->OnDestroy(); };
-      OnUpdateFunction = [](ScriptableEntity* instance, Timestep timestep) { ((T*)instance)->OnUpdate(timestep); };
+      InstanciateScript = []() { return static_cast<ScriptableEntity*>(new T); };
+      DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
     }
 
   };

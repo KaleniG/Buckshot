@@ -176,7 +176,6 @@ namespace Buckshot {
         file_bin.resize(size);
         file.seekg(0, std::ios::beg);
         file.read(&file_bin[0], size);
-        file.close();
       }
       else
       {

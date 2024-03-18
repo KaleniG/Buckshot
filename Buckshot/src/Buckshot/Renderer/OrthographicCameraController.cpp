@@ -29,14 +29,14 @@ namespace Buckshot {
   {
     BS_PROFILE_FUNCTION();
 
-    if (Input::IsKeyPressed(BS_KEY_A))
+    if (Input::IsKeyPressed(Key::A))
       m_CameraPosition.x -= m_CameraTranslationSpeed * timestep.GetSeconds();
-    else if (Input::IsKeyPressed(BS_KEY_D))
+    else if (Input::IsKeyPressed(Key::D))
       m_CameraPosition.x += m_CameraTranslationSpeed * timestep.GetSeconds();
 
-    if (Input::IsKeyPressed(BS_KEY_W))
+    if (Input::IsKeyPressed(Key::W))
       m_CameraPosition.y += m_CameraTranslationSpeed * timestep.GetSeconds();
-    else if (Input::IsKeyPressed(BS_KEY_S))
+    else if (Input::IsKeyPressed(Key::S))
       m_CameraPosition.y -= m_CameraTranslationSpeed * timestep.GetSeconds();
 
     m_Camera.SetPosition(m_CameraPosition);
@@ -82,7 +82,7 @@ namespace Buckshot {
   {
     BS_PROFILE_FUNCTION();
 
-    if (event.GetMouseButton() == BS_MOUSE_BUTTON_MIDDLE)
+    if (event.GetMouseButton() == Mouse::ButtonMiddle)
     {
       m_ZoomLevel = 1.0f;
       CalculateView();

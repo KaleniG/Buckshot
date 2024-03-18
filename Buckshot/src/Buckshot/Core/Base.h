@@ -1,34 +1,5 @@
 #pragma once
 
-#ifdef _WIN32
-	#ifdef _WIN64
-		#define BS_PLATFORM_WINDOWS
-	#else
-		#error Buckshot supports only x64 builds!
-	#endif
-#elif defined(__MACH__) || defined(__APPLE__)
-	#include <TargetConditionals.h>
-	#if TARGET_IPHONE_SIMULATOR == 1
-		#error iOS simulator is not supported!
-	#elif TARGET_OS_IPHONE == 1
-		#define BS_PLATFORM_IOS
-		#error iOS is not supported!
-	#elif TRAGET_OS_MAC == 1
-		#define BS_PLATFORM_MACOS
-		#error MacOS is not supported!
-	#else
-		#error Unknown Apple Platform!
-	#endif
-#elif defined(__ANDROID__)
-	#define BS_PLATFORM_ANDROID
-	#error Android is not supported!
-#elif defined(__linux__)
-	#define BS_PLATFORM_LINUX
-	#error Linux is not supported!
-#else
-	#error Unknown Platform!
-#endif
-
 #if defined(BS_DEBUG) || defined(BS_RELEASE)
 	#ifdef BS_PLATFORM_WINDOWS
 		#define BS_DEBUGBREAK() __debugbreak()

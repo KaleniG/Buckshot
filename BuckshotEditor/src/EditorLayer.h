@@ -29,7 +29,7 @@ namespace Buckshot {
     Ref<Texture2D> m_SpriteSheet;
     Ref<SubTexture2D> m_BarrelTexture;
 
-    bool m_PrimaryCamera = false;
+    bool m_PrimaryCamera = true;
 
     glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
     bool m_ViewportFocused = false;

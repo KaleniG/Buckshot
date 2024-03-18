@@ -34,12 +34,11 @@ namespace Buckshot {
       {
         if (!nsc.Instance)
         {
-          nsc.CreateInstanceFunction();
+          nsc.Instance = nsc.InstanciateScript();
           nsc.Instance->m_Entity = Entity(entity, this);
-          nsc.OnCreateFunction(nsc.Instance);
+          nsc.Instance->OnCreate();
         }
-
-        nsc.OnUpdateFunction(nsc.Instance, timestep);
+        nsc.Instance->OnUpdate(timestep);
       }
     );
 
