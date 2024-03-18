@@ -60,6 +60,8 @@ namespace Buckshot {
 
     m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+    m_SceneHierarchyPanel.SetContext(m_ActiveScene);
   }
 
   void EditorLayer::OnDetach()
@@ -135,6 +137,9 @@ namespace Buckshot {
       }
       ImGui::EndMenuBar();
     }
+
+    // SCENE HIEARACHY
+    m_SceneHierarchyPanel.OnImGuiRender();
 
     // SETTINGS WINDOW
     ImGui::Begin("Settings");

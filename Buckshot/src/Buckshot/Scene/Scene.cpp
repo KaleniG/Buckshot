@@ -89,7 +89,6 @@ namespace Buckshot {
       if (!cameraComponent.FixedAspectRatio)
         cameraComponent.Camera.SetViewportSize(width, height);
     }
-
   }
 
 }

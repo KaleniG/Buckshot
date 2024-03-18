@@ -2,6 +2,8 @@
 
 #include <Buckshot.h>
 
+#include "Panels/SceneHierarchyPanel.h"
+
 namespace Buckshot {
 
   class EditorLayer : public Layer
@@ -34,6 +36,9 @@ namespace Buckshot {
     glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
     bool m_ViewportFocused = false;
     bool m_ViewportHovered = false;
+
+    // Panels
+    SceneHierarchyPanel m_SceneHierarchyPanel;
   };
 
 }
