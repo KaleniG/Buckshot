@@ -43,16 +43,16 @@ namespace Buckshot {
 
       void OnUpdate(Timestep timestep)
       {
-        auto& transform = GetComponent<TransformComponent>().Transform;
-        float speed = 2.0f;
+        auto& position = GetComponent<TransformComponent>().Position;
+        float speed = 2.5f;
         if (Input::IsKeyPressed(Key::A))
-          transform[3][0] -= speed * timestep;
+          position.x -= speed * timestep;
         if (Input::IsKeyPressed(Key::D))
-          transform[3][0] += speed * timestep;
+          position.x += speed * timestep;
         if (Input::IsKeyPressed(Key::W))
-          transform[3][1] += speed * timestep;
+          position.y += speed * timestep;
         if (Input::IsKeyPressed(Key::S))
-          transform[3][1] -= speed * timestep;
+          position.y -= speed * timestep;
       }
     };
 

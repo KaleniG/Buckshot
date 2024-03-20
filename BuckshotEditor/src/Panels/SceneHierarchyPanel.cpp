@@ -1,3 +1,4 @@
+#include <ImGui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <ImGui/imgui.h>
 #include <entt.hpp>
@@ -81,8 +82,10 @@ namespace Buckshot {
     {
       if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
       {
-        auto& transform = entity.GetComponent<TransformComponent>().Transform;
-        ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.5f);
+        auto& transform_component = entity.GetComponent<TransformComponent>();
+        DrawVec3Control("Position", transform_component.Position);
+        DrawVec3Control("Rotation", transform_component.Rotation);
+        DrawVec3Control("Scale", transform_component.Scale, 1.0f);
         ImGui::TreePop();
       }
     }
@@ -176,6 +179,49 @@ namespace Buckshot {
 
 
     ImGui::PopStyleVar();
+}
+
+void SceneHierarchyPanel::DrawVec3Control(const std::string& label, glm::vec3& values, float reset_value /*= 0.0f*/, float column_width /*= 100.0f*/)
+{
+  ImGui::PushID(label.c_str());
+
+  ImGui::Columns(2);
+  ImGui::SetColumnWidth(0.0f, column_width);
+  ImGui::Text(label.c_str());
+  ImGui::NextColumn();
+  ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+
+  float line_height = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+  ImVec2 button_size = ImVec2(line_height + 3.0f, line_height);
+
+  if (ImGui::Button("X", button_size))
+    values.x = reset_value;
+
+  ImGui::SameLine();
+  ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+  ImGui::PopItemWidth();
+  ImGui::SameLine();
+
+  if (ImGui::Button("Y", button_size))
+    values.y = reset_value;
+
+  ImGui::SameLine();
+  ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+  ImGui::PopItemWidth();
+  ImGui::SameLine();
+
+  if (ImGui::Button("Z", button_size))
+    values.z = reset_value;
+
+  ImGui::SameLine();
+  ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+  ImGui::PopItemWidth();
+
+  ImGui::PopStyleVar();
+  ImGui::Columns(1);
+
+  ImGui::PopID();
 }
 
 }
