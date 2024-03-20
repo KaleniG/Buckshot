@@ -7,9 +7,7 @@
 namespace Buckshot {
 
   EditorLayer::EditorLayer()
-  {
-    Layer("EditorLayer");
-  }
+    : Layer("EditorLayer") {}
 
   void EditorLayer::OnAttach()
   {
@@ -21,14 +19,14 @@ namespace Buckshot {
     m_Framebuffer = Framebuffer::Create(fbSpec);
     m_ActiveScene = CreateRef<Scene>();
     // Entity
-    auto square = m_ActiveScene->CreateEntity("Green Square");
+    auto square = m_ActiveScene->CreateEntity("Square");
     square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
     m_SquareEntity = square;
 
-    m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+    m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
     m_CameraEntity.AddComponent<CameraComponent>();
 
-    m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+    m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
     m_SecondCamera.AddComponent<CameraComponent>().Primary = false;
 
     class CameraController : public ScriptableEntity
@@ -141,32 +139,13 @@ namespace Buckshot {
     // SCENE HIEARACHY
     m_SceneHierarchyPanel.OnImGuiRender();
 
-    // SETTINGS WINDOW
-    ImGui::Begin("Settings");
+    // STATS WINDOW
+    ImGui::Begin("Stats");
     auto stats = Renderer2D::GetStats();
-    ImGui::Text("Renderer2D Stats:");
     ImGui::Text("Draw Calls: %d", stats.DrawCalls);
     ImGui::Text("Quads: %d", stats.QuadCount);
     ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
     ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-    if (m_SquareEntity)
-    {
-      ImGui::Separator();
-      auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-      ImGui::Text("%s", tag.c_str());
-      auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-      ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-      ImGui::Separator();
-    }
-
-    if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
-    {
-      m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-      m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-    }
-
-
-
     ImGui::End();
 
     // VIEWPORT WINDOW

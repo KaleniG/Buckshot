@@ -61,6 +61,8 @@ namespace Buckshot {
 
   void SceneHierarchyPanel::DrawComponents(Entity entity)
   {
+    ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 0.0f);
+
     if (entity.HasComponent<TagComponent>())
     {
       auto& tag = entity.GetComponent<TagComponent>().Tag;
@@ -77,16 +79,17 @@ namespace Buckshot {
 
     if (entity.HasComponent<TransformComponent>())
     {
-      if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+      if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
       {
         auto& transform = entity.GetComponent<TransformComponent>().Transform;
         ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.5f);
+        ImGui::TreePop();
       }
     }
 
     if (entity.HasComponent<CameraComponent>())
     {
-      if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+      if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
       {
         auto& camera_component = entity.GetComponent<CameraComponent>();
         
@@ -156,9 +159,23 @@ namespace Buckshot {
             camera_component.Camera.SetPerspectiveFarClip(far_clip);
           }
         }
-
+        ImGui::TreePop();
       }
     }
-  }
+
+    if (entity.HasComponent<SpriteRendererComponent>())
+    {
+      if (ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer"))
+      {
+        auto& sprite_renderer_component = entity.GetComponent<SpriteRendererComponent>();
+
+        ImGui::ColorEdit4("Color", glm::value_ptr(sprite_renderer_component.Color));
+        ImGui::TreePop();
+      }
+    }
+
+
+    ImGui::PopStyleVar();
+}
 
 }
