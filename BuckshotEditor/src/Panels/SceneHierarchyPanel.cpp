@@ -100,68 +100,70 @@ namespace Buckshot {
         const char* current_projection_type_string = projection_type_strings[(int)camera_component.Camera.GetProjectionType()];
 
         ImGui::Checkbox("Primary", &camera_component.Primary);
-        ImGui::Checkbox("Fixed Aspect Ratio", &camera_component.FixedAspectRatio);
 
         if (ImGui::BeginCombo("Projection", current_projection_type_string))
         {
-
           for (int i = 0; i < 2; i++)
           {
-            bool is_selected = current_projection_type_string == projection_type_strings[i];
-            if (ImGui::Selectable(projection_type_strings[i], is_selected))
+            bool isSelected = current_projection_type_string == projection_type_strings[i];
+            if (ImGui::Selectable(projection_type_strings[i], isSelected))
             {
               current_projection_type_string = projection_type_strings[i];
               camera_component.Camera.SetProjectionType((SceneCamera::ProjectionType)i);
             }
 
-            if (is_selected)
+            if (isSelected)
               ImGui::SetItemDefaultFocus();
           }
+
           ImGui::EndCombo();
+        }
+
+        if (camera_component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
+        {
+          float fov = glm::degrees(camera_component.Camera.GetPerspectiveFOV());
+          if (ImGui::DragFloat("FOV", &fov, 1.0f, 0.0f, 0.0f, "%.0f"))
+          {
+            camera_component.Camera.SetPerspectiveFOV(glm::radians(fov));
+          }
+
+          float near_clip = camera_component.Camera.GetPerspectiveNearClip();
+          if (ImGui::DragFloat("Near Clip", &near_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
+          {
+            camera_component.Camera.SetPerspectiveNearClip(near_clip);
+          }
+
+          float far_clip = camera_component.Camera.GetPerspectiveFarClip();
+          if (ImGui::DragFloat("Far Clip", &far_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
+          {
+            camera_component.Camera.SetPerspectiveFarClip(far_clip);
+          }
         }
 
         if (camera_component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
         {
+          ImGui::Checkbox("Fixed Aspect Ratio", &camera_component.FixedAspectRatio);
+
           float size = camera_component.Camera.GetOrthographicSize();
-          if (ImGui::DragFloat("Size", &size))
+          if (ImGui::DragFloat("Size", &size, 1.0f, 0.0f, 0.0f, "%.0f"))
           {
             camera_component.Camera.SetOrthographicSize(size);
           }
 
           float near_clip = camera_component.Camera.GetOrthographicNearClip();
-          if (ImGui::DragFloat("Near Clip", &near_clip))
+          if (ImGui::DragFloat("Near Clip", &near_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
           {
             camera_component.Camera.SetOrthographicNearClip(near_clip);
           }
 
           float far_clip = camera_component.Camera.GetOrthographicFarClip();
-          if (ImGui::DragFloat("Far Clip", &far_clip))
+          if (ImGui::DragFloat("Far Clip", &far_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
           {
             camera_component.Camera.SetOrthographicFarClip(far_clip);
           }
 
         }
 
-        if (camera_component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
-        {
-          float fov = glm::degrees(camera_component.Camera.GetPerspectiveFOV());
-          if (ImGui::DragFloat("FOV", &fov))
-          {
-            camera_component.Camera.SetPerspectiveFOV(glm::radians(fov));
-          }
-
-          float near_clip = camera_component.Camera.GetPerspectiveNearClip();
-          if (ImGui::DragFloat("Near Clip", &near_clip))
-          {
-            camera_component.Camera.SetPerspectiveNearClip(near_clip);
-          }
-
-          float far_clip = camera_component.Camera.GetPerspectiveFarClip();
-          if (ImGui::DragFloat("Far Clip", &far_clip))
-          {
-            camera_component.Camera.SetPerspectiveFarClip(far_clip);
-          }
-        }
         ImGui::TreePop();
       }
     }
