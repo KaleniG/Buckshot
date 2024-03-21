@@ -1,4 +1,5 @@
 #include <bspch.h>
+#include <entt.hpp>
 #include <glm/glm.hpp>
 
 #include "Buckshot/Renderer/Renderer2D.h"
@@ -11,7 +12,7 @@ namespace Buckshot {
   Scene::Scene()
   {
 
-  }
+  } 
 
   Scene::~Scene()
   {

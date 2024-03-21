@@ -7,6 +7,7 @@ namespace Buckshot {
 
 	SceneCamera::SceneCamera()
 	{
+		SetViewportSize(1.0f, 1.0f);
 		RecalculateProjection();
 	}
 

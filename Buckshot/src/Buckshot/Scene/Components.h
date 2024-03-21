@@ -28,7 +28,7 @@ namespace Buckshot {
 
     glm::mat4 GetTransform() const
     {
-      glm::mat4 rotation = 
+      glm::mat4 rotation =
         glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.x), { 1, 0, 0 })
         * glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.y), { 0, 1, 0 })
         * glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), { 0, 0, 1 });
@@ -63,7 +63,7 @@ namespace Buckshot {
   {
     ScriptableEntity* Instance = nullptr;
 
-    ScriptableEntity*(*InstanciateScript)();
+    ScriptableEntity* (*InstanciateScript)();
     void (*DestroyScript)(NativeScriptComponent*);
 
     template<typename T>
