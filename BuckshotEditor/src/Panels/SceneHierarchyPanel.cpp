@@ -1,6 +1,6 @@
+#include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <ImGui/imgui.h>
 #include <entt.hpp>
 
 #include "SceneHierarchyPanel.h"
@@ -30,6 +30,16 @@ namespace Buckshot {
     if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
       m_SelectionContext = {};
 
+    if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_MouseButtonRight))
+    {
+      if (ImGui::MenuItem("New Entity"))
+      {
+        m_Context->CreateEntity("NewEntity");
+      }
+
+      ImGui::EndPopup();
+    }
+
     ImGui::End();
 
     ImGui::Begin("Properties");
@@ -37,6 +47,30 @@ namespace Buckshot {
     if (m_SelectionContext)
     {
       DrawComponents(m_SelectionContext);
+
+      ImGui::Separator();
+
+      if (ImGui::Button("Add Component"))
+      {
+        ImGui::OpenPopup("AddComponent");
+      }
+
+      if (ImGui::BeginPopup("AddComponent"))
+      {
+        if (ImGui::MenuItem("Camera"))
+        {
+          m_SelectionContext.AddComponent<CameraComponent>();
+          ImGui::CloseCurrentPopup();
+        }
+
+        if (ImGui::MenuItem("Sprite Renderer"))
+        {
+          m_SelectionContext.AddComponent<SpriteRendererComponent>();
+          ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+      }
     }
 
     ImGui::End();
@@ -54,15 +88,35 @@ namespace Buckshot {
       m_SelectionContext = entity;
     }
 
+    bool entity_deleted = false;
+    if (ImGui::BeginPopupContextItem(0, ImGuiPopupFlags_MouseButtonRight))
+    {
+      if (ImGui::MenuItem("Delete"))
+      {
+        entity_deleted = true;
+      }
+
+      ImGui::EndPopup();
+    }
+
     if (opened)
     {
       ImGui::TreePop();
+    }
+
+    if (entity_deleted)
+    {
+      if (m_SelectionContext == entity)
+        m_SelectionContext = {};
+      m_Context->DestroyEntity(entity);
     }
   }
 
   void SceneHierarchyPanel::DrawComponents(Entity entity)
   {
     ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 0.0f);
+
+    const ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
 
     if (entity.HasComponent<TagComponent>())
     {
@@ -80,7 +134,30 @@ namespace Buckshot {
 
     if (entity.HasComponent<TransformComponent>())
     {
-      if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+      ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4.0f, 4.0f));
+      bool open = ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), tree_node_flags, "Transform");
+
+      ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
+
+      if (ImGui::Button("+", ImVec2(20.0f, 20.0f)))
+      {
+        ImGui::OpenPopup("ComponentSettings");
+      }
+      ImGui::PopStyleVar();
+
+      bool remove_component = false;
+      if (ImGui::BeginPopup("ComponentSettings"))
+      {
+        if (ImGui::MenuItem("Remove Component"))
+        {
+          remove_component = true;
+        }
+
+        ImGui::EndPopup();
+      }
+
+
+      if (open)
       {
         auto& transform_component = entity.GetComponent<TransformComponent>();
         DrawVec3Control("Position", transform_component.Position);
@@ -88,11 +165,37 @@ namespace Buckshot {
         DrawVec3Control("Scale", transform_component.Scale, 1.0f);
         ImGui::TreePop();
       }
+
+      if (remove_component)
+      {
+        entity.RemoveComponent<TransformComponent>();
+      }
     }
 
     if (entity.HasComponent<CameraComponent>())
     {
-      if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+      bool open = ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), tree_node_flags, "Camera");
+
+      ImGui::SameLine();
+
+      if (ImGui::Button("+"))
+      {
+        ImGui::OpenPopup("ComponentSettings");
+      }
+
+      bool remove_component = false;
+      if (ImGui::BeginPopup("ComponentSettings"))
+      {
+        if (ImGui::MenuItem("Remove Component"))
+        {
+          remove_component = true;
+        }
+
+        ImGui::EndPopup();
+      }
+
+
+      if (open)
       {
         auto& camera_component = entity.GetComponent<CameraComponent>();
         
@@ -166,16 +269,47 @@ namespace Buckshot {
 
         ImGui::TreePop();
       }
+
+      if (remove_component)
+      {
+        entity.RemoveComponent<CameraComponent>();
+      }
+
     }
 
     if (entity.HasComponent<SpriteRendererComponent>())
     {
-      if (ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer"))
+      bool open = ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), tree_node_flags, "Sprite Renderer");
+
+      ImGui::SameLine();
+
+      if (ImGui::Button("+"))
+      {
+        ImGui::OpenPopup("ComponentSettings");
+      }
+
+      bool remove_component = false;
+      if (ImGui::BeginPopup("ComponentSettings"))
+      {
+        if (ImGui::MenuItem("Remove Component"))
+        {
+          remove_component = true;
+        }
+
+        ImGui::EndPopup();
+      }
+
+      if (open)
       {
         auto& sprite_renderer_component = entity.GetComponent<SpriteRendererComponent>();
 
         ImGui::ColorEdit4("Color", glm::value_ptr(sprite_renderer_component.Color));
         ImGui::TreePop();
+      }
+
+      if (remove_component)
+      {
+        entity.RemoveComponent<SpriteRendererComponent>();
       }
     }
 
@@ -183,7 +317,7 @@ namespace Buckshot {
     ImGui::PopStyleVar();
 }
 
-void SceneHierarchyPanel::DrawVec3Control(const std::string& label, glm::vec3& values, float reset_value /*= 0.0f*/, float column_width /*= 100.0f*/)
+  void SceneHierarchyPanel::DrawVec3Control(const std::string& label, glm::vec3& values, float reset_value /*= 0.0f*/, float column_width /*= 100.0f*/)
 {
   ImGui::PushID(label.c_str());
 
