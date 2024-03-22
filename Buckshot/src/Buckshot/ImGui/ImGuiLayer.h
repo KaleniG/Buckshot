@@ -23,6 +23,7 @@ namespace Buckshot {
     void End();
 
     void BlockEvents(bool block) { m_BlockEvents = block; }
+    void SetDarkThemeColors();
 
   private:
     bool m_BlockEvents = false;
