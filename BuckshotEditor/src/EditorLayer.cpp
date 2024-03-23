@@ -17,48 +17,8 @@ namespace Buckshot {
     fbSpec.Width = 1280;
     fbSpec.Height = 720;
     m_Framebuffer = Framebuffer::Create(fbSpec);
+
     m_ActiveScene = CreateRef<Scene>();
-    // Entity
-    auto square = m_ActiveScene->CreateEntity("Square");
-    square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
-    m_SquareEntity = square;
-
-    m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-    m_CameraEntity.AddComponent<CameraComponent>();
-
-    m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
-    m_SecondCamera.AddComponent<CameraComponent>().Primary = false;
-
-    class CameraController : public ScriptableEntity
-    {
-    public:
-      void OnCreate()
-      {
-      }
-
-      void OnDestroy()
-      {
-
-      }
-
-      void OnUpdate(Timestep timestep)
-      {
-        auto& position = GetComponent<TransformComponent>().Position;
-        float speed = 2.5f;
-        if (Input::IsKeyPressed(Key::A))
-          position.x -= speed * timestep;
-        if (Input::IsKeyPressed(Key::D))
-          position.x += speed * timestep;
-        if (Input::IsKeyPressed(Key::W))
-          position.y += speed * timestep;
-        if (Input::IsKeyPressed(Key::S))
-          position.y -= speed * timestep;
-      }
-    };
-
-    m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-    m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
     m_SceneHierarchyPanel.SetContext(m_ActiveScene);
   }
 
@@ -137,7 +97,23 @@ namespace Buckshot {
     {
       if (ImGui::BeginMenu("File"))
       {
-        if (ImGui::MenuItem("Exit")) Application::Get().Close();
+        if (ImGui::MenuItem("Save"))
+        {
+          SceneSerializer serializer(m_ActiveScene);
+          serializer.Serialize("assets/scenes/Example.bshot");
+        }
+
+        if (ImGui::MenuItem("Load"))
+        {
+          SceneSerializer serializer(m_ActiveScene);
+          serializer.Deserialize("assets/scenes/Example.bshot");
+        }
+
+        if (ImGui::MenuItem("Exit")) 
+        {
+          Application::Get().Close();
+        }
+
         ImGui::EndMenu();
       }
       ImGui::EndMenuBar();

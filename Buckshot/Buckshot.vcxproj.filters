@@ -168,6 +168,9 @@
     <ClInclude Include="src\Buckshot\Scene\SceneCamera.h">
       <Filter>src\Buckshot\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buckshot\Scene\SceneSerializer.h">
+      <Filter>src\Buckshot\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Buckshot\Scene\ScriptableEntity.h">
       <Filter>src\Buckshot\Scene</Filter>
     </ClInclude>
@@ -1518,6 +1521,9 @@
       <Filter>src\Buckshot\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Scene\SceneCamera.cpp">
+      <Filter>src\Buckshot\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Scene\SceneSerializer.cpp">
       <Filter>src\Buckshot\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">

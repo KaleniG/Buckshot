@@ -34,11 +34,13 @@ IncludeDir["ImGui"] 	= "Buckshot/vendor/ImGui"
 IncludeDir["glm"] 		= "Buckshot/vendor/glm"
 IncludeDir["EnTT"]		= "Buckshot/vendor/EnTT/include"
 IncludeDir["stb_image"] = "Buckshot/vendor/stb_image"
+IncludeDir["YAML"] 		= "Buckshot/vendor/YAML/include"
 
 group "Dependencies"
 	include "Buckshot/vendor/GLFW"
 	include "Buckshot/vendor/GLAD"
 	include "Buckshot/vendor/ImGui"
+	include "Buckshot/vendor/YAML"
 group ""
 
 project "Buckshot"
@@ -73,7 +75,8 @@ project "Buckshot"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.YAML}"
 	}
 
 	links 
@@ -81,6 +84,7 @@ project "Buckshot"
 		"GLFW",
 		"GLAD",
 		"ImGui",
+		"YAML",
 		"opengl32.lib"
 	}
 
