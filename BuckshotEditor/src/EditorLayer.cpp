@@ -1,4 +1,5 @@
 #include <ImGui/imgui.h>
+#include <ImGuizmo.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -126,9 +127,9 @@ namespace Buckshot {
     ImGui::Begin("Stats");
     auto stats = Renderer2D::GetStats();
     ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-    ImGui::Text("Quads: %d", stats.QuadCount);
-    ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-    ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+    ImGui::Text("Quad Count: %d", stats.QuadCount);
+    ImGui::Text("Vertices Count: %d", stats.GetTotalVertexCount());
+    ImGui::Text("Indices Count: %d", stats.GetTotalIndexCount());
     ImGui::End();
 
     // VIEWPORT WINDOW
@@ -136,11 +137,59 @@ namespace Buckshot {
     ImGui::Begin("Viewport");
     m_ViewportFocused = ImGui::IsWindowFocused();
     m_ViewportHovered = ImGui::IsWindowHovered();
-    Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+    Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
     m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
     ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+    // GIZMOS
+
+    Entity selected_entity = m_SceneHierarchyPanel.GetSelectedEntity();
+    if (selected_entity && m_GizmoType != -1)
+    {
+      ImGuizmo::SetOrthographic(false);
+      ImGuizmo::SetDrawlist();
+      float window_width = (float)ImGui::GetWindowWidth();
+      float window_height = (float)ImGui::GetWindowHeight();
+      ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
+
+      // GIZMO::CAMERA
+      auto camera_entity = m_ActiveScene->GetPrimaryCameraEntity();
+      const auto& camera = camera_entity.GetComponent<CameraComponent>().Camera;
+      const glm::mat4& camera_projection = camera.GetProjection();
+      glm::mat4 camera_view = glm::inverse(camera_entity.GetComponent<TransformComponent>().GetTransform());
+
+      // GIZMO::SUBJECT
+      auto& selected_entity_transform_component = selected_entity.GetComponent<TransformComponent>();
+      glm::mat4 selected_entity_transform = selected_entity_transform_component.GetTransform();
+
+      // GIZMO::SNAPPING
+      bool snap = Input::IsKeyPressed(Key::RightControl) || Input::IsKeyPressed(Key::LeftControl);
+      float snap_value = 0.5f; // Snap for 0.5 distance units for translation/scaling;
+      if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+        snap_value = 45.0f; // Snap for 45.0 degrees for rotation;
+      float snap_values[3] = { snap_value, snap_value, snap_value };
+
+      // GIZMO::TRANSFORMATIONS
+      ImGuizmo::Manipulate(glm::value_ptr(camera_view), glm::value_ptr(camera_projection), (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(selected_entity_transform), nullptr, snap ? snap_values : nullptr);
+
+      if (ImGuizmo::IsUsing())
+      {
+        glm::vec3 position;
+        glm::vec3 rotation;
+        glm::vec3 scale;
+
+        Math::DecomposeTransform(selected_entity_transform, position, rotation, scale);
+
+        glm::vec3 delta_rotation = rotation - selected_entity_transform_component.Rotation;
+        selected_entity_transform_component.Position = position;
+        selected_entity_transform_component.Rotation += delta_rotation;
+        selected_entity_transform_component.Scale = scale;
+      }
+    }
+
+
     ImGui::End();
     ImGui::PopStyleVar();
 
@@ -164,6 +213,7 @@ namespace Buckshot {
 
     switch (event.GetKeyCode())
     {
+    // Shortcuts
     case Key::N:
     {
       if (control_pressed)
@@ -182,6 +232,30 @@ namespace Buckshot {
         SaveSceneAs();
       return false;
     }
+
+    // Gizmo
+
+    case Key::Z:
+    {
+      m_GizmoType = -1;
+      return false;
+    }
+    case Key::X:
+    {
+      m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+      return false;
+    }
+    case Key::C:
+    {
+      m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+      return false;
+    }
+    case Key::V:
+    {
+      m_GizmoType = ImGuizmo::OPERATION::SCALE;
+      return false;
+    }
+
     }
   }
 

@@ -213,19 +213,33 @@ namespace Buckshot {
       ImGui::OpenPopup("AddComponent");
     }
 
+    bool present_any_component = false;
     if (ImGui::BeginPopup("AddComponent"))
     {
-      if (ImGui::MenuItem("Camera"))
+      if (!entity.HasComponent<CameraComponent>())
       {
-        m_SelectionContext.AddComponent<CameraComponent>();
-        m_Context->OnViewportResize();
-        ImGui::CloseCurrentPopup();
+        present_any_component = true;
+        if (ImGui::MenuItem("Camera"))
+        {
+          m_SelectionContext.AddComponent<CameraComponent>();
+          m_Context->OnViewportResize();
+          ImGui::CloseCurrentPopup();
+        }
       }
 
-      if (ImGui::MenuItem("Sprite Renderer"))
+      if (!entity.HasComponent<SpriteRendererComponent>())
       {
-        m_SelectionContext.AddComponent<SpriteRendererComponent>();
-        ImGui::CloseCurrentPopup();
+        present_any_component = true;
+        if (ImGui::MenuItem("Sprite Renderer"))
+        {
+          m_SelectionContext.AddComponent<SpriteRendererComponent>();
+          ImGui::CloseCurrentPopup();
+        }
+      }
+
+      if (!present_any_component)
+      {
+        ImGui::Text("No Components Available");
       }
 
       ImGui::EndPopup();

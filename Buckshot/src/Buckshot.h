@@ -16,6 +16,9 @@
 // Utils
 #include "Buckshot/Utilities/PlatformUtils.h"
 
+// Math
+#include "Buckshot/Math/Math.h"
+
 // GUI
 #include "Buckshot/ImGui/ImGuiLayer.h"
 

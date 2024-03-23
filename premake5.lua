@@ -35,6 +35,7 @@ IncludeDir["glm"] 		= "Buckshot/vendor/glm"
 IncludeDir["EnTT"]		= "Buckshot/vendor/EnTT/include"
 IncludeDir["stb_image"] = "Buckshot/vendor/stb_image"
 IncludeDir["YAML"] 		= "Buckshot/vendor/YAML/include"
+IncludeDir["ImGuizmo"]  = "Buckshot/vendor/ImGuizmo"
 
 group "Dependencies"
 	include "Buckshot/vendor/GLFW"
@@ -63,7 +64,9 @@ project "Buckshot"
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/ImGuizmo/**.h",
+		"%{prj.name}/vendor/ImGuizmo/**.cpp"
 	}
 
 	includedirs
@@ -76,7 +79,8 @@ project "Buckshot"
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.YAML}"
+		"%{IncludeDir.YAML}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links 
@@ -87,6 +91,9 @@ project "Buckshot"
 		"YAML",
 		"opengl32.lib"
 	}
+
+	filter "files:Buckshot/vendor/ImGuizmo/**.cpp"
+		flags { "NoPCH" }
 
 	filter "system:windows"
 		systemversion "latest"
@@ -134,7 +141,8 @@ project "BuckshotEditor"
 		"Buckshot/src",
 		"Buckshot/vendor",
 		"%{IncludeDir.EnTT}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links
@@ -187,7 +195,8 @@ project "Sandbox"
 		"Buckshot/src",
 		"Buckshot/vendor",
 		"%{IncludeDir.EnTT}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 	
 	links

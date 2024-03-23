@@ -25,19 +25,17 @@ namespace Buckshot {
     void SaveSceneAs();
 
   private:
-    Entity m_SquareEntity;
-    Entity m_CameraEntity;
-    Entity m_SecondCamera;
-
     Ref<Scene> m_ActiveScene;
-    Ref<Framebuffer> m_Framebuffer;
 
+    // GUI
+    Ref<Framebuffer> m_Framebuffer;
     glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
     bool m_ViewportFocused = false;
     bool m_ViewportHovered = false;
-
-    // Panels
     SceneHierarchyPanel m_SceneHierarchyPanel;
+
+    // Gizmo
+    int m_GizmoType = -1;
   };
 
 }

@@ -14,10 +14,11 @@ namespace Buckshot {
 
     void OnImGuiRender();
 
+    Entity GetSelectedEntity() const { return m_SelectionContext; }
+
   private:
     void DrawEntityNode(Entity entity);
     void DrawComponents(Entity entity);
-    //void DrawVec3Control(const std::string& label, glm::vec3& vector, float reset_value = 0.0f, float column_width = 100.0f);
 
   private:
     Ref<Scene> m_Context;
