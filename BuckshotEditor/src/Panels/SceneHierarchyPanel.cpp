@@ -113,6 +113,7 @@ namespace Buckshot {
   void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
   {
     m_Context = context;
+    m_SelectionContext = {};
   }
 
   void SceneHierarchyPanel::OnImGuiRender()
@@ -217,6 +218,7 @@ namespace Buckshot {
       if (ImGui::MenuItem("Camera"))
       {
         m_SelectionContext.AddComponent<CameraComponent>();
+        m_Context->OnViewportResize();
         ImGui::CloseCurrentPopup();
       }
 

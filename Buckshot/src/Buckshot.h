@@ -13,6 +13,9 @@
 #include "Buckshot/Core/Base.h"
 #include "Buckshot/Core/Log.h"
 
+// Utils
+#include "Buckshot/Utilities/PlatformUtils.h"
+
 // GUI
 #include "Buckshot/ImGui/ImGuiLayer.h"
 

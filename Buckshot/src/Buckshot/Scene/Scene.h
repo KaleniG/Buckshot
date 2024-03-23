@@ -19,6 +19,7 @@ namespace Buckshot {
 
     void OnUpdate(Timestep timestep);
     void OnViewportResize(uint32_t width, uint32_t height);
+    void OnViewportResize();
 
   private:
     entt::registry m_Registry;

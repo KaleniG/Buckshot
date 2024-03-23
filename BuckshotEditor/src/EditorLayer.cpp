@@ -11,8 +11,6 @@ namespace Buckshot {
 
   void EditorLayer::OnAttach()
   {
-    m_Texture = Texture2D::Create("assets/textures/Checkerboard.png");
-
     FramebufferSpecification fbSpec;
     fbSpec.Width = 1280;
     fbSpec.Height = 720;
@@ -33,13 +31,10 @@ namespace Buckshot {
       (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
     {
       m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-      m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 
       m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
     }
 
-    if (m_ViewportFocused)
-      m_CameraController.OnUpdate(timestep);
     // Render
     Renderer2D::ResetStats();
     m_Framebuffer->Bind();
@@ -97,17 +92,22 @@ namespace Buckshot {
     {
       if (ImGui::BeginMenu("File"))
       {
-        if (ImGui::MenuItem("Save"))
+        if (ImGui::MenuItem("New", "Ctrl + N"))
         {
-          SceneSerializer serializer(m_ActiveScene);
-          serializer.Serialize("assets/scenes/Example.bshot");
+          NewScene();
         }
 
-        if (ImGui::MenuItem("Load"))
+        if (ImGui::MenuItem("Save As...", "Ctrl + Shift + S"))
         {
-          SceneSerializer serializer(m_ActiveScene);
-          serializer.Deserialize("assets/scenes/Example.bshot");
+          SaveSceneAs();
         }
+
+        if (ImGui::MenuItem("Open...", "Ctrl + O"))
+        {
+          OpenScene();
+        }
+
+        ImGui::Separator();
 
         if (ImGui::MenuItem("Exit")) 
         {
@@ -150,7 +150,72 @@ namespace Buckshot {
 
   void EditorLayer::OnEvent(Event& event)
   {
-    m_CameraController.OnEvent(event);
+    EventDispatcher dispatcher(event);
+    dispatcher.Dispatch<KeyPressedEvent>(BS_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+  }
+
+  bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
+  {
+    if (event.GetRepeatCount() > 0)
+      return false;
+
+    bool control_pressed = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+    bool shift_pressed = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+
+    switch (event.GetKeyCode())
+    {
+    case Key::N:
+    {
+      if (control_pressed)
+        NewScene();
+      return false;
+    }
+    case Key::O:
+    {
+      if (control_pressed)
+        OpenScene();
+      return false;
+    }
+    case Key::S:
+    {
+      if (control_pressed && shift_pressed)
+        SaveSceneAs();
+      return false;
+    }
+    }
+  }
+
+  void EditorLayer::NewScene()
+  {
+    m_ActiveScene = CreateRef<Scene>();
+    m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+    m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+  }
+
+  void EditorLayer::OpenScene()
+  {
+    std::string filepath = FileDialogs::OpenFile("Buckshot Scene (*.bshot)\0*.bshot\0");
+
+    if (!filepath.empty())
+    {
+      m_ActiveScene = CreateRef<Scene>();
+      m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+      SceneSerializer serializer(m_ActiveScene);
+      serializer.Deserialize(filepath);
+      m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+    }
+  }
+
+  void EditorLayer::SaveSceneAs()
+  {
+    std::string filepath = FileDialogs::SaveFile("Buckshot Scene (*.bshot)\0*.bshot\0");
+
+    if (!filepath.empty())
+    {
+      SceneSerializer serializer(m_ActiveScene);
+      serializer.Serialize(filepath);
+    }
   }
 
 }
