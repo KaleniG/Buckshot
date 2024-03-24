@@ -17,6 +17,8 @@ namespace Buckshot {
     fbSpec.Height = 720;
     m_Framebuffer = Framebuffer::Create(fbSpec);
 
+    m_EditorCamera = EditorCamera(30.0f, 1.788f, 0.1f, 1000.0f);
+
     m_ActiveScene = CreateRef<Scene>();
     m_SceneHierarchyPanel.SetContext(m_ActiveScene);
   }
@@ -32,9 +34,12 @@ namespace Buckshot {
       (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
     {
       m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-
+      m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
       m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
     }
+
+    if (m_ViewportFocused)
+      m_EditorCamera.OnUpdate(timestep);
 
     // Render
     Renderer2D::ResetStats();
@@ -42,7 +47,7 @@ namespace Buckshot {
     RenderCommand::ClearColor({ 0.1f, 0.1f, 0.1f, 1 });
     RenderCommand::Clear();
     // Update scene
-    m_ActiveScene->OnUpdate(timestep);
+    m_ActiveScene->OnUpdateEditor(timestep, m_EditorCamera);
     m_Framebuffer->Unbind();
   }
 
@@ -144,7 +149,6 @@ namespace Buckshot {
     ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
     // GIZMOS
-
     Entity selected_entity = m_SceneHierarchyPanel.GetSelectedEntity();
     if (selected_entity && m_GizmoType != -1)
     {
@@ -154,11 +158,16 @@ namespace Buckshot {
       float window_height = (float)ImGui::GetWindowHeight();
       ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
 
-      // GIZMO::CAMERA
-      auto camera_entity = m_ActiveScene->GetPrimaryCameraEntity();
-      const auto& camera = camera_entity.GetComponent<CameraComponent>().Camera;
-      const glm::mat4& camera_projection = camera.GetProjection();
-      glm::mat4 camera_view = glm::inverse(camera_entity.GetComponent<TransformComponent>().GetTransform());
+      // GIZMO::CAMERA::RUNTIME
+      // auto camera_entity = m_ActiveScene->GetPrimaryCameraEntity();
+      // const auto& camera = camera_entity.GetComponent<CameraComponent>().Camera;
+      // const glm::mat4& camera_projection = camera.GetProjection();
+      // glm::mat4 camera_view = glm::inverse(camera_entity.GetComponent<TransformComponent>().GetTransform());
+
+      // GIZMO::CAMERA::EDITOR
+      const glm::mat4& camera_projection = m_EditorCamera.GetProjection();
+      glm::mat4 camera_view = m_EditorCamera.GetViewMatrix();
+
 
       // GIZMO::SUBJECT
       auto& selected_entity_transform_component = selected_entity.GetComponent<TransformComponent>();
@@ -199,6 +208,8 @@ namespace Buckshot {
 
   void EditorLayer::OnEvent(Event& event)
   {
+    m_EditorCamera.OnEvent(event);
+
     EventDispatcher dispatcher(event);
     dispatcher.Dispatch<KeyPressedEvent>(BS_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
   }
@@ -257,6 +268,7 @@ namespace Buckshot {
     }
 
     }
+    return false;
   }
 
   void EditorLayer::NewScene()

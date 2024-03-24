@@ -168,6 +168,7 @@
     <ClInclude Include="src\Buckshot\Math\Math.h" />
     <ClInclude Include="src\Buckshot\Renderer\Buffers.h" />
     <ClInclude Include="src\Buckshot\Renderer\Camera.h" />
+    <ClInclude Include="src\Buckshot\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Buckshot\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Buckshot\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Buckshot\Renderer\OrthographicCamera.h" />
@@ -636,6 +637,7 @@
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayerBuild.cpp" />
     <ClCompile Include="src\Buckshot\Math\Math.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\Buffers.cpp" />
+    <ClCompile Include="src\Buckshot\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\OrthographicCamera.cpp" />

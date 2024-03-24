@@ -33,7 +33,23 @@ namespace Buckshot {
     m_Registry.destroy(entity);
   }
 
-  void Scene::OnUpdate(Timestep timestep)
+  void Scene::OnUpdateEditor(Timestep timestep, EditorCamera& camera)
+  {
+    Renderer2D::BeginScene(camera);
+
+    auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+    for (auto entity : group)
+    {
+      auto transform = group.get<TransformComponent>(entity);
+      auto sprite = group.get<SpriteRendererComponent>(entity);
+
+      Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+    }
+
+    Renderer2D::EndScene();
+  }
+
+  void Scene::OnUpdateRuntime(Timestep timestep)
   {
     // Scripts Update
     m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
