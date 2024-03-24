@@ -198,7 +198,7 @@ namespace Buckshot {
 
       char buffer[256];
       std::memset(buffer, 0, sizeof(buffer));
-      std::strcpy(buffer, tag.c_str());
+      std::strncpy(buffer, tag.c_str(), sizeof(buffer));
       if (ImGui::InputText("##TAG", buffer, sizeof(buffer)))
       {
         tag = std::string(buffer);
