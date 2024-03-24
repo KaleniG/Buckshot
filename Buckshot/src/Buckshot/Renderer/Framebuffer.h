@@ -14,8 +14,8 @@ namespace Buckshot {
     // Depth/Stencil
     DEPTH24STENCIL8,
 
-    // Defaults
-    Depth = DEPTH24STENCIL8,
+    // Data
+    RED_INT
   };
 
   struct FramebufferTextureSpecification
@@ -54,6 +54,8 @@ namespace Buckshot {
 
     virtual void Bind() = 0;
     virtual void Unbind() = 0;
+
+    virtual int ReadPixel(uint32_t attachment_index, int x, int y) = 0;
 
     virtual void Resize(uint32_t width, uint32_t height) = 0;
 

@@ -33,17 +33,17 @@ namespace Buckshot {
       }
     }
 
-    static void AttachColorTexture(uint32_t id, int samples, GLenum format, uint32_t width, uint32_t height, int index)
+    static void AttachColorTexture(uint32_t id, int samples, GLenum internal_format, GLenum format, uint32_t width, uint32_t height, int index)
     {
       bool multisampled = samples > 1;
 
       if (multisampled)
       {
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internal_format, width, height, GL_FALSE);
       }
       else
       {
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -120,6 +120,18 @@ namespace Buckshot {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
+  int OpenGLFramebuffer::ReadPixel(uint32_t attachment_index, int x, int y)
+  {
+    BS_ASSERT(attachment_index < m_ColorAttachments.size(), "Invalid index, only up to 4 attachments can be done");
+
+    int pixel_data;
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0 + attachment_index);
+    glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixel_data);
+
+    return pixel_data;
+  }
+
   void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
   {
     BS_PROFILE_FUNCTION();
@@ -167,7 +179,10 @@ namespace Buckshot {
         switch (m_ColorAttachmentSpecifications[i].TextureFormat)
         {
           case FramebufferTextureFormat::RGBA8:
-            Utilities::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, m_Specification.Width, m_Specification.Height, i);
+            Utilities::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+            break;
+          case FramebufferTextureFormat::RED_INT:
+            Utilities::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
             break;
         }
       }

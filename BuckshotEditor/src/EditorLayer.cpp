@@ -13,7 +13,7 @@ namespace Buckshot {
   void EditorLayer::OnAttach()
   {
     FramebufferSpecification fbSpec;
-    fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
+    fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::DEPTH24STENCIL8 };
     fbSpec.Width = 1280;
     fbSpec.Height = 720;
     m_Framebuffer = Framebuffer::Create(fbSpec);
@@ -49,6 +49,23 @@ namespace Buckshot {
     RenderCommand::Clear();
     // Update scene
     m_ActiveScene->OnUpdateEditor(timestep, m_EditorCamera);
+
+
+    auto [mx, my] = ImGui::GetMousePos();
+    mx -= m_ViewportBounds[0].x;
+    my -= m_ViewportBounds[0].y;
+    glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+    my = viewportSize.y - my;
+    int mouseX = (int)mx;
+    int mouseY = (int)my;
+
+    if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+    {
+      int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+      BS_WARN("Pixel data = {0}", pixelData);
+    }
+
+
     m_Framebuffer->Unbind();
   }
 
@@ -141,13 +158,26 @@ namespace Buckshot {
     // VIEWPORT WINDOW
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
     ImGui::Begin("Viewport");
+    ImVec2 viewport_offset = ImGui::GetCursorPos();
+
     m_ViewportFocused = ImGui::IsWindowFocused();
     m_ViewportHovered = ImGui::IsWindowHovered();
     Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+
     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
     m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
     ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+    // MOUSE-PICKING
+    ImVec2 window_size = ImGui::GetWindowSize();
+    ImVec2 min_bound = ImGui::GetWindowPos();
+    min_bound.x += viewport_offset.x;
+    min_bound.y += viewport_offset.y;
+    ImVec2 max_bound = ImVec2(min_bound.x + window_size.x, min_bound.y + window_size.y);
+    m_ViewportBounds[0] = glm::vec2(min_bound.x, min_bound.y);
+    m_ViewportBounds[1] = glm::vec2(max_bound.x, max_bound.y);
+
 
     // GIZMOS
     Entity selected_entity = m_SceneHierarchyPanel.GetSelectedEntity();
