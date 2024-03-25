@@ -47,6 +47,7 @@ namespace Buckshot {
     m_Framebuffer->Bind();
     RenderCommand::ClearColor({ 0.1f, 0.1f, 0.1f, 1 });
     RenderCommand::Clear();
+    m_Framebuffer->ClearAttachment(1, -1);
     // Update scene
     m_ActiveScene->OnUpdateEditor(timestep, m_EditorCamera);
 

@@ -6,7 +6,7 @@
 namespace Buckshot {
 
   namespace Utilities {
-    static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
+    static GLenum ShaderDataType_BuckshotToOpenGL(ShaderDataType type)
     {
       switch (type)
       {
@@ -85,7 +85,7 @@ namespace Buckshot {
         glEnableVertexAttribArray(m_VertexBufferIndex);
         glVertexAttribPointer(m_VertexBufferIndex,
           element.GetComponentCount(),
-          Utilities::ShaderDataTypeToOpenGLBaseType(element.DataType),
+          Utilities::ShaderDataType_BuckshotToOpenGL(element.DataType),
           element.Normalized ? GL_TRUE : GL_FALSE,
           layout.GetStride(),
           (const void*)element.Offset);
@@ -101,7 +101,7 @@ namespace Buckshot {
           glEnableVertexAttribArray(m_VertexBufferIndex);
           glVertexAttribPointer(m_VertexBufferIndex,
             count,
-            Utilities::ShaderDataTypeToOpenGLBaseType(element.DataType),
+            Utilities::ShaderDataType_BuckshotToOpenGL(element.DataType),
             element.Normalized ? GL_TRUE : GL_FALSE,
             layout.GetStride(),
             (const void*)(element.Offset + sizeof(float) * count * i));

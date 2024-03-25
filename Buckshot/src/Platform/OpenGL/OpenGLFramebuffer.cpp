@@ -8,6 +8,21 @@ namespace Buckshot {
   static const uint32_t s_MaxFramebufferSize = 8192;
 
   namespace Utilities {
+    static GLenum FrambufferTextureFormat_BuckshotToOpenGL(FramebufferTextureFormat format)
+    {
+      switch (format)
+      {
+      case Buckshot::FramebufferTextureFormat::RGBA8:
+        return GL_RGBA8;
+      case Buckshot::FramebufferTextureFormat::DEPTH24STENCIL8:
+        return GL_DEPTH24_STENCIL8;
+      case Buckshot::FramebufferTextureFormat::RED_INT:
+        return GL_RED_INTEGER;
+      }
+      BS_ASSERT(false, "Invalid Framebuffer Texture Format specified, enum = \"{0}\"", (int)format);
+      return GL_INVALID_ENUM;
+    }
+
     static GLenum TextureTarget(bool is_multisampled)
     {
       return is_multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
@@ -92,7 +107,6 @@ namespace Buckshot {
         m_DepthAttachmentSpecification = spec;
     }
 
-
     Invalidate();
   }
 
@@ -118,6 +132,14 @@ namespace Buckshot {
     BS_PROFILE_FUNCTION();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  }
+
+  void OpenGLFramebuffer::ClearAttachment(uint32_t attachment_index, int value)
+  {
+    BS_ASSERT(attachment_index < m_ColorAttachments.size(), "Invalid index, only up to 4 attachments can be done");
+
+    auto spec = m_ColorAttachmentSpecifications[attachment_index];
+    glClearTexImage(m_ColorAttachments[attachment_index], 0, Utilities::FrambufferTextureFormat_BuckshotToOpenGL(spec.TextureFormat), GL_INT, &value);
   }
 
   int OpenGLFramebuffer::ReadPixel(uint32_t attachment_index, int x, int y)
