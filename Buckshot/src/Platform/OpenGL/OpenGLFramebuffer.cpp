@@ -29,8 +29,8 @@ namespace Buckshot {
       switch (format)
       {
       case FramebufferTextureFormat::DEPTH24STENCIL8: return true;
-      default: return false;
       }
+      return false;
     }
 
     static void AttachColorTexture(uint32_t id, int samples, GLenum internal_format, GLenum format, uint32_t width, uint32_t height, int index)

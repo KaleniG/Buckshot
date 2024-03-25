@@ -174,7 +174,7 @@ namespace Buckshot {
     ImVec2 min_bound = ImGui::GetWindowPos();
     min_bound.x += viewport_offset.x;
     min_bound.y += viewport_offset.y;
-    ImVec2 max_bound = ImVec2(min_bound.x + window_size.x, min_bound.y + window_size.y);
+    ImVec2 max_bound = ImVec2(min_bound.x + m_ViewportSize.x, min_bound.y + m_ViewportSize.y);
     m_ViewportBounds[0] = glm::vec2(min_bound.x, min_bound.y);
     m_ViewportBounds[1] = glm::vec2(max_bound.x, max_bound.y);
 
