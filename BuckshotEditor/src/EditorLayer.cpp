@@ -63,7 +63,10 @@ namespace Buckshot {
     if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
     {
       int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-      BS_WARN("Pixel data = {0}", pixelData);
+      if (pixelData == -1)
+        m_HoveredEntity = Entity();
+      else
+        m_HoveredEntity = Entity((entt::entity)pixelData, m_ActiveScene.get());
     }
 
 
@@ -150,10 +153,13 @@ namespace Buckshot {
     // STATS WINDOW
     ImGui::Begin("Stats");
     auto stats = Renderer2D::GetStats();
+    std::string hovered_entity_name = "None";
+    if (m_HoveredEntity) hovered_entity_name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
     ImGui::Text("Draw Calls: %d", stats.DrawCalls);
     ImGui::Text("Quad Count: %d", stats.QuadCount);
     ImGui::Text("Vertices Count: %d", stats.GetTotalVertexCount());
     ImGui::Text("Indices Count: %d", stats.GetTotalIndexCount());
+    ImGui::Text("Hovered Entity: %s", hovered_entity_name.c_str());
     ImGui::End();
 
     // VIEWPORT WINDOW
@@ -280,22 +286,26 @@ namespace Buckshot {
 
     case Key::Z:
     {
-      m_GizmoType = -1;
+      if (!ImGuizmo::IsUsing())
+        m_GizmoType = -1;
       return false;
     }
     case Key::X:
     {
-      m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+      if (!ImGuizmo::IsUsing())
+        m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
       return false;
     }
     case Key::C:
     {
-      m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+      if (!ImGuizmo::IsUsing())
+        m_GizmoType = ImGuizmo::OPERATION::ROTATE;
       return false;
     }
     case Key::V:
     {
-      m_GizmoType = ImGuizmo::OPERATION::SCALE;
+      if (!ImGuizmo::IsUsing())
+        m_GizmoType = ImGuizmo::OPERATION::SCALE;
       return false;
     }
 

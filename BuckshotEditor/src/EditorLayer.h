@@ -38,6 +38,7 @@ namespace Buckshot {
 
     // Gizmo
     int m_GizmoType = -1;
+    Entity m_HoveredEntity;
   };
 
 }

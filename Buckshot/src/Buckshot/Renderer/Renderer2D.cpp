@@ -15,6 +15,8 @@ namespace Buckshot {
     glm::vec2 TexCoord;
     float TexIndex;
     float TilingFactor;
+
+    int EntityID;
   };
 
   struct Renderer2DData
@@ -59,7 +61,8 @@ namespace Buckshot {
       { ShaderDataType::Float4, "a_Color" },
       { ShaderDataType::Float2, "a_TexCoord" },
       { ShaderDataType::Float, "a_TexIndex" },
-      { ShaderDataType::Float, "a_TilingFactor" }
+      { ShaderDataType::Float, "a_TilingFactor" },
+      { ShaderDataType::Int, "a_EntityID" }
     });
     s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
@@ -186,7 +189,12 @@ namespace Buckshot {
     s_Data.TextureSlotIndex = 1;
   }
 
-  void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+  void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id)
+  {
+    DrawQuad(transform, src.Color, entity_id);
+  }
+
+  void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entity_id)
   {
     constexpr size_t quadVertexCount = 4;
     constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
@@ -204,6 +212,7 @@ namespace Buckshot {
       s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
       s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
       s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+      s_Data.QuadVertexBufferPtr->EntityID = entity_id;
       s_Data.QuadVertexBufferPtr++;
     }
 
@@ -212,7 +221,7 @@ namespace Buckshot {
     s_Data.Stats.QuadCount++;
   }
 
-  void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tiling_factor /*= 1.0f*/, const glm::vec4& tint_color /*= glm::vec4(1.0f)*/)
+  void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tiling_factor /*= 1.0f*/, const glm::vec4& tint_color /*= glm::vec4(1.0f)*/, int entity_id)
   {
     BS_PROFILE_FUNCTION();
 
@@ -247,6 +256,7 @@ namespace Buckshot {
       s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
       s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
       s_Data.QuadVertexBufferPtr->TilingFactor = tiling_factor;
+      s_Data.QuadVertexBufferPtr->EntityID = entity_id;
       s_Data.QuadVertexBufferPtr++;
     }
 
@@ -255,7 +265,7 @@ namespace Buckshot {
     s_Data.Stats.QuadCount++;
   }
 
-  void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subtexture, const glm::vec4& tint_color /*= glm::vec4(1.0f)*/)
+  void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subtexture, const glm::vec4& tint_color /*= glm::vec4(1.0f)*/, int entity_id)
   {
     BS_PROFILE_FUNCTION();
 
@@ -292,6 +302,7 @@ namespace Buckshot {
       s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
       s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
       s_Data.QuadVertexBufferPtr->TilingFactor = tiling_factor;
+      s_Data.QuadVertexBufferPtr->EntityID = entity_id;
       s_Data.QuadVertexBufferPtr++;
     }
 
