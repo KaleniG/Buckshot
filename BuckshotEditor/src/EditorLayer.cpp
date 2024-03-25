@@ -165,7 +165,13 @@ namespace Buckshot {
     // VIEWPORT WINDOW
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
     ImGui::Begin("Viewport");
-    ImVec2 viewport_offset = ImGui::GetCursorPos();
+
+    // MOUSE-PICKING
+    auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+    auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+    auto viewportOffset = ImGui::GetWindowPos();
+    m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+    m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
     m_ViewportFocused = ImGui::IsWindowFocused();
     m_ViewportHovered = ImGui::IsWindowHovered();
@@ -176,14 +182,6 @@ namespace Buckshot {
     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
     ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-    // MOUSE-PICKING
-    ImVec2 window_size = ImGui::GetWindowSize();
-    ImVec2 min_bound = ImGui::GetWindowPos();
-    min_bound.x += viewport_offset.x;
-    min_bound.y += viewport_offset.y;
-    ImVec2 max_bound = ImVec2(min_bound.x + m_ViewportSize.x, min_bound.y + m_ViewportSize.y);
-    m_ViewportBounds[0] = glm::vec2(min_bound.x, min_bound.y);
-    m_ViewportBounds[1] = glm::vec2(max_bound.x, max_bound.y);
 
 
     // GIZMOS
@@ -192,9 +190,8 @@ namespace Buckshot {
     {
       ImGuizmo::SetOrthographic(false);
       ImGuizmo::SetDrawlist();
-      float window_width = (float)ImGui::GetWindowWidth();
-      float window_height = (float)ImGui::GetWindowHeight();
-      ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
+
+      ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
       // GIZMO::CAMERA::RUNTIME
       // auto camera_entity = m_ActiveScene->GetPrimaryCameraEntity();
@@ -250,6 +247,7 @@ namespace Buckshot {
 
     EventDispatcher dispatcher(event);
     dispatcher.Dispatch<KeyPressedEvent>(BS_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+    dispatcher.Dispatch<MouseButtonPressedEvent>(BS_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
   }
 
   bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
@@ -309,6 +307,16 @@ namespace Buckshot {
       return false;
     }
 
+    }
+    return false;
+  }
+
+  bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& event)
+  {
+    if (event.GetMouseButton() == Mouse::ButtonLeft)
+    {
+      if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
+        m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
     }
     return false;
   }
