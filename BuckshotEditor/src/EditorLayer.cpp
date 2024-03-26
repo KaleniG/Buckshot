@@ -150,6 +150,9 @@ namespace Buckshot {
     // SCENE HIEARACHY
     m_SceneHierarchyPanel.OnImGuiRender();
 
+    // CONTENT BRWOSER PANEL
+    m_ContentBrowserPanel.OnImGuiRender();
+
     // STATS WINDOW
     ImGui::Begin("Stats");
     auto stats = Renderer2D::GetStats();

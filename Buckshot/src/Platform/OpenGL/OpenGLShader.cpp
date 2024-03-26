@@ -36,7 +36,7 @@ namespace Buckshot {
     std::string shader = ReadFile(filepath);
     auto shaderSources = PreProcess(shader);
     Compile(shaderSources);
-    
+
     auto lastSlash = filepath.find_last_of("/\\");
     lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
     auto lastDot = filepath.rfind('.');

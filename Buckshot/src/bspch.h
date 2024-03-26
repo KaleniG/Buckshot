@@ -6,6 +6,7 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include <filesystem>
 
 #include <cstring>
 #include <string>

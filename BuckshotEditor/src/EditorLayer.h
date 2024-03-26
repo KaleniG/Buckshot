@@ -3,6 +3,7 @@
 #include <Buckshot.h>
 
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 namespace Buckshot {
 
@@ -36,6 +37,7 @@ namespace Buckshot {
     bool m_ViewportFocused = false;
     bool m_ViewportHovered = false;
     SceneHierarchyPanel m_SceneHierarchyPanel;
+    ContentBrowserPanel m_ContentBrowserPanel;
 
     // Gizmo
     int m_GizmoType = -1;

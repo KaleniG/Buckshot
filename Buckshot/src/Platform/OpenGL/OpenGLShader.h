@@ -40,7 +40,7 @@ namespace Buckshot {
   private:
     std::string ReadFile(const std::string& filepath);
     std::unordered_map<GLenum, std::string> PreProcess(const std::string& shaderSource);
-    void Compile(const std::unordered_map<GLenum, std::string>& shaderSources );
+    void Compile(const std::unordered_map<GLenum, std::string>& shaderSources);
 
   private:
     uint32_t m_RendererID;
