@@ -5,11 +5,11 @@
 
 namespace Buckshot {
 
-  static const std::filesystem::path s_AssetsPath("assets");
+  const std::filesystem::path g_AssetsPath("assets");
 
   ContentBrowserPanel::ContentBrowserPanel()
   {
-    m_CurrentDirectory = s_AssetsPath;
+    m_CurrentDirectory = g_AssetsPath;
     m_DirectoryIcon = Texture2D::Create("assets/textures/DirectoryIcon.png");
     m_FileIcon = Texture2D::Create("assets/textures/FileIcon.png");
   }
@@ -18,7 +18,7 @@ namespace Buckshot {
   {
     ImGui::Begin("Content Browser");
     
-    if (m_CurrentDirectory != s_AssetsPath)
+    if (m_CurrentDirectory != g_AssetsPath)
     {
       if (ImGui::Button("<-"))
       {
@@ -37,14 +37,24 @@ namespace Buckshot {
 
     ImGui::Columns(columnCount, 0, false);
 
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
     for (auto& directory_entry : std::filesystem::directory_iterator(m_CurrentDirectory))
     {
       const auto& path = directory_entry.path();
-      auto relative_path = std::filesystem::relative(path, s_AssetsPath);
+      auto relative_path = std::filesystem::relative(path, g_AssetsPath);
       std::string filename_string = relative_path.filename().string();
+      
+      ImGui::PushID(filename_string.c_str());
 
       Ref<Texture2D> icon = directory_entry.is_directory() ? m_DirectoryIcon : m_FileIcon;
       ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+      if (ImGui::BeginDragDropSource())
+      {
+        const wchar_t* item_path = relative_path.c_str();
+        ImGui::SetDragDropPayload("ASSET_BROWSER_FILE", item_path, (std::wcslen(item_path) + 1) * sizeof(wchar_t), ImGuiCond_Once);
+        ImGui::EndDragDropSource();
+      }
 
       if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
       {
@@ -55,7 +65,9 @@ namespace Buckshot {
       ImGui::TextWrapped(filename_string.c_str());
 
       ImGui::NextColumn();
+      ImGui::PopID();
     }
+    ImGui::PopStyleColor();
 
     ImGui::Columns(1);
 

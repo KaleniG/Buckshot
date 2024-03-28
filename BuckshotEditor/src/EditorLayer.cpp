@@ -7,6 +7,8 @@
 
 namespace Buckshot {
 
+  extern const std::filesystem::path g_AssetsPath("assets");
+
   EditorLayer::EditorLayer()
     : Layer("EditorLayer") {}
 
@@ -185,6 +187,15 @@ namespace Buckshot {
     uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
     ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
+    if (ImGui::BeginDragDropTarget())
+    {
+      if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_BROWSER_FILE"))
+      {
+        const wchar_t* path = (const wchar_t*)payload->Data;
+        OpenScene(std::filesystem::path(g_AssetsPath) / path);
+      }
+      ImGui::EndDragDropTarget();
+    }
 
 
     // GIZMOS
@@ -334,16 +345,18 @@ namespace Buckshot {
   void EditorLayer::OpenScene()
   {
     std::string filepath = FileDialogs::OpenFile("Buckshot Scene (*.bshot)\0*.bshot\0");
-
     if (!filepath.empty())
-    {
-      m_ActiveScene = CreateRef<Scene>();
-      m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+      OpenScene(filepath);
+  }
 
-      SceneSerializer serializer(m_ActiveScene);
-      serializer.Deserialize(filepath);
-      m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-    }
+  void EditorLayer::OpenScene(const std::filesystem::path filepath)
+  {
+    m_ActiveScene = CreateRef<Scene>();
+    m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+    SceneSerializer serializer(m_ActiveScene);
+    serializer.Deserialize(filepath.string());
+    m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
   }
 
   void EditorLayer::SaveSceneAs()

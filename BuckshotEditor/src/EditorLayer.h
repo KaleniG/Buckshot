@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bspch.h>
 #include <Buckshot.h>
 
 #include "Panels/SceneHierarchyPanel.h"
@@ -24,6 +25,7 @@ namespace Buckshot {
     bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
     void NewScene();
     void OpenScene();
+    void OpenScene(const std::filesystem::path filepath);
     void SaveSceneAs();
 
   private:
