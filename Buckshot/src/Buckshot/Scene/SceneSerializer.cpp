@@ -139,6 +139,20 @@ namespace Buckshot {
 
       auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
       out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+      out << YAML::Key << "HasTexture" << YAML::Value << (bool)spriteRendererComponent.Texture;
+      if (spriteRendererComponent.Texture)
+      {
+        out << YAML::Key << "Path" << YAML::Value << spriteRendererComponent.Texture->GetSourcePath();
+        out << YAML::Key << "Tiling Factor" << YAML::Value << spriteRendererComponent.TilingFactor;
+        
+
+      }
+      else
+      {
+        out << YAML::Key << "Path" << YAML::Value << std::string();
+        out << YAML::Key << "Tiling Factor" << YAML::Value << 0.0f;
+
+      }
 
       out << YAML::EndMap; // SpriteRendererComponent
     }
@@ -232,6 +246,11 @@ namespace Buckshot {
         {
           auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
           src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+          if (spriteRendererComponent["HasTexture"].as<bool>() == true)
+          {
+            src.Texture = Texture2D::Create(spriteRendererComponent["Path"].as<std::string>());
+            src.TilingFactor = spriteRendererComponent["Tiling Factor"].as<float>();
+          }
         }
       }
     }
