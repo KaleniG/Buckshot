@@ -191,7 +191,10 @@ namespace Buckshot {
 
   void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id)
   {
-    DrawQuad(transform, src.Color, entity_id);
+    if (src.Texture)
+      DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entity_id);
+    else
+      DrawQuad(transform, src.Color, entity_id);
   }
 
   void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entity_id)

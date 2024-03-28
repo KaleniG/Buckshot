@@ -8,6 +8,8 @@
 
 namespace Buckshot {
 
+  const std::filesystem::path g_AssetsPath("assets");
+
   static void DrawVec3Control(const std::string& label, glm::vec3& values, float reset_value = 0.0f, float column_width = 100.0f)
   {
     ImGuiIO& io = ImGui::GetIO();
@@ -333,6 +335,20 @@ namespace Buckshot {
     DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
     {
         ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+        ImGui::Button("Texture");
+        if (ImGui::BeginDragDropTarget())
+        {
+          if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_BROWSER_FILE"))
+          {
+            const wchar_t* path = (const wchar_t*)payload->Data;
+            std::filesystem::path texture_path = std::filesystem::path(g_AssetsPath) / path;
+            component.Texture = Texture2D::Create(texture_path.string());
+          }
+          ImGui::EndDragDropTarget();
+        }
+        if (component.Texture)
+          ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
     });
 
     ImGui::PopStyleVar();

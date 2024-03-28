@@ -4,6 +4,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+#include "Buckshot/Renderer/Texture.h"
 #include "Buckshot/Scene/ScriptableEntity.h"
 #include "Buckshot/Scene/SceneCamera.h"
 
@@ -41,6 +42,8 @@ namespace Buckshot {
   struct SpriteRendererComponent
   {
     glm::vec4 Color = glm::vec4(1.0f);
+    Ref<Texture2D> Texture;
+    float TilingFactor = 1.0f;
 
     SpriteRendererComponent() = default;
     SpriteRendererComponent(const SpriteRendererComponent&) = default;
