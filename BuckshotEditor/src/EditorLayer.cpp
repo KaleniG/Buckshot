@@ -14,6 +14,10 @@ namespace Buckshot {
 
   void EditorLayer::OnAttach()
   {
+    m_IconStop = Texture2D::Create("assets/textures/IconStop.png");
+    m_IconPlay = Texture2D::Create("assets/textures/IconPlay.png");
+
+
     FramebufferSpecification fbSpec;
     fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::DEPTH24STENCIL8 };
     fbSpec.Width = 1280;
@@ -41,19 +45,33 @@ namespace Buckshot {
       m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
     }
 
-    if (m_ViewportFocused)
-      m_EditorCamera.OnUpdate(timestep);
-
     // Render
     Renderer2D::ResetStats();
     m_Framebuffer->Bind();
     RenderCommand::ClearColor({ 0.1f, 0.1f, 0.1f, 1 });
     RenderCommand::Clear();
     m_Framebuffer->ClearAttachment(1, -1);
+    
     // Update scene
-    m_ActiveScene->OnUpdateEditor(timestep, m_EditorCamera);
+    switch (m_SceneState)
+    {
+      case SceneState::Edit:
+      {
+        if (m_ViewportFocused)
+          m_EditorCamera.OnUpdate(timestep);
 
+        m_ActiveScene->OnUpdateEditor(timestep, m_EditorCamera);
+        break;
+      }
+      case SceneState::Play: 
+      {
+        m_GizmoType = -1;
+        m_ActiveScene->OnUpdateRuntime(timestep);
+        break;
+      }
+    }
 
+    // Gizmos related stuff
     auto [mx, my] = ImGui::GetMousePos();
     mx -= m_ViewportBounds[0].x;
     my -= m_ViewportBounds[0].y;
@@ -70,7 +88,6 @@ namespace Buckshot {
       else
         m_HoveredEntity = Entity((entt::entity)pixelData, m_ActiveScene.get());
     }
-
 
     m_Framebuffer->Unbind();
   }
@@ -251,8 +268,43 @@ namespace Buckshot {
     ImGui::End();
     ImGui::PopStyleVar();
 
+    UI_Toolbar();
+
     // END
     ImGui::End();
+  }
+
+  void EditorLayer::UI_Toolbar()
+  {
+    auto& colors = ImGui::GetStyle().Colors;
+    const auto& button_hovered = colors[ImGuiCol_ButtonHovered];
+    const auto& button_active = colors[ImGuiCol_ButtonActive];
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(button_hovered.x, button_hovered.y, button_hovered.z, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(button_active.x, button_active.y, button_active.z, 0.5f));
+    ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+    float size = ImGui::GetWindowHeight() - 4.0f;
+    Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+    ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x / 2.0f) - (size / 2.0f));
+    if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+    {
+      if (m_SceneState == SceneState::Edit)
+      {
+        OnScenePlay();
+      }
+      else if (m_SceneState == SceneState::Play)
+      {
+        OnSceneStop();
+      }
+    }
+
+    ImGui::End();
+    ImGui::PopStyleColor(3);
+    ImGui::PopStyleVar(2);
   }
 
   void EditorLayer::OnEvent(Event& event)
@@ -320,7 +372,6 @@ namespace Buckshot {
         m_GizmoType = ImGuizmo::OPERATION::SCALE;
       return false;
     }
-
     }
     return false;
   }
@@ -368,6 +419,16 @@ namespace Buckshot {
       SceneSerializer serializer(m_ActiveScene);
       serializer.Serialize(filepath);
     }
+  }
+
+  void EditorLayer::OnScenePlay()
+  {
+    m_SceneState = SceneState::Play;
+  }
+
+  void EditorLayer::OnSceneStop()
+  {
+    m_SceneState = SceneState::Edit;
   }
 
 }

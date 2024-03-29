@@ -20,28 +20,46 @@ namespace Buckshot {
     void OnUpdate(Timestep timestep) override;
     void OnImGuiRender() override;
     void OnEvent(Event& event) override;
+
   private:
+    void OnScenePlay();
+    void OnSceneStop();
+
     bool OnKeyPressed(KeyPressedEvent& event);
     bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
+
     void NewScene();
     void OpenScene();
     void OpenScene(const std::filesystem::path filepath);
     void SaveSceneAs();
+
+    void UI_Toolbar();
 
   private:
     EditorCamera m_EditorCamera;
     Ref<Scene> m_ActiveScene;
 
     // GUI
+    enum class SceneState
+    {
+      Edit,
+      Play
+    };
+
+    Ref<Texture2D> m_IconStop;
+    Ref<Texture2D> m_IconPlay;
+
     Ref<Framebuffer> m_Framebuffer;
     glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
     glm::vec2 m_ViewportBounds[2];
     bool m_ViewportFocused = false;
     bool m_ViewportHovered = false;
+
     SceneHierarchyPanel m_SceneHierarchyPanel;
     ContentBrowserPanel m_ContentBrowserPanel;
+    SceneState m_SceneState = SceneState::Edit;
 
-    // Gizmo
+    // Gizmos
     int m_GizmoType = -1;
     Entity m_HoveredEntity;
   };

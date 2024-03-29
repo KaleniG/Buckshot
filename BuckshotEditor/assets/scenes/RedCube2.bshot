@@ -2,16 +2,34 @@ Scene: Untitled
 Entities:
   - Entity: 12837192831273
     TagComponent:
-      Tag: Top
+      Tag: Camera
     TransformComponent:
-      Position: [0, 0.5, 0]
-      Rotation: [1.57079637, 0.785398185, 0]
+      Position: [0, 2.5, 3.5999999]
+      Rotation: [-0.699999988, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 12837192831273
+    TagComponent:
+      Tag: Right
+    TransformComponent:
+      Position: [0.351999998, 0, 0.349999994]
+      Rotation: [0, 0.785398185, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [1, 0.0604838729, 0.0604838729, 1]
+      Color: [1, 0.245967746, 0.245967746, 1]
       HasTexture: true
-      Path: assets\textures\ChernoLogo.png
-      Tiling Factor: 6.19999981
+      Path: assets\textures\RPGpack_sheet_2X.png
+      Tiling Factor: 1.39999998
   - Entity: 12837192831273
     TagComponent:
       Tag: Left
@@ -26,13 +44,13 @@ Entities:
       Tiling Factor: 2.0999999
   - Entity: 12837192831273
     TagComponent:
-      Tag: Right
+      Tag: Top
     TransformComponent:
-      Position: [0.351999998, 0, 0.349999994]
-      Rotation: [0, 0.785398185, 0]
+      Position: [0, 0.5, 0]
+      Rotation: [1.57079637, 0.785398185, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [1, 0.245967746, 0.245967746, 1]
+      Color: [1, 0.0604838729, 0.0604838729, 1]
       HasTexture: true
-      Path: assets\textures\RPGpack_sheet_2X.png
-      Tiling Factor: 1.39999998
+      Path: assets\textures\ChernoLogo.png
+      Tiling Factor: 6.19999981
