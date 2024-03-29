@@ -32,12 +32,14 @@ namespace Buckshot {
     void OpenScene();
     void OpenScene(const std::filesystem::path filepath);
     void SaveSceneAs();
+    void SaveScene();
 
     void UI_Toolbar();
 
   private:
     EditorCamera m_EditorCamera;
     Ref<Scene> m_ActiveScene;
+    std::string m_CurrentlyOpenScene = std::string();
 
     // GUI
     enum class SceneState

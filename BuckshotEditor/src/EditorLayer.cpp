@@ -149,6 +149,11 @@ namespace Buckshot {
           SaveSceneAs();
         }
 
+        if (ImGui::MenuItem("Save", "Ctrl + S"))
+        {
+          SaveScene();
+        }
+
         if (ImGui::MenuItem("Open...", "Ctrl + O"))
         {
           OpenScene();
@@ -343,6 +348,8 @@ namespace Buckshot {
     {
       if (control_pressed && shift_pressed)
         SaveSceneAs();
+      if (control_pressed)
+        SaveScene();
       return false;
     }
 
@@ -408,6 +415,7 @@ namespace Buckshot {
     SceneSerializer serializer(m_ActiveScene);
     serializer.Deserialize(filepath.string());
     m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+    m_CurrentlyOpenScene = filepath.string();
   }
 
   void EditorLayer::SaveSceneAs()
@@ -418,6 +426,20 @@ namespace Buckshot {
     {
       SceneSerializer serializer(m_ActiveScene);
       serializer.Serialize(filepath);
+      m_CurrentlyOpenScene = filepath;
+    }
+  }
+
+  void EditorLayer::SaveScene()
+  {
+    if (m_CurrentlyOpenScene.empty())
+    {
+      SaveSceneAs();
+    }
+    else
+    {
+      SceneSerializer serializer(m_ActiveScene);
+      serializer.Serialize(m_CurrentlyOpenScene);
     }
   }
 
