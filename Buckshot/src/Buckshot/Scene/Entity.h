@@ -2,7 +2,9 @@
 
 #include <entt.hpp>
 
+#include "Buckshot/Core/UUID.h"
 #include "Buckshot/Scene/Scene.h"
+#include "Buckshot/Scene/Components.h"
 
 namespace Buckshot {
 
@@ -39,6 +41,8 @@ namespace Buckshot {
       BS_ASSERT(HasComponent<T>(), "Entity does not have the component!");
       m_Scene->m_Registry.remove<T>(m_EntityHandle);
     }
+
+    UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 
     operator bool() const { return m_EntityHandle != entt::null; }
     operator uint32_t() const { return (uint32_t)m_EntityHandle; }

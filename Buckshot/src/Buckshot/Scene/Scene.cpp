@@ -7,6 +7,7 @@
 #include <entt.hpp>
 
 #include "Buckshot/Renderer/Renderer2D.h"
+#include "Buckshot/Scene/ScriptableEntity.h"
 #include "Buckshot/Scene/Components.h"
 #include "Buckshot/Scene/Entity.h"
 #include "Buckshot/Scene/Scene.h"
@@ -45,16 +46,28 @@ namespace Buckshot {
 
   Entity Scene::CreateEntity(const std::string& name)
   {
+    return CreateEntityWithUUID(UUID(), name);
+  }
+
+  Buckshot::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
+  {
     Entity entity = { m_Registry.create(), this };
-    entity.AddComponent<TransformComponent>();
+
+    entity.AddComponent<IDComponent>(uuid);
+
     auto& tag = entity.AddComponent<TagComponent>();
     tag.Tag = (name.empty()) ? "Entity" : name;
+
+    entity.AddComponent<TransformComponent>();
+
     return entity;
   }
 
   Buckshot::Entity Scene::DuplicateEntity(Entity& other)
   {
     Entity entity = { m_Registry.create(), this };
+
+    entity.AddComponent<IDComponent>();
 
     if (other.HasComponent<TagComponent>())
     {

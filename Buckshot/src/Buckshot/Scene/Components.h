@@ -4,11 +4,20 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+#include "Buckshot/Core/UUID.h"
 #include "Buckshot/Renderer/Texture.h"
-#include "Buckshot/Scene/ScriptableEntity.h"
 #include "Buckshot/Scene/SceneCamera.h"
 
 namespace Buckshot {
+
+  struct IDComponent
+  {
+    UUID ID;
+
+    IDComponent() = default;
+    IDComponent(const IDComponent&) = default;
+    IDComponent(const UUID& id) : ID(id) {}
+  };
 
   struct TagComponent
   {
@@ -61,6 +70,7 @@ namespace Buckshot {
     CameraComponent(const SceneCamera& camera) : Camera(camera) {}
   };
 
+  class ScriptableEntity;
   struct NativeScriptComponent
   {
     ScriptableEntity* Instance = nullptr;

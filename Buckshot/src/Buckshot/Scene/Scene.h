@@ -3,6 +3,7 @@
 #include <entt.hpp>
 
 #include "Buckshot/Core/Timestep.h"
+#include "Buckshot/Core/UUID.h"
 #include "Buckshot/Renderer/EditorCamera.h"
 
 class b2World;
@@ -18,6 +19,7 @@ namespace Buckshot {
     ~Scene();
 
     Entity CreateEntity(const std::string& name = std::string());
+    Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
     Entity DuplicateEntity(Entity& entity);
     void DestroyEntity(Entity entity);
 

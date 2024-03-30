@@ -7,7 +7,9 @@
 #include <algorithm>
 #include <functional>
 #include <filesystem>
+#include <random>
 
+#include <xhash>
 #include <cstring>
 #include <string>
 #include <sstream>

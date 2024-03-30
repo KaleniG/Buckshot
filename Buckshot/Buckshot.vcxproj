@@ -158,6 +158,7 @@
     <ClInclude Include="src\Buckshot\Core\Log.h" />
     <ClInclude Include="src\Buckshot\Core\MouseCodes.h" />
     <ClInclude Include="src\Buckshot\Core\Timestep.h" />
+    <ClInclude Include="src\Buckshot\Core\UUID.h" />
     <ClInclude Include="src\Buckshot\Core\Window.h" />
     <ClInclude Include="src\Buckshot\Debug\Instrumentor.h" />
     <ClInclude Include="src\Buckshot\Events\ApplicationEvent.h" />
@@ -631,6 +632,7 @@
     <ClCompile Include="src\Buckshot\Core\Layer.cpp" />
     <ClCompile Include="src\Buckshot\Core\LayerStack.cpp" />
     <ClCompile Include="src\Buckshot\Core\Log.cpp" />
+    <ClCompile Include="src\Buckshot\Core\UUID.cpp" />
     <ClCompile Include="src\Buckshot\Core\Window.cpp" />
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayerBuild.cpp" />

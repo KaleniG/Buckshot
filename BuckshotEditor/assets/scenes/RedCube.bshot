@@ -1,30 +1,6 @@
 Scene: Untitled
 Entities:
-  - Entity: 12837192831273
-    TagComponent:
-      Tag: Right
-    TransformComponent:
-      Position: [0.351999998, 0, 0.349999994]
-      Rotation: [0, 0.785398185, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0.245967746, 0.245967746, 1]
-      HasTexture: false
-      Path: ""
-      Tiling Factor: 0
-  - Entity: 12837192831273
-    TagComponent:
-      Tag: Left
-    TransformComponent:
-      Position: [-0.354999989, 0, 0.349999994]
-      Rotation: [0, -0.785398185, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0.713709712, 0, 0, 1]
-      HasTexture: false
-      Path: ""
-      Tiling Factor: 0
-  - Entity: 12837192831273
+  - Entity: 8461537521433670754
     TagComponent:
       Tag: Top
     TransformComponent:
@@ -34,5 +10,23 @@ Entities:
     SpriteRendererComponent:
       Color: [1, 0.0604838729, 0.0604838729, 1]
       HasTexture: false
-      Path: ""
-      Tiling Factor: 0
+  - Entity: 5998851816980690309
+    TagComponent:
+      Tag: Left
+    TransformComponent:
+      Position: [-0.354999989, 0, 0.349999994]
+      Rotation: [0, -0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.713709712, 0, 0, 1]
+      HasTexture: false
+  - Entity: 12688310004284072372
+    TagComponent:
+      Tag: Right
+    TransformComponent:
+      Position: [0.351999998, 0, 0.349999994]
+      Rotation: [0, 0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.245967746, 0.245967746, 1]
+      HasTexture: false
