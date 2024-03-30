@@ -8,6 +8,28 @@
 namespace YAML {
 
   template<>
+  struct convert<glm::vec2>
+  {
+    static Node encode(const glm::vec2& rhs)
+    {
+      Node node;
+      node.push_back(rhs.x);
+      node.push_back(rhs.y);
+      return node;
+    }
+
+    static bool decode(const Node& node, glm::vec2& rhs)
+    {
+      if (!node.IsSequence() || node.size() != 2)
+        return false;
+
+      rhs.x = node[0].as<float>();
+      rhs.y = node[1].as<float>();
+      return true;
+    }
+  };
+
+  template<>
   struct convert<glm::vec3>
   {
     static Node encode(const glm::vec3& rhs)
@@ -61,6 +83,13 @@ namespace YAML {
 
 namespace Buckshot {
   
+  YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
+  {
+    out << YAML::Flow;
+    out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+    return out;
+  }
+
   YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
   {
     out << YAML::Flow;
@@ -144,17 +173,37 @@ namespace Buckshot {
       {
         out << YAML::Key << "Path" << YAML::Value << spriteRendererComponent.Texture->GetSourcePath();
         out << YAML::Key << "Tiling Factor" << YAML::Value << spriteRendererComponent.TilingFactor;
-        
-
-      }
-      else
-      {
-        out << YAML::Key << "Path" << YAML::Value << std::string();
-        out << YAML::Key << "Tiling Factor" << YAML::Value << 0.0f;
-
       }
 
       out << YAML::EndMap; // SpriteRendererComponent
+    }
+
+    if (entity.HasComponent<Rigidbody2DComponent>())
+    {
+      out << YAML::Key << "Rigidbody2DComponent";
+      out << YAML::BeginMap; // Rigidbody2DComponent
+
+      auto& rb2d_component = entity.GetComponent<Rigidbody2DComponent>();
+      out << YAML::Key << "Type" << YAML::Value << (int)rb2d_component.Type;
+      out << YAML::Key << "Fixed Rotation" << YAML::Value << rb2d_component.FixedRotation;
+
+      out << YAML::EndMap; // Rigidbody2DComponent
+    }
+
+    if (entity.HasComponent<BoxCollider2DComponent>())
+    {
+      out << YAML::Key << "BoxCollider2DComponent";
+      out << YAML::BeginMap; // BoxCollider2DComponent
+
+      auto& bc2d_component = entity.GetComponent<BoxCollider2DComponent>();
+      out << YAML::Key << "Offset" << YAML::Value << bc2d_component.Offset;
+      out << YAML::Key << "Size" << YAML::Value << bc2d_component.Size;
+      out << YAML::Key << "Density" << YAML::Value << bc2d_component.Density;
+      out << YAML::Key << "Friction" << YAML::Value << bc2d_component.Friction;
+      out << YAML::Key << "Restituition" << YAML::Value << bc2d_component.Restituition;
+      out << YAML::Key << "Restituition Threshold" << YAML::Value << bc2d_component.RestituitionThreshold;
+
+      out << YAML::EndMap; // BoxCollider2DComponent
     }
 
     out << YAML::EndMap; // Entity
@@ -251,6 +300,26 @@ namespace Buckshot {
             src.Texture = Texture2D::Create(spriteRendererComponent["Path"].as<std::string>());
             src.TilingFactor = spriteRendererComponent["Tiling Factor"].as<float>();
           }
+        }
+
+        auto rigidbody2d_component = entity["Rigidbody2DComponent"];
+        if (rigidbody2d_component)
+        {
+          auto& rb2d = deserializedEntity.AddComponent<Rigidbody2DComponent>();
+          rb2d.Type = (Rigidbody2DComponent::BodyType)rigidbody2d_component["Type"].as<int>();
+          rb2d.FixedRotation = rigidbody2d_component["Fixed Rotation"].as<bool>();
+        }
+
+        auto boxcollider2d_component = entity["BoxCollider2DComponent"];
+        if (boxcollider2d_component)
+        {
+          auto& bc2d = deserializedEntity.AddComponent<BoxCollider2DComponent>();
+          bc2d.Size = boxcollider2d_component["Size"].as<glm::vec2>();
+          bc2d.Offset = boxcollider2d_component["Offset"].as<glm::vec2>();
+          bc2d.Density = boxcollider2d_component["Density"].as<float>();
+          bc2d.Friction = boxcollider2d_component["Friction"].as<float>();
+          bc2d.Restituition = boxcollider2d_component["Restituition"].as<float>();
+          bc2d.RestituitionThreshold = boxcollider2d_component["Restituition Threshold"].as<float>();
         }
       }
     }

@@ -168,6 +168,21 @@ namespace Buckshot {
 
         ImGui::EndMenu();
       }
+      if (ImGui::BeginMenu("Scene"))
+      {
+        if (ImGui::MenuItem("New Entity"))
+        {
+          m_ActiveScene->CreateEntity("NewEntity");
+        }
+
+        if (ImGui::MenuItem("Duplicate Entity", "Ctrl + D", nullptr, (bool)m_SceneHierarchyPanel.GetSelectedEntity()))
+        {
+          Entity selected_entity = m_SceneHierarchyPanel.GetSelectedEntity();
+          m_ActiveScene->DuplicateEntity(selected_entity);
+        }
+
+        ImGui::EndMenu();
+      }
       ImGui::EndMenuBar();
     }
 
@@ -331,7 +346,7 @@ namespace Buckshot {
 
     switch (event.GetKeyCode())
     {
-    // Shortcuts
+    // File Options Shortcuts
     case Key::N:
     {
       if (control_pressed)
@@ -346,11 +361,32 @@ namespace Buckshot {
     }
     case Key::S:
     {
-      if (control_pressed && shift_pressed)
-        SaveSceneAs();
       if (control_pressed)
-        SaveScene();
+      { 
+        if (shift_pressed)
+          SaveSceneAs();
+        else
+          SaveScene();
+      }
       return false;
+    }
+
+    // Entities Shortcuts
+
+    case Key::Delete:
+    {
+      if (m_SceneHierarchyPanel.GetSelectedEntity())
+      {
+        m_ActiveScene->DestroyEntity(m_SceneHierarchyPanel.GetSelectedEntity());
+      }
+    }
+    case Key::D:
+    {
+      if (control_pressed)
+      {
+        Entity selected_entity = m_SceneHierarchyPanel.GetSelectedEntity();
+        m_ActiveScene->DuplicateEntity(selected_entity);
+      }
     }
 
     // Gizmo
@@ -445,11 +481,13 @@ namespace Buckshot {
 
   void EditorLayer::OnScenePlay()
   {
+    m_ActiveScene->OnRuntimeStart();
     m_SceneState = SceneState::Play;
   }
 
   void EditorLayer::OnSceneStop()
   {
+    m_ActiveScene->OnRuntimeStop();
     m_SceneState = SceneState::Edit;
   }
 

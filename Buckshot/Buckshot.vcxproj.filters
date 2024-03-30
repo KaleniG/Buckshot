@@ -19,6 +19,9 @@
     <Filter Include="src\Buckshot\ImGui">
       <UniqueIdentifier>{8990698B-7574-2AE1-DED4-2434CAD71463}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Buckshot\Math">
+      <UniqueIdentifier>{58106ABE-C426-6854-0D9E-F37579F338DC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Buckshot\Renderer">
       <UniqueIdentifier>{A5964ECE-1103-0AC9-DAF6-A12646222C31}</UniqueIdentifier>
     </Filter>
@@ -123,16 +126,28 @@
     <ClInclude Include="src\Buckshot\ImGui\ImGuiLayer.h">
       <Filter>src\Buckshot\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buckshot\Math\Math.h">
+      <Filter>src\Buckshot\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\Buffers.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\Camera.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buckshot\Renderer\EditorCamera.h">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\Framebuffer.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\GraphicsContext.h">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Renderer\OrthographicCamera.h">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Renderer\OrthographicCameraController.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\RenderCommand.h">
@@ -1491,10 +1506,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Buckshot\Math\Math.h" />
-    <ClInclude Include="src\Buckshot\Renderer\EditorCamera.h" />
-    <ClInclude Include="src\Buckshot\Renderer\OrthographicCamera.h" />
-    <ClInclude Include="src\Buckshot\Renderer\OrthographicCameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buckshot\Core\Application.cpp">
@@ -1518,13 +1529,25 @@
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayerBuild.cpp">
       <Filter>src\Buckshot\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Buckshot\Math\Math.cpp">
+      <Filter>src\Buckshot\Math</Filter>
+    </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\Buffers.cpp">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Renderer\EditorCamera.cpp">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\Framebuffer.cpp">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\GraphicsContext.cpp">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Renderer\OrthographicCameraController.cpp">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\RenderCommand.cpp">
@@ -1623,9 +1646,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Buckshot\Math\Math.cpp" />
-    <ClCompile Include="src\Buckshot\Renderer\EditorCamera.cpp" />
-    <ClCompile Include="src\Buckshot\Renderer\OrthographicCamera.cpp" />
-    <ClCompile Include="src\Buckshot\Renderer\OrthographicCameraController.cpp" />
   </ItemGroup>
 </Project>

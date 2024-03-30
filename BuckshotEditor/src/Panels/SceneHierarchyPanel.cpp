@@ -16,7 +16,6 @@ namespace Buckshot {
     auto bold_font = io.Fonts->Fonts[0];
 
     ImGui::PushID(label.c_str());
-
     ImGui::Columns(2);
     ImGui::SetColumnWidth(0.0f, column_width);
     ImGui::Text(label.c_str());
@@ -54,6 +53,47 @@ namespace Buckshot {
 
     ImGui::SameLine();
     ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::PopItemWidth();
+
+    ImGui::PopStyleVar();
+    ImGui::Columns(1);
+    ImGui::PopID();
+  }
+
+  static void DrawVec2Control(const std::string& label, glm::vec2& values, float reset_value = 0.0f, float column_width = 100.0f)
+  {
+    ImGuiIO& io = ImGui::GetIO();
+    auto bold_font = io.Fonts->Fonts[0];
+
+    ImGui::PushID(label.c_str());
+
+    ImGui::Columns(2);
+    ImGui::SetColumnWidth(0.0f, column_width);
+    ImGui::Text(label.c_str());
+    ImGui::NextColumn();
+    ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+
+    float line_height = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    ImVec2 button_size = ImVec2(line_height + 3.0f, line_height);
+
+    ImGui::PushFont(bold_font);
+    if (ImGui::Button("X", button_size))
+      values.x = reset_value;
+    ImGui::PopFont();
+
+    ImGui::SameLine();
+    ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+
+    ImGui::PushFont(bold_font);
+    if (ImGui::Button("Y", button_size))
+      values.y = reset_value;
+    ImGui::PopFont();
+
+    ImGui::SameLine();
+    ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -180,6 +220,11 @@ namespace Buckshot {
         entity_deleted = true;
       }
 
+      if (ImGui::MenuItem("Duplicate"))
+      {
+        m_SelectionContext = m_Context->DuplicateEntity(entity);
+      }
+
       ImGui::EndPopup();
     }
 
@@ -245,6 +290,26 @@ namespace Buckshot {
         }
       }
 
+      if (!entity.HasComponent<Rigidbody2DComponent>())
+      {
+        present_any_component = true;
+        if (ImGui::MenuItem("Rigidbody2D"))
+        {
+          m_SelectionContext.AddComponent<Rigidbody2DComponent>();
+          ImGui::CloseCurrentPopup();
+        }
+      }
+
+      if (!entity.HasComponent<BoxCollider2DComponent>())
+      {
+        present_any_component = true;
+        if (ImGui::MenuItem("BoxCollider2D"))
+        {
+          m_SelectionContext.AddComponent<BoxCollider2DComponent>();
+          ImGui::CloseCurrentPopup();
+        }
+      }
+
       if (!present_any_component)
       {
         ImGui::Text("No Components Available");
@@ -257,9 +322,11 @@ namespace Buckshot {
 
     DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
     {
+        ImGui::Separator();
         DrawVec3Control("Position", component.Position);
         DrawVec3Control("Rotation", component.Rotation);
         DrawVec3Control("Scale", component.Scale, 1.0f);
+        ImGui::Separator();
     });
 
     DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
@@ -349,6 +416,46 @@ namespace Buckshot {
         }
         if (component.Texture)
           ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+    });
+
+    DrawComponent<Rigidbody2DComponent>("Rigidbody2D", entity, [](auto& component)
+    {
+      const char* body_type_strings[] = { "Static", "Dynamic", "Kinematic"};
+      const char* current_body_type_string = body_type_strings[(int)component.Type];
+
+      if (ImGui::BeginCombo("Body Type", current_body_type_string))
+      {
+        for (int i = 0; i < 3; i++)
+        {
+          bool isSelected = current_body_type_string == body_type_strings[i];
+          if (ImGui::Selectable(body_type_strings[i], isSelected))
+          {
+            current_body_type_string = body_type_strings[i];
+            component.Type = (Rigidbody2DComponent::BodyType)i;
+          }
+
+          if (isSelected)
+            ImGui::SetItemDefaultFocus();
+        }
+
+        ImGui::EndCombo();
+      }
+
+      ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
+
+    });
+
+    DrawComponent<BoxCollider2DComponent>("BoxCollider2D", entity, [](auto& component)
+    {
+      ImGui::Separator();
+      DrawVec2Control("Size", component.Size, 0.5f);
+      DrawVec2Control("Offset", component.Offset);
+      ImGui::Separator();
+
+      ImGui::InputFloat("Density", &component.Density);
+      ImGui::InputFloat("Friction", &component.Friction);
+      ImGui::InputFloat("Restituition", &component.Restituition);
+      ImGui::InputFloat("RestituitionThreshold", &component.RestituitionThreshold);
     });
 
     ImGui::PopStyleVar();

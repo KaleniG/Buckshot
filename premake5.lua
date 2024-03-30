@@ -36,12 +36,14 @@ IncludeDir["EnTT"]		= "Buckshot/vendor/EnTT/include"
 IncludeDir["stb_image"] = "Buckshot/vendor/stb_image"
 IncludeDir["YAML"] 		= "Buckshot/vendor/YAML/include"
 IncludeDir["ImGuizmo"]  = "Buckshot/vendor/ImGuizmo"
+IncludeDir["Box2D"]  	= "Buckshot/vendor/Box2D/include"
 
 group "Dependencies"
 	include "Buckshot/vendor/GLFW"
 	include "Buckshot/vendor/GLAD"
 	include "Buckshot/vendor/ImGui"
 	include "Buckshot/vendor/YAML"
+	include "Buckshot/vendor/Box2D"
 group ""
 
 project "Buckshot"
@@ -80,7 +82,8 @@ project "Buckshot"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.YAML}",
-		"%{IncludeDir.ImGuizmo}"
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.Box2D}"
 	}
 
 	links 
@@ -89,6 +92,7 @@ project "Buckshot"
 		"GLAD",
 		"ImGui",
 		"YAML",
+		"Box2D",
 		"opengl32.lib"
 	}
 

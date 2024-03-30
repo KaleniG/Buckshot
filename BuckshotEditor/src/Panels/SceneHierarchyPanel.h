@@ -15,6 +15,7 @@ namespace Buckshot {
     void OnImGuiRender();
 
     Entity GetSelectedEntity() const { return m_SelectionContext; }
+    Entity GetSelectedEntity() { return m_SelectionContext; }
     void SetSelectedEntity(Entity entity);
 
   private:
