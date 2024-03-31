@@ -5,8 +5,8 @@ Entities:
       Tag: Square
     TransformComponent:
       Position: [4.84850027e-08, -0.956942081, 3.7252903e-09]
-      Rotation: [0, 0, 0.000277546467]
-      Scale: [1, 1, 1]
+      Rotation: [0, 0, 0.000277546584]
+      Scale: [0.999999583, 0.999999583, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
       HasTexture: false
@@ -58,3 +58,14 @@ Entities:
         OrthographicFar: 1
       Primary: true
       FixedAspectRatio: false
+  - Entity: 17733605883991764419
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Position: [2.58951378, -1.21622133, 1.61818552]
+      Rotation: [0, 0, 0]
+      Scale: [3.32802653, 4.5944128, 1.81999993]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 1]
+      Thickness: 0.200000003
+      Fade: 0.00499999989

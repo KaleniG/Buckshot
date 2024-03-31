@@ -79,6 +79,7 @@ namespace Buckshot {
 
     Utilities::CopyComponent<TransformComponent>(new_registry, other_registry, entt_map);
     Utilities::CopyComponent<SpriteRendererComponent>(new_registry, other_registry, entt_map);
+    Utilities::CopyComponent<CircleRendererComponent>(new_registry, other_registry, entt_map);
     Utilities::CopyComponent<CameraComponent>(new_registry, other_registry, entt_map);
     Utilities::CopyComponent<NativeScriptComponent>(new_registry, other_registry, entt_map);
     Utilities::CopyComponent<Rigidbody2DComponent>(new_registry, other_registry, entt_map);
@@ -125,6 +126,7 @@ namespace Buckshot {
 
     Utilities::CopyComponentIfExists<TransformComponent>(new_entity, other_entity);
     Utilities::CopyComponentIfExists<SpriteRendererComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<CircleRendererComponent>(new_entity, other_entity);
     Utilities::CopyComponentIfExists<CameraComponent>(new_entity, other_entity);
     Utilities::CopyComponentIfExists<NativeScriptComponent>(new_entity, other_entity);
     Utilities::CopyComponentIfExists<Rigidbody2DComponent>(new_entity, other_entity);
@@ -187,13 +189,26 @@ namespace Buckshot {
   {
     Renderer2D::BeginScene(camera);
 
-    auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-    for (auto entity : group)
     {
-      auto transform = group.get<TransformComponent>(entity);
-      auto sprite = group.get<SpriteRendererComponent>(entity);
+      auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+      for (auto entity : group)
+      {
+        auto transform = group.get<TransformComponent>(entity);
+        auto sprite = group.get<SpriteRendererComponent>(entity);
 
-      Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+        Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+      }
+    }
+
+    {
+      auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+      for (auto entity : view)
+      {
+        auto transform = view.get<TransformComponent>(entity);
+        auto circle = view.get<CircleRendererComponent>(entity);
+
+        Renderer2D::DrawCircle(transform.GetTransform(), circle, (int)entity);
+      }
     }
 
     Renderer2D::EndScene();
@@ -262,13 +277,29 @@ namespace Buckshot {
     {
       Renderer2D::BeginScene(main_camera->GetProjection(), camera_transform);
 
-      auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-      for (auto entity : group)
-      {
-        auto transform = group.get<TransformComponent>(entity);
-        auto sprite = group.get<SpriteRendererComponent>(entity);
 
-        Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+      // Draw Sprites
+      {
+        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+        for (auto entity : group)
+        {
+          auto transform = group.get<TransformComponent>(entity);
+          auto sprite = group.get<SpriteRendererComponent>(entity);
+
+          Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+        }
+      }
+
+      // Draw Circles
+      {
+        auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+        for (auto entity : view)
+        {
+          auto transform = view.get<TransformComponent>(entity);
+          auto circle = view.get<CircleRendererComponent>(entity);
+
+          Renderer2D::DrawCircle(transform.GetTransform(), circle, (int)entity);
+        }
       }
 
       Renderer2D::EndScene();

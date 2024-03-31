@@ -178,6 +178,19 @@ namespace Buckshot {
       out << YAML::EndMap; // SpriteRendererComponent
     }
 
+    if (entity.HasComponent<CircleRendererComponent>())
+    {
+      out << YAML::Key << "CircleRendererComponent";
+      out << YAML::BeginMap; // CircleRendererComponent
+
+      auto& circle_renderer_component = entity.GetComponent<CircleRendererComponent>();
+      out << YAML::Key << "Color" << YAML::Value << circle_renderer_component.Color;
+      out << YAML::Key << "Thickness" << YAML::Value << circle_renderer_component.Thickness;
+      out << YAML::Key << "Fade" << YAML::Value << circle_renderer_component.Fade;
+
+      out << YAML::EndMap; // CircleRendererComponent
+    }
+
     if (entity.HasComponent<Rigidbody2DComponent>())
     {
       out << YAML::Key << "Rigidbody2DComponent";
@@ -300,6 +313,15 @@ namespace Buckshot {
             src.Texture = Texture2D::Create(spriteRendererComponent["Path"].as<std::string>());
             src.TilingFactor = spriteRendererComponent["Tiling Factor"].as<float>();
           }
+        }
+
+        auto circle_renderer_component = entity["CircleRendererComponent"];
+        if (circle_renderer_component)
+        {
+          auto& crc = deserializedEntity.AddComponent<CircleRendererComponent>();
+          crc.Color = circle_renderer_component["Color"].as<glm::vec4>();
+          crc.Thickness = circle_renderer_component["Thickness"].as<float>();
+          crc.Fade = circle_renderer_component["Fade"].as<float>();
         }
 
         auto rigidbody2d_component = entity["Rigidbody2DComponent"];

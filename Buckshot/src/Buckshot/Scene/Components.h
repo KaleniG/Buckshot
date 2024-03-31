@@ -59,6 +59,16 @@ namespace Buckshot {
     SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
   };
 
+  struct CircleRendererComponent
+  {
+    glm::vec4 Color = glm::vec4(1.0f);
+    float Thickness = 1.0f;
+    float Fade = 0.005f;
+
+    CircleRendererComponent() = default;
+    CircleRendererComponent(const CircleRendererComponent&) = default;
+  };
+
   struct CameraComponent
   {
     SceneCamera Camera;
