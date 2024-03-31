@@ -30,6 +30,14 @@ namespace Buckshot {
     int EntityID;
   };
 
+  struct LineVertex
+  {
+    glm::vec3 Position;
+    glm::vec4 Color;
+
+    int EntityID;
+  };
+
   struct Renderer2DData
   {
     // CONSTANTS | QUAD
@@ -38,36 +46,58 @@ namespace Buckshot {
     static const uint32_t MaxIndices = MaxQuads * 6;
     static const uint32_t MaxTextureSlots = 32;
 
-    // RENDERING COMPONENTS | CIRCLE
-    Ref<VertexArray> CircleVertexArray;
-    Ref<VertexBuffer> CircleVertexBuffer;
-    Ref<Shader> CircleShader;
-
     // RENDERING COMPONENTS | QUAD
     Ref<VertexArray> QuadVertexArray;
     Ref<VertexBuffer> QuadVertexBuffer;
     Ref<Shader> QuadShader;
     Ref<Texture2D> WhiteTexture;
 
-    // BATCHRENDERING | CIRCLE
-    uint32_t CircleIndexCount = 0;
-    CircleVertex* CircleVertexBufferBase = nullptr;
-    CircleVertex* CircleVertexBufferPtr = nullptr;
+    // RENDERING COMPONENTS | CIRCLE
+    Ref<VertexArray> CircleVertexArray;
+    Ref<VertexBuffer> CircleVertexBuffer;
+    Ref<Shader> CircleShader;
+
+    // RENDERING COMPONENTS | LINE
+    Ref<VertexArray> LineVertexArray;
+    Ref<VertexBuffer> LineVertexBuffer;
+    Ref<Shader> LineShader;
+    float LineWidth = 2.0f;
 
     // BATCHRENDERING | QUAD
     uint32_t QuadIndexCount = 0;
     QuadVertex* QuadVertexBufferBase = nullptr;
     QuadVertex* QuadVertexBufferPtr = nullptr;
     glm::vec4 QuadVertexPositions[4];
+    
+    // BATCHRENDERING | CIRCLE
+    uint32_t CircleIndexCount = 0;
+    CircleVertex* CircleVertexBufferBase = nullptr;
+    CircleVertex* CircleVertexBufferPtr = nullptr;
 
+    // BATCHRENDERING | CIRCLE
+    uint32_t LineVertexCount = 0;
+    LineVertex* LineVertexBufferBase = nullptr;
+    LineVertex* LineVertexBufferPtr = nullptr;
+
+    // TEXTURES | QUAD
     uint32_t TextureSlotIndex = 1; // WhiteTexture = 0
     std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 
-    // STATISTICS | QUAD
+    // STATISTICS
     Renderer2D::Statistics Stats;
   };
 
   static Renderer2DData s_Data;
+
+  float Renderer2D::GetLineWidth()
+  {
+    return s_Data.LineWidth;
+  }
+
+  void Renderer2D::SetLineWidth(float width)
+  {
+    s_Data.LineWidth = width;
+  }
 
   void Renderer2D::Init()
   {
@@ -78,7 +108,8 @@ namespace Buckshot {
 
     s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
 
-    s_Data.QuadVertexBuffer->SetLayout({
+    s_Data.QuadVertexBuffer->SetLayout
+    ({
       { ShaderDataType::Float3, "a_Position" },
       { ShaderDataType::Float4, "a_Color" },
       { ShaderDataType::Float2, "a_TexCoord" },
@@ -114,19 +145,36 @@ namespace Buckshot {
 
     s_Data.CircleVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
 
-    s_Data.CircleVertexBuffer->SetLayout({
+    s_Data.CircleVertexBuffer->SetLayout
+    ({
       { ShaderDataType::Float3, "a_WorldPosition" },
       { ShaderDataType::Float3, "a_LocalPosition" },
       { ShaderDataType::Float4, "a_Color" },
       { ShaderDataType::Float, "a_Thickness" },
       { ShaderDataType::Float, "a_Fade" },
       { ShaderDataType::Int, "a_EntityID" }
-      });
+    });
     s_Data.CircleVertexArray->AddVertexBuffer(s_Data.CircleVertexBuffer);
 
     s_Data.CircleVertexArray->SetIndexBuffer(quadIB); // Intentional (PS: Maybe rename the variable)
 
     s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
+
+    // SETTING-UP | LINE
+
+    s_Data.LineVertexArray = VertexArray::Create();
+
+    s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
+
+    s_Data.LineVertexBuffer->SetLayout
+    ({
+      { ShaderDataType::Float3, "a_Position" },
+      { ShaderDataType::Float4, "a_Color" },
+      { ShaderDataType::Int, "a_EntityID" }
+    });
+    s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+
+    s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
 
     // SHADER | QUAD
 
@@ -144,12 +192,15 @@ namespace Buckshot {
 
     s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
-
     // SHADER | CIRCLE
 
     s_Data.CircleShader = Shader::Create("assets/shaders/Renderer2D_Circle.glsl");
 
-    // OTHER
+    // SHADER | LINE
+
+    s_Data.LineShader = Shader::Create("assets/shaders/Renderer2D_Line.glsl");
+
+    // OTHER | QUAD | CIRCLE | LINE
 
     s_Data.QuadVertexPositions[0] = glm::vec4(-0.5f, -0.5f, 0.0f, 1.0f);
     s_Data.QuadVertexPositions[1] = glm::vec4( 0.5f, -0.5f, 0.0f, 1.0f);
@@ -176,6 +227,9 @@ namespace Buckshot {
     s_Data.CircleShader->Bind();
     s_Data.CircleShader->SetMat4("u_ViewProjection", view_projection);
 
+    s_Data.LineShader->Bind();
+    s_Data.LineShader->SetMat4("u_ViewProjection", view_projection);
+
     StartBatch();
   }
 
@@ -201,6 +255,9 @@ namespace Buckshot {
 
     s_Data.CircleShader->Bind();
     s_Data.CircleShader->SetMat4("u_ViewProjection", view_projection);
+
+    s_Data.LineShader->Bind();
+    s_Data.LineShader->SetMat4("u_ViewProjection", view_projection);
 
     StartBatch();
   }
@@ -238,6 +295,17 @@ namespace Buckshot {
       RenderCommand::DrawIndexed(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
       s_Data.Stats.DrawCalls++;
     }
+
+    if (s_Data.LineVertexCount)
+    {
+      uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
+      s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
+
+      s_Data.LineShader->Bind();
+      RenderCommand::SetLineWidth(s_Data.LineWidth);
+      RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+      s_Data.Stats.DrawCalls++;
+    }
   }
 
   void Renderer2D::FlushAndReset()
@@ -254,7 +322,53 @@ namespace Buckshot {
     s_Data.CircleIndexCount = 0;
     s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
 
+    s_Data.LineVertexCount = 0;
+    s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+
     s_Data.TextureSlotIndex = 1;
+  }
+
+  void Renderer2D::DrawLine(const glm::vec3& position_start, const glm::vec3& position_end, const glm::vec4& color, int entity_id)
+  {
+    s_Data.LineVertexBufferPtr->Position = position_start;
+    s_Data.LineVertexBufferPtr->Color = color;
+    s_Data.LineVertexBufferPtr->EntityID = entity_id;
+    s_Data.LineVertexBufferPtr++;
+
+    s_Data.LineVertexBufferPtr->Position = position_end;
+    s_Data.LineVertexBufferPtr->Color = color;
+    s_Data.LineVertexBufferPtr->EntityID = entity_id;
+    s_Data.LineVertexBufferPtr++;
+
+    s_Data.LineVertexCount += 2;
+  }
+
+  void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entity_id)
+  {
+    glm::vec3 p0 = glm::vec3(position.x - size.x / 2.0f, position.y - size.y / 2.0f, position.z);
+    glm::vec3 p1 = glm::vec3(position.x + size.x / 2.0f, position.y - size.y / 2.0f, position.z);
+    glm::vec3 p2 = glm::vec3(position.x + size.x / 2.0f, position.y + size.y / 2.0f, position.z);
+    glm::vec3 p3 = glm::vec3(position.x - size.x / 2.0f, position.y + size.y / 2.0f, position.z);
+
+    DrawLine(p0, p1, color);
+    DrawLine(p1, p2, color);
+    DrawLine(p2, p3, color);
+    DrawLine(p3, p0, color);
+  }
+
+  void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entity_id)
+  {
+    glm::vec3 line_vertices[4];
+
+    for (size_t i = 0; i < 4; i++)
+    {
+      line_vertices[i] = transform * s_Data.QuadVertexPositions[i];
+    }
+
+    DrawLine(line_vertices[0], line_vertices[1], color);
+    DrawLine(line_vertices[1], line_vertices[2], color);
+    DrawLine(line_vertices[2], line_vertices[3], color);
+    DrawLine(line_vertices[3], line_vertices[0], color);
   }
 
   void Renderer2D::DrawCircle(const glm::mat4& transform, CircleRendererComponent& crc, int entity_id)

@@ -39,6 +39,8 @@ namespace Buckshot {
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glEnable(GL_LINE_SMOOTH);
   }
 
   void OpenGLRendererAPI::ClearColor(const glm::vec4& color)
@@ -51,11 +53,22 @@ namespace Buckshot {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   }
 
+  void OpenGLRendererAPI::SetLineWidth(float width)
+  {
+    glLineWidth(width);
+  }
+
   void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t index_count)
   {
     vertexArray->Bind();
     uint32_t count = (index_count) ? index_count : vertexArray->GetIndexBuffer()->GetCount();
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+  }
+
+  void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertex_count)
+  {
+    vertexArray->Bind();
+    glDrawArrays(GL_LINES, 0, vertex_count);
   }
 
   void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

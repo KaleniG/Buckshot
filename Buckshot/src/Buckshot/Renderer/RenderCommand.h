@@ -24,10 +24,19 @@ namespace Buckshot {
       m_RendererAPI->Clear();
     }
 
+    inline static void SetLineWidth(float width)
+    {
+      m_RendererAPI->SetLineWidth(width);
+    }
 
     inline static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t index_count = 0)
     {
       m_RendererAPI->DrawIndexed(vertexArray, index_count);
+    }
+
+    inline static void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertex_count = 0)
+    {
+      m_RendererAPI->DrawLines(vertexArray, vertex_count);
     }
 
     inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

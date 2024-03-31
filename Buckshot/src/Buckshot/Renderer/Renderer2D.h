@@ -22,8 +22,12 @@ namespace Buckshot {
     static void EndScene();
 
     // RENDERING PRIMITIVES
+    static void DrawRect(const glm::mat4& transform, const glm::vec4& color, int entity_id = -1);
     static void DrawCircle(const glm::mat4& transform, CircleRendererComponent& crc, int entity_id = -1);
     static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id = -1);
+
+    static void DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entity_id = -1);
+    static void DrawLine(const glm::vec3& position_start, const glm::vec3& position_end, const glm::vec4& color, int entity_id = -1);
 
     static void DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entity_id = -1);
     static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tiling_factor = 1.0f, const glm::vec4& tint_color = glm::vec4(1.0f), int entity_id = -1);
@@ -42,6 +46,11 @@ namespace Buckshot {
     static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tiling_factor = 1.0f, const glm::vec4& tint_color = glm::vec4(1.0f));
     static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subtexture, const glm::vec4& tint_color = glm::vec4(1.0f));
     static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subtexture, const glm::vec4& tint_color = glm::vec4(1.0f));
+
+    // IDK
+    static float GetLineWidth();
+    static void SetLineWidth(float width);
+
 
     // STATISTICS
     struct Statistics
