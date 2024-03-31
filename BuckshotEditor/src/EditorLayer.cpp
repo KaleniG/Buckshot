@@ -375,17 +375,13 @@ namespace Buckshot {
 
     case Key::Delete:
     {
-      if (m_SceneHierarchyPanel.GetSelectedEntity())
-      {
-        m_ActiveScene->DestroyEntity(m_SceneHierarchyPanel.GetSelectedEntity());
-      }
+      OnEntityDelete();
     }
     case Key::D:
     {
       if (control_pressed)
       {
-        Entity selected_entity = m_SceneHierarchyPanel.GetSelectedEntity();
-        m_ActiveScene->DuplicateEntity(selected_entity);
+        OnEntityDuplicate();
       }
     }
 
@@ -445,13 +441,26 @@ namespace Buckshot {
 
   void EditorLayer::OpenScene(const std::filesystem::path filepath)
   {
-    m_ActiveScene = CreateRef<Scene>();
-    m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+    if (m_SceneState != SceneState::Edit)
+      OnSceneStop();
 
-    SceneSerializer serializer(m_ActiveScene);
-    serializer.Deserialize(filepath.string());
-    m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-    m_CurrentlyOpenScene = filepath.string();
+    if (filepath.extension() != ".bshot")
+    {
+      BS_WARN("Could not load {0}, not a scene file", filepath.string());
+      return;
+    }
+
+    Ref<Scene> new_scene = CreateRef<Scene>();
+    SceneSerializer serializer(new_scene);
+    if (serializer.Deserialize(filepath.string()))
+    {
+      m_EditorScene = new_scene;
+      m_CurrentlyOpenScene = filepath.string();
+      m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+      m_SceneHierarchyPanel.SetContext(m_EditorScene);
+      m_ActiveScene = m_EditorScene;
+    }
+    
   }
 
   void EditorLayer::SaveSceneAs()
@@ -479,16 +488,37 @@ namespace Buckshot {
     }
   }
 
+  void EditorLayer::OnEntityDuplicate()
+  {
+    if (m_SceneHierarchyPanel.GetSelectedEntity())
+    {
+      Entity selected_entity = m_SceneHierarchyPanel.GetSelectedEntity();
+      m_SceneHierarchyPanel.SetSelectedEntity(m_ActiveScene->DuplicateEntity(selected_entity));
+    }
+  }
+
+  void EditorLayer::OnEntityDelete()
+  {
+    if (m_SceneHierarchyPanel.GetSelectedEntity())
+    {
+      m_ActiveScene->DestroyEntity(m_SceneHierarchyPanel.GetSelectedEntity());
+      m_SceneHierarchyPanel.SetSelectedEntity({});
+    }
+  }
+
   void EditorLayer::OnScenePlay()
   {
-    m_ActiveScene->OnRuntimeStart();
     m_SceneState = SceneState::Play;
+    m_ActiveScene = Scene::Copy(m_EditorScene);
+    m_ActiveScene->OnRuntimeStart();
   }
 
   void EditorLayer::OnSceneStop()
   {
-    m_ActiveScene->OnRuntimeStop();
     m_SceneState = SceneState::Edit;
+    m_ActiveScene->OnRuntimeStop();
+    m_ActiveScene = m_EditorScene;
+    m_SceneHierarchyPanel.SetContext(m_ActiveScene);
   }
 
 }

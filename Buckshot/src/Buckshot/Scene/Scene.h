@@ -33,6 +33,8 @@ namespace Buckshot {
 
     Entity GetPrimaryCameraEntity();
 
+    static Ref<Scene> Copy(Ref<Scene> other);
+
   private:
     entt::registry m_Registry;
     uint32_t m_ViewportWidth = 0;

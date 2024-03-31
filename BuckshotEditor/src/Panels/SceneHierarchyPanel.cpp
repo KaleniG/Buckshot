@@ -452,10 +452,10 @@ namespace Buckshot {
       DrawVec2Control("Offset", component.Offset);
       ImGui::Separator();
 
-      ImGui::InputFloat("Density", &component.Density);
-      ImGui::InputFloat("Friction", &component.Friction);
-      ImGui::InputFloat("Restituition", &component.Restituition);
-      ImGui::InputFloat("RestituitionThreshold", &component.RestituitionThreshold);
+      ImGui::DragFloat("Density", &component.Density, 0.1f);
+      ImGui::DragFloat("Friction", &component.Friction, 0.1f);
+      ImGui::DragFloat("Restituition", &component.Restituition, 0.1f);
+      ImGui::DragFloat("RestituitionThreshold", &component.RestituitionThreshold, 0.1f);
     });
 
     ImGui::PopStyleVar();

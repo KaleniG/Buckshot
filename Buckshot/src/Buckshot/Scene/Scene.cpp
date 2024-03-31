@@ -32,6 +32,59 @@ namespace Buckshot {
       return b2_staticBody;
     }
 
+    template<typename Component>
+    static void CopyComponent(entt::registry& destination, entt::registry& source, const std::unordered_map<UUID, entt::entity>& entt_map)
+    {
+      auto source_view = source.view<Component>();
+      for (auto e : source_view)
+      {
+        entt::entity destination_entity_id = entt_map.at(source.get<IDComponent>(e).ID);
+
+        auto& component = source.get<Component>(e);
+        destination.emplace_or_replace<Component>(destination_entity_id, component);
+      }
+    }
+
+    template<typename Component>
+    static void CopyComponentIfExists(Entity destination, Entity source)
+    {
+      if (source.HasComponent<Component>())
+      {
+        destination.AddOrReplaceComponent<Component>(source.GetComponent<Component>());
+      }
+    }
+
+  }
+
+  Ref<Scene> Scene::Copy(Ref<Scene> other)
+  {
+    Ref<Scene> new_scene = CreateRef<Scene>();
+
+    new_scene->m_ViewportWidth = other->m_ViewportWidth;
+    new_scene->m_ViewportHeight = other->m_ViewportHeight;
+
+    auto& other_registry = other->m_Registry;
+    auto& new_registry = new_scene->m_Registry;
+
+    std::unordered_map<UUID, entt::entity> entt_map;
+
+    auto id_view = other_registry.view<IDComponent>();
+    for (auto e : id_view)
+    {
+      UUID uuid = other_registry.get<IDComponent>(e).ID;
+      const auto& name = other_registry.get<TagComponent>(e).Tag;
+      Entity new_entity = new_scene->CreateEntityWithUUID(uuid, name);
+      entt_map[uuid] = (entt::entity)new_entity;
+    }
+
+    Utilities::CopyComponent<TransformComponent>(new_registry, other_registry, entt_map);
+    Utilities::CopyComponent<SpriteRendererComponent>(new_registry, other_registry, entt_map);
+    Utilities::CopyComponent<CameraComponent>(new_registry, other_registry, entt_map);
+    Utilities::CopyComponent<NativeScriptComponent>(new_registry, other_registry, entt_map);
+    Utilities::CopyComponent<Rigidbody2DComponent>(new_registry, other_registry, entt_map);
+    Utilities::CopyComponent<BoxCollider2DComponent>(new_registry, other_registry, entt_map);
+
+    return new_scene;
   }
 
   Scene::Scene()
@@ -63,69 +116,21 @@ namespace Buckshot {
     return entity;
   }
 
-  Buckshot::Entity Scene::DuplicateEntity(Entity& other)
+  Buckshot::Entity Scene::DuplicateEntity(Entity& other_entity)
   {
-    Entity entity = { m_Registry.create(), this };
+    std::string new_name = other_entity.GetName();
+    new_name.append(" (Copy)");
 
-    entity.AddComponent<IDComponent>();
+    Entity new_entity = CreateEntity(new_name);
 
-    if (other.HasComponent<TagComponent>())
-    {
-      auto& tag = entity.AddComponent<TagComponent>();
-      auto& tag_other = other.GetComponent<TagComponent>();
-      std::string new_name = tag_other.Tag;
-      new_name.append(" (Copy)");
-      tag.Tag = new_name;
-    }
+    Utilities::CopyComponentIfExists<TransformComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<SpriteRendererComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<CameraComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<NativeScriptComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<Rigidbody2DComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<BoxCollider2DComponent>(new_entity, other_entity);
 
-    if (other.HasComponent<TransformComponent>())
-    {
-      auto& transform = entity.AddComponent<TransformComponent>();
-      auto& transform_other = other.GetComponent<TransformComponent>();
-      transform.Position = transform_other.Position;
-      transform.Rotation = transform_other.Rotation;
-      transform.Scale = transform_other.Scale;
-    }
-
-    if (other.HasComponent<SpriteRendererComponent>())
-    {
-      auto& src = entity.AddComponent<SpriteRendererComponent>();
-      auto& src_other = other.GetComponent<SpriteRendererComponent>();
-      src.Color = src_other.Color;
-      src.Texture = src_other.Texture;
-      src.TilingFactor = src_other.TilingFactor;
-    }
-
-    if (other.HasComponent<CameraComponent>())
-    {
-      auto& camera = entity.AddComponent<CameraComponent>();
-      auto& camera_other = other.GetComponent<CameraComponent>();
-      camera.Camera = camera_other.Camera;
-      camera.FixedAspectRatio = camera_other.FixedAspectRatio;
-      camera.Primary = false;
-    }
-
-    if (other.HasComponent<Rigidbody2DComponent>())
-    {
-      auto& rb2d = entity.AddComponent<Rigidbody2DComponent>();
-      auto& rb2d_other = other.GetComponent<Rigidbody2DComponent>();
-      rb2d.Type = rb2d_other.Type;
-      rb2d.FixedRotation = rb2d_other.FixedRotation;
-    }
-
-    if (other.HasComponent<BoxCollider2DComponent>())
-    {
-      auto& bc2d = entity.AddComponent<BoxCollider2DComponent>();
-      auto& bc2d_other = other.GetComponent<BoxCollider2DComponent>();
-      bc2d.Size = bc2d_other.Size;
-      bc2d.Offset = bc2d_other.Offset;
-      bc2d.Density = bc2d_other.Density;
-      bc2d.Friction = bc2d_other.Friction;
-      bc2d.Restituition = bc2d_other.Restituition;
-      bc2d.RestituitionThreshold = bc2d_other.RestituitionThreshold;
-    }
-
-    return entity;
+    return new_entity;
   }
 
   void Scene::DestroyEntity(Entity entity)

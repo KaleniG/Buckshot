@@ -34,20 +34,27 @@ namespace Buckshot {
     void SaveSceneAs();
     void SaveScene();
 
+    void OnEntityDuplicate();
+    void OnEntityDelete();
+
     void UI_Toolbar();
 
   private:
     EditorCamera m_EditorCamera;
     Ref<Scene> m_ActiveScene;
+    Ref<Scene> m_RuntimeScene;
+    Ref<Scene> m_EditorScene;
     std::string m_CurrentlyOpenScene = std::string();
 
-    // GUI
     enum class SceneState
     {
       Edit,
       Play
     };
 
+    SceneState m_SceneState = SceneState::Edit;
+
+    // GUI
     Ref<Texture2D> m_IconStop;
     Ref<Texture2D> m_IconPlay;
 
@@ -59,7 +66,6 @@ namespace Buckshot {
 
     SceneHierarchyPanel m_SceneHierarchyPanel;
     ContentBrowserPanel m_ContentBrowserPanel;
-    SceneState m_SceneState = SceneState::Edit;
 
     // Gizmos
     int m_GizmoType = -1;

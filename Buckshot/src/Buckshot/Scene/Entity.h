@@ -22,6 +22,12 @@ namespace Buckshot {
       return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
     }
 
+    template<typename T, typename... Args>
+    T& AddOrReplaceComponent(Args&&... args)
+    {
+      return m_Scene->m_Registry.emplace_or_replace<T>(m_EntityHandle, std::forward<Args>(args)...);
+    }
+
     template<typename T>
     T& GetComponent()
     {
@@ -43,6 +49,7 @@ namespace Buckshot {
     }
 
     UUID GetUUID() { return GetComponent<IDComponent>().ID; }
+    const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
 
     operator bool() const { return m_EntityHandle != entt::null; }
     operator uint32_t() const { return (uint32_t)m_EntityHandle; }
