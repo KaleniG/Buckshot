@@ -217,6 +217,8 @@ namespace Buckshot {
 
     m_ViewportFocused = ImGui::IsWindowFocused();
     m_ViewportHovered = ImGui::IsWindowHovered();
+
+    // SETUP A PROPER EVENT_BLOCKING SYSTEM!!!!
     Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
@@ -511,6 +513,7 @@ namespace Buckshot {
     m_SceneState = SceneState::Play;
     m_ActiveScene = Scene::Copy(m_EditorScene);
     m_ActiveScene->OnRuntimeStart();
+    m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
   }
 
   void EditorLayer::OnSceneStop()
