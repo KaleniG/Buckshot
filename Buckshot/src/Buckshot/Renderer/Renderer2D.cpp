@@ -371,6 +371,27 @@ namespace Buckshot {
     DrawLine(line_vertices[3], line_vertices[0], color);
   }
 
+  void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entity_id)
+  {
+    //if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+    //  FlushAndReset();
+
+    for (size_t i = 0; i < 4; i++)
+    {
+      s_Data.CircleVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
+      s_Data.CircleVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
+      s_Data.CircleVertexBufferPtr->Color = color;
+      s_Data.CircleVertexBufferPtr->Thickness = thickness;
+      s_Data.CircleVertexBufferPtr->Fade = fade;
+      s_Data.CircleVertexBufferPtr->EntityID = entity_id;
+      s_Data.CircleVertexBufferPtr++;
+    }
+
+    s_Data.CircleIndexCount += 6;
+
+    s_Data.Stats.QuadCount++; // Stupidass name TO-CHANGE
+  }
+
   void Renderer2D::DrawCircle(const glm::mat4& transform, CircleRendererComponent& crc, int entity_id)
   {
     //if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)

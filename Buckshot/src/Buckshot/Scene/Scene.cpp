@@ -186,7 +186,7 @@ namespace Buckshot {
 
         b2CircleShape circle_shape;
         circle_shape.m_p.Set(cc2d_component.Offset.x, cc2d_component.Offset.y);
-        circle_shape.m_radius = cc2d_component.Radius;
+        circle_shape.m_radius = cc2d_component.Radius * transform_component.Scale.x;
 
         b2FixtureDef fixture_definition;
         fixture_definition.shape = &circle_shape;

@@ -4,7 +4,7 @@ Entities:
     TagComponent:
       Tag: Circle (Copy)
     TransformComponent:
-      Position: [0.327708095, 1.45541203, 0]
+      Position: [0.0268037319, 2.78766346, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CircleRendererComponent:
@@ -16,7 +16,7 @@ Entities:
       Fixed Rotation: false
     CircleCollider2DComponent:
       Offset: [0, 0]
-      Radius: 0.5
+      Radius: 1.20000005
       Density: 1
       Friction: 0.5
       Restituition: 1.10000002
@@ -37,7 +37,7 @@ Entities:
       Fixed Rotation: false
     CircleCollider2DComponent:
       Offset: [0, 0]
-      Radius: 0.5
+      Radius: 0.699999988
       Density: 1
       Friction: 0.5
       Restituition: 0

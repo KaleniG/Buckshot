@@ -22,6 +22,8 @@ namespace Buckshot {
     void OnEvent(Event& event) override;
 
   private:
+    void OnOverlayRender();
+
     void OnScenePlay();
     void OnSceneStop();
 
@@ -40,6 +42,7 @@ namespace Buckshot {
     void UI_Toolbar();
 
   private:
+    // GENERAL
     EditorCamera m_EditorCamera;
     Ref<Scene> m_ActiveScene;
     Ref<Scene> m_RuntimeScene;
@@ -70,6 +73,7 @@ namespace Buckshot {
     // Gizmos
     int m_GizmoType = -1;
     Entity m_HoveredEntity;
+    bool m_ShowPhysicsColliders = false;
   };
 
 }

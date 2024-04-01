@@ -35,6 +35,13 @@ namespace Buckshot {
 
     static Ref<Scene> Copy(Ref<Scene> other);
 
+
+    template<typename... Components>
+    auto GetAllEntitiesWith()
+    {
+      return m_Registry.view<Components...>();
+    }
+
   private:
     entt::registry m_Registry;
     uint32_t m_ViewportWidth = 0;

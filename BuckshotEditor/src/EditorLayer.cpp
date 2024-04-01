@@ -17,7 +17,6 @@ namespace Buckshot {
     m_IconStop = Texture2D::Create("assets/textures/IconStop.png");
     m_IconPlay = Texture2D::Create("assets/textures/IconPlay.png");
 
-
     FramebufferSpecification fbSpec;
     fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::DEPTH24STENCIL8 };
     fbSpec.Width = 1280;
@@ -70,6 +69,8 @@ namespace Buckshot {
         break;
       }
     }
+
+    OnOverlayRender();
 
     // Gizmos related stuff
     auto [mx, my] = ImGui::GetMousePos();
@@ -186,13 +187,13 @@ namespace Buckshot {
       ImGui::EndMenuBar();
     }
 
-    // SCENE HIEARACHY
+    // SCENE HIEARACHY PANEL
     m_SceneHierarchyPanel.OnImGuiRender();
 
     // CONTENT BRWOSER PANEL
     m_ContentBrowserPanel.OnImGuiRender();
 
-    // STATS WINDOW
+    // STATS PANEL
     ImGui::Begin("Stats");
     auto stats = Renderer2D::GetStats();
     std::string hovered_entity_name = "None";
@@ -204,7 +205,12 @@ namespace Buckshot {
     ImGui::Text("Hovered Entity: %s", hovered_entity_name.c_str());
     ImGui::End();
 
-    // VIEWPORT WINDOW
+    // STATS PANEL
+    ImGui::Begin("Settings");
+    ImGui::Checkbox("Show Physics Colliders", &m_ShowPhysicsColliders);
+    ImGui::End();
+
+    // VIEWPORT PANEL
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
     ImGui::Begin("Viewport");
 
@@ -340,7 +346,7 @@ namespace Buckshot {
 
   bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
   {
-    if (event.GetRepeatCount() > 0)
+    if (event.GetRepeatCount() > 0 || m_SceneState == SceneState::Play)
       return false;
 
     bool control_pressed = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
@@ -506,6 +512,58 @@ namespace Buckshot {
       m_ActiveScene->DestroyEntity(m_SceneHierarchyPanel.GetSelectedEntity());
       m_SceneHierarchyPanel.SetSelectedEntity({});
     }
+  }
+
+  void EditorLayer::OnOverlayRender()
+  {
+    if (m_SceneState == SceneState::Play)
+    {
+      Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
+      Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+    }
+    else
+    {
+      Renderer2D::BeginScene(m_EditorCamera);
+    }
+
+    if (m_ShowPhysicsColliders)
+    {
+      // RECT
+      {
+        auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+        for (auto entity : view)
+        {
+          auto transform = view.get<TransformComponent>(entity);
+          auto bc2d = view.get<BoxCollider2DComponent>(entity);
+
+          glm::vec3 translation = transform.Position + glm::vec3(bc2d.Offset, 0.001f);
+          glm::vec3 scale = transform.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+          glm::mat4 offset = glm::translate(glm::mat4(1.0f), translation)
+            * glm::rotate(glm::mat4(1.0f), transform.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+            * glm::scale(glm::mat4(1.0f), scale);
+
+          Renderer2D::DrawRect(offset, glm::vec4(0, 1, 0, 1));
+        }
+      }
+
+      // CIRCLE | ISSUE: Cannot make elipse circle coliders, ex. when resizing the circle the overlay resizes but the collider doesn't have the same shape)
+      {
+        auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+        for (auto entity : view)
+        {
+          auto transform = view.get<TransformComponent>(entity);
+          auto cc2d = view.get<CircleCollider2DComponent>(entity);
+
+          glm::vec3 translation = transform.Position + glm::vec3(cc2d.Offset, 0.001f);
+          glm::vec3 scale = transform.Scale * glm::vec3(cc2d.Radius * 2.0f);
+          glm::mat4 offset = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
+
+          Renderer2D::DrawCircle(offset, glm::vec4(0, 1, 0, 1), 0.01f);
+        }
+      }
+    }
+
+    Renderer2D::EndScene();
   }
 
   void EditorLayer::OnScenePlay()
