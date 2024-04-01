@@ -25,9 +25,13 @@ namespace Buckshot {
 
     void OnRuntimeStart();
     void OnRuntimeStop();
+    void OnSimulationStart();
+    void OnSimulationStop();
 
-    void OnUpdateEditor(Timestep timestep, EditorCamera& camera);
     void OnUpdateRuntime(Timestep timestep);
+    void OnUpdateSimulation(Timestep timestep, EditorCamera& camera);
+    void OnUpdateEditor(Timestep timestep, EditorCamera& camera);
+
     void OnViewportResize(uint32_t width, uint32_t height);
     void OnViewportResize();
 
@@ -41,6 +45,11 @@ namespace Buckshot {
     {
       return m_Registry.view<Components...>();
     }
+  private:
+    void OnPhysics2DStart();
+    void OnPhysics2DStop();
+
+    void RenderScene(EditorCamera& camera);
 
   private:
     entt::registry m_Registry;

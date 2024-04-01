@@ -90,60 +90,7 @@ namespace Buckshot {
     return new_scene;
   }
 
-  Scene::Scene()
-  {
-
-  } 
-
-  Scene::~Scene()
-  {
-    delete m_PhysicsWorld;
-  }
-
-  Entity Scene::CreateEntity(const std::string& name)
-  {
-    return CreateEntityWithUUID(UUID(), name);
-  }
-
-  Buckshot::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
-  {
-    Entity entity = { m_Registry.create(), this };
-
-    entity.AddComponent<IDComponent>(uuid);
-
-    auto& tag = entity.AddComponent<TagComponent>();
-    tag.Tag = (name.empty()) ? "Entity" : name;
-
-    entity.AddComponent<TransformComponent>();
-
-    return entity;
-  }
-
-  Buckshot::Entity Scene::DuplicateEntity(Entity& other_entity)
-  {
-    std::string new_name = other_entity.GetName();
-    new_name.append(" (Copy)");
-
-    Entity new_entity = CreateEntity(new_name);
-
-    Utilities::CopyComponentIfExists<TransformComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<SpriteRendererComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<CircleRendererComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<CameraComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<NativeScriptComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<Rigidbody2DComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<BoxCollider2DComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<CircleCollider2DComponent>(new_entity, other_entity);
-
-    return new_entity;
-  }
-
-  void Scene::DestroyEntity(Entity entity)
-  {
-    m_Registry.destroy(entity);
-  }
-
-  void Scene::OnRuntimeStart()
+  void Scene::OnPhysics2DStart()
   {
     m_PhysicsWorld = new b2World(b2Vec2(0.0f, -9.8f));
     auto view = m_Registry.view<Rigidbody2DComponent>();
@@ -200,13 +147,13 @@ namespace Buckshot {
     }
   }
 
-  void Scene::OnRuntimeStop()
+  void Scene::OnPhysics2DStop()
   {
     delete m_PhysicsWorld;
     m_PhysicsWorld = nullptr;
   }
 
-  void Scene::OnUpdateEditor(Timestep timestep, EditorCamera& camera)
+  void Scene::RenderScene(EditorCamera& camera)
   {
     Renderer2D::BeginScene(camera);
 
@@ -233,6 +180,84 @@ namespace Buckshot {
     }
 
     Renderer2D::EndScene();
+  }
+
+  Scene::Scene()
+  {
+
+  } 
+
+  Scene::~Scene()
+  {
+    delete m_PhysicsWorld;
+  }
+
+  Entity Scene::CreateEntity(const std::string& name)
+  {
+    return CreateEntityWithUUID(UUID(), name);
+  }
+
+  Buckshot::Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
+  {
+    Entity entity = { m_Registry.create(), this };
+
+    entity.AddComponent<IDComponent>(uuid);
+
+    auto& tag = entity.AddComponent<TagComponent>();
+    tag.Tag = (name.empty()) ? "Entity" : name;
+
+    entity.AddComponent<TransformComponent>();
+
+    return entity;
+  }
+
+  Buckshot::Entity Scene::DuplicateEntity(Entity& other_entity)
+  {
+    std::string new_name = other_entity.GetName();
+    new_name.append(" (Copy)");
+
+    Entity new_entity = CreateEntity(new_name);
+
+    Utilities::CopyComponentIfExists<TransformComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<SpriteRendererComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<CircleRendererComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<CameraComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<NativeScriptComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<Rigidbody2DComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<BoxCollider2DComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<CircleCollider2DComponent>(new_entity, other_entity);
+
+    return new_entity;
+  }
+
+  void Scene::DestroyEntity(Entity entity)
+  {
+    m_Registry.destroy(entity);
+  }
+
+  void Scene::OnRuntimeStart()
+  {
+    OnPhysics2DStart();
+  }
+
+  void Scene::OnRuntimeStop()
+  {
+    OnPhysics2DStop();
+  }
+
+  void Scene::OnSimulationStart()
+  {
+    OnPhysics2DStart();
+  }
+
+  void Scene::OnSimulationStop()
+  {
+    OnPhysics2DStop();
+  }
+
+  void Scene::OnUpdateEditor(Timestep timestep, EditorCamera& camera)
+  {
+    RenderScene(camera);
   }
 
   void Scene::OnUpdateRuntime(Timestep timestep)
@@ -325,6 +350,35 @@ namespace Buckshot {
 
       Renderer2D::EndScene();
     }
+  }
+
+  void Scene::OnUpdateSimulation(Timestep timestep, EditorCamera& camera)
+  {
+    // Physics
+    {
+      const int32_t velocity_iterations = 6;
+      const int32_t position_iterations = 2;
+      m_PhysicsWorld->Step(timestep, velocity_iterations, position_iterations);
+
+      auto view = m_Registry.view<Rigidbody2DComponent>();
+      for (auto e : view)
+      {
+        Entity entity(e, this);
+
+        auto& transform_component = entity.GetComponent<TransformComponent>();
+        auto& rb2d_component = entity.GetComponent<Rigidbody2DComponent>();
+
+        b2Body* body = (b2Body*)rb2d_component.RuntimeBody;
+        const auto& position = body->GetPosition();
+        transform_component.Position.x = position.x;
+        transform_component.Position.y = position.y;
+        const auto& rotation = body->GetAngle();
+        transform_component.Rotation.z = rotation;
+
+      }
+    }
+
+    RenderScene(camera);
   }
 
   void Scene::OnViewportResize(uint32_t width, uint32_t height)

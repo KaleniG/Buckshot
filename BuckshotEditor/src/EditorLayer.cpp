@@ -16,6 +16,7 @@ namespace Buckshot {
   {
     m_IconStop = Texture2D::Create("assets/textures/IconStop.png");
     m_IconPlay = Texture2D::Create("assets/textures/IconPlay.png");
+    m_IconSimulate = Texture2D::Create("assets/textures/IconSimulate.png");
 
     FramebufferSpecification fbSpec;
     fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::DEPTH24STENCIL8 };
@@ -60,6 +61,14 @@ namespace Buckshot {
           m_EditorCamera.OnUpdate(timestep);
 
         m_ActiveScene->OnUpdateEditor(timestep, m_EditorCamera);
+        break;
+      }
+      case SceneState::Simulate:
+      {
+        if (m_ViewportFocused)
+          m_EditorCamera.OnUpdate(timestep);
+
+        m_ActiveScene->OnUpdateSimulation(timestep, m_EditorCamera);
         break;
       }
       case SceneState::Play: 
@@ -316,17 +325,34 @@ namespace Buckshot {
     ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
     float size = ImGui::GetWindowHeight() - 4.0f;
-    Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
     ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x / 2.0f) - (size / 2.0f));
-    if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
     {
-      if (m_SceneState == SceneState::Edit)
+      Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
+      if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
       {
-        OnScenePlay();
+        if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+        {
+          OnScenePlay();
+        }
+        else if (m_SceneState == SceneState::Play)
+        {
+          OnSceneStop();
+        }
       }
-      else if (m_SceneState == SceneState::Play)
+    }
+    ImGui::SameLine();
+    {
+      Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
+      if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
       {
-        OnSceneStop();
+        if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
+        {
+          OnSceneSimulate();
+        }
+        else if (m_SceneState == SceneState::Simulate)
+        {
+          OnSceneStop();
+        }
       }
     }
 
@@ -519,6 +545,8 @@ namespace Buckshot {
     if (m_SceneState == SceneState::Play)
     {
       Entity camera = m_ActiveScene->GetPrimaryCameraEntity();
+      if (!camera)
+        return;
       Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
     }
     else
@@ -568,6 +596,9 @@ namespace Buckshot {
 
   void EditorLayer::OnScenePlay()
   {
+    if (m_SceneState == SceneState::Simulate)
+      OnSceneStop();
+
     m_SceneState = SceneState::Play;
     m_EditorScene = Scene::Copy(m_ActiveScene);
     m_ActiveScene = Scene::Copy(m_EditorScene);
@@ -575,10 +606,28 @@ namespace Buckshot {
     m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
   }
 
+  void EditorLayer::OnSceneSimulate()
+  {
+    if (m_SceneState == SceneState::Play)
+      OnSceneStop();
+
+    m_SceneState = SceneState::Simulate;
+    m_EditorScene = Scene::Copy(m_ActiveScene);
+    m_ActiveScene = Scene::Copy(m_EditorScene);
+    m_ActiveScene->OnSimulationStart();
+    m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+  }
+
   void EditorLayer::OnSceneStop()
   {
+    CL_ASSERT(m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate, "Invalid Scene State at this stage");
+
+    if (m_SceneState == SceneState::Play)
+      m_ActiveScene->OnRuntimeStop();
+    else if (m_SceneState == SceneState::Simulate)
+      m_ActiveScene->OnSimulationStop();
+
     m_SceneState = SceneState::Edit;
-    m_ActiveScene->OnRuntimeStop();
     m_ActiveScene = m_EditorScene;
     m_SceneHierarchyPanel.SetContext(m_ActiveScene);
   }

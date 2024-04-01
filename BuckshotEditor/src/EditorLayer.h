@@ -25,6 +25,7 @@ namespace Buckshot {
     void OnOverlayRender();
 
     void OnScenePlay();
+    void OnSceneSimulate();
     void OnSceneStop();
 
     bool OnKeyPressed(KeyPressedEvent& event);
@@ -52,14 +53,16 @@ namespace Buckshot {
     enum class SceneState
     {
       Edit,
+      Simulate,
       Play
     };
 
     SceneState m_SceneState = SceneState::Edit;
 
     // GUI
-    Ref<Texture2D> m_IconStop;
     Ref<Texture2D> m_IconPlay;
+    Ref<Texture2D> m_IconSimulate;
+    Ref<Texture2D> m_IconStop;
 
     Ref<Framebuffer> m_Framebuffer;
     glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
