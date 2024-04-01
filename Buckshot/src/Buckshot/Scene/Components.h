@@ -129,4 +129,19 @@ namespace Buckshot {
     BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
   };
 
+  struct CircleCollider2DComponent
+  {
+    glm::vec2 Offset = glm::vec2(0.0f);
+    float Radius = 0.5f;
+    float Density = 1.0f;
+    float Friction = 0.5f;
+    float Restituition = 0.0f;
+    float RestituitionThreshold = 0.5f;
+
+    void* RuntimeFixture = nullptr;
+
+    CircleCollider2DComponent() = default;
+    CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+  };
+
 }

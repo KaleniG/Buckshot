@@ -1,5 +1,6 @@
 #include <bspch.h>
 #include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_circle_shape.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_world.h>
 #include <box2d/b2_body.h>
@@ -84,6 +85,7 @@ namespace Buckshot {
     Utilities::CopyComponent<NativeScriptComponent>(new_registry, other_registry, entt_map);
     Utilities::CopyComponent<Rigidbody2DComponent>(new_registry, other_registry, entt_map);
     Utilities::CopyComponent<BoxCollider2DComponent>(new_registry, other_registry, entt_map);
+    Utilities::CopyComponent<CircleCollider2DComponent>(new_registry, other_registry, entt_map);
 
     return new_scene;
   }
@@ -131,6 +133,7 @@ namespace Buckshot {
     Utilities::CopyComponentIfExists<NativeScriptComponent>(new_entity, other_entity);
     Utilities::CopyComponentIfExists<Rigidbody2DComponent>(new_entity, other_entity);
     Utilities::CopyComponentIfExists<BoxCollider2DComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists<CircleCollider2DComponent>(new_entity, other_entity);
 
     return new_entity;
   }
@@ -173,6 +176,24 @@ namespace Buckshot {
         fixture_definition.friction = bc2d_component.Friction;
         fixture_definition.restitution = bc2d_component.Restituition;
         fixture_definition.restitutionThreshold = bc2d_component.RestituitionThreshold;
+
+        body->CreateFixture(&fixture_definition);
+      }
+
+      if (entity.HasComponent<CircleCollider2DComponent>())
+      {
+        auto& cc2d_component = entity.GetComponent<CircleCollider2DComponent>();
+
+        b2CircleShape circle_shape;
+        circle_shape.m_p.Set(cc2d_component.Offset.x, cc2d_component.Offset.y);
+        circle_shape.m_radius = cc2d_component.Radius;
+
+        b2FixtureDef fixture_definition;
+        fixture_definition.shape = &circle_shape;
+        fixture_definition.density = cc2d_component.Density;
+        fixture_definition.friction = cc2d_component.Friction;
+        fixture_definition.restitution = cc2d_component.Restituition;
+        fixture_definition.restitutionThreshold = cc2d_component.RestituitionThreshold;
 
         body->CreateFixture(&fixture_definition);
       }

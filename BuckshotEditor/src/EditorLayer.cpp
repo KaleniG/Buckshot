@@ -511,6 +511,7 @@ namespace Buckshot {
   void EditorLayer::OnScenePlay()
   {
     m_SceneState = SceneState::Play;
+    m_EditorScene = Scene::Copy(m_ActiveScene);
     m_ActiveScene = Scene::Copy(m_EditorScene);
     m_ActiveScene->OnRuntimeStart();
     m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);

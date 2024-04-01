@@ -330,6 +330,16 @@ namespace Buckshot {
         }
       }
 
+      if (!entity.HasComponent<CircleCollider2DComponent>())
+      {
+        present_any_component = true;
+        if (ImGui::MenuItem("CircleCollider2D"))
+        {
+          m_SelectionContext.AddComponent<CircleCollider2DComponent>();
+          ImGui::CloseCurrentPopup();
+        }
+      }
+
       if (!present_any_component)
       {
         ImGui::Text("No Components Available");
@@ -479,6 +489,19 @@ namespace Buckshot {
       DrawVec2Control("Offset", component.Offset);
       ImGui::Separator();
 
+      ImGui::DragFloat("Density", &component.Density, 0.1f);
+      ImGui::DragFloat("Friction", &component.Friction, 0.1f);
+      ImGui::DragFloat("Restituition", &component.Restituition, 0.1f);
+      ImGui::DragFloat("RestituitionThreshold", &component.RestituitionThreshold, 0.1f);
+    });
+
+    DrawComponent<CircleCollider2DComponent>("CircleCollider2D", entity, [](auto& component)
+    {
+      ImGui::Separator();
+      DrawVec2Control("Offset", component.Offset);
+      ImGui::Separator();
+
+      ImGui::DragFloat("Radius", &component.Radius, 0.1f);
       ImGui::DragFloat("Density", &component.Density, 0.1f);
       ImGui::DragFloat("Friction", &component.Friction, 0.1f);
       ImGui::DragFloat("Restituition", &component.Restituition, 0.1f);

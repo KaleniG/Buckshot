@@ -219,6 +219,22 @@ namespace Buckshot {
       out << YAML::EndMap; // BoxCollider2DComponent
     }
 
+    if (entity.HasComponent<CircleCollider2DComponent>())
+    {
+      out << YAML::Key << "CircleCollider2DComponent";
+      out << YAML::BeginMap; // CircleCollider2DComponent
+
+      auto& cc2d_component = entity.GetComponent<CircleCollider2DComponent>();
+      out << YAML::Key << "Offset" << YAML::Value << cc2d_component.Offset;
+      out << YAML::Key << "Radius" << YAML::Value << cc2d_component.Radius;
+      out << YAML::Key << "Density" << YAML::Value << cc2d_component.Density;
+      out << YAML::Key << "Friction" << YAML::Value << cc2d_component.Friction;
+      out << YAML::Key << "Restituition" << YAML::Value << cc2d_component.Restituition;
+      out << YAML::Key << "Restituition Threshold" << YAML::Value << cc2d_component.RestituitionThreshold;
+
+      out << YAML::EndMap; // CircleCollider2DComponent
+    }
+
     out << YAML::EndMap; // Entity
   }
 
@@ -342,6 +358,18 @@ namespace Buckshot {
           bc2d.Friction = boxcollider2d_component["Friction"].as<float>();
           bc2d.Restituition = boxcollider2d_component["Restituition"].as<float>();
           bc2d.RestituitionThreshold = boxcollider2d_component["Restituition Threshold"].as<float>();
+        }
+
+        auto circlecollider2d_component = entity["CircleCollider2DComponent"];
+        if (circlecollider2d_component)
+        {
+          auto& cc2d = deserializedEntity.AddComponent<CircleCollider2DComponent>();
+          cc2d.Offset = circlecollider2d_component["Offset"].as<glm::vec2>();
+          cc2d.Radius = circlecollider2d_component["Radius"].as<float>();
+          cc2d.Density = circlecollider2d_component["Density"].as<float>();
+          cc2d.Friction = circlecollider2d_component["Friction"].as<float>();
+          cc2d.Restituition = circlecollider2d_component["Restituition"].as<float>();
+          cc2d.RestituitionThreshold = circlecollider2d_component["Restituition Threshold"].as<float>();
         }
       }
     }
