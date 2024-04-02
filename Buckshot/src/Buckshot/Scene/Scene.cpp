@@ -33,26 +33,41 @@ namespace Buckshot {
       return b2_staticBody;
     }
 
-    template<typename Component>
+    template<typename... Component>
     static void CopyComponent(entt::registry& destination, entt::registry& source, const std::unordered_map<UUID, entt::entity>& entt_map)
     {
-      auto source_view = source.view<Component>();
-      for (auto e : source_view)
+      ([&]() 
       {
-        entt::entity destination_entity_id = entt_map.at(source.get<IDComponent>(e).ID);
-
-        auto& component = source.get<Component>(e);
-        destination.emplace_or_replace<Component>(destination_entity_id, component);
-      }
+        auto view = source.view<Component>();
+        for (auto source_entity : view)
+        {
+          entt::entity destination_entity = entt_map.at(source.get<IDComponent>(source_entity).ID);
+          auto& source_component = source.get<Component>(source_entity);
+          destination.emplace_or_replace<Component>(destination_entity, source_component);
+        }
+      }(), ...);
     }
 
-    template<typename Component>
+    template<typename... Component>
+    static void CopyComponent(ComponentGroup<Component...>, entt::registry& destination, entt::registry& source, const std::unordered_map<UUID, entt::entity>& entt_map)
+    {
+      CopyComponent<Component...>(destination, source, entt_map);
+    }
+
+    template<typename... Component>
     static void CopyComponentIfExists(Entity destination, Entity source)
     {
-      if (source.HasComponent<Component>())
+      ([&]()
       {
-        destination.AddOrReplaceComponent<Component>(source.GetComponent<Component>());
-      }
+        if (source.HasComponent<Component>())
+          destination.AddOrReplaceComponent<Component>(source.GetComponent<Component>());
+      }(), ...);
+    }
+
+    template<typename... Component>
+    static void CopyComponentIfExists(ComponentGroup<Component...>, Entity destination, Entity source)
+    {
+      CopyComponentIfExists<Component...>(destination, source);
     }
 
   }
@@ -78,14 +93,7 @@ namespace Buckshot {
       entt_map[uuid] = (entt::entity)new_entity;
     }
 
-    Utilities::CopyComponent<TransformComponent>(new_registry, other_registry, entt_map);
-    Utilities::CopyComponent<SpriteRendererComponent>(new_registry, other_registry, entt_map);
-    Utilities::CopyComponent<CircleRendererComponent>(new_registry, other_registry, entt_map);
-    Utilities::CopyComponent<CameraComponent>(new_registry, other_registry, entt_map);
-    Utilities::CopyComponent<NativeScriptComponent>(new_registry, other_registry, entt_map);
-    Utilities::CopyComponent<Rigidbody2DComponent>(new_registry, other_registry, entt_map);
-    Utilities::CopyComponent<BoxCollider2DComponent>(new_registry, other_registry, entt_map);
-    Utilities::CopyComponent<CircleCollider2DComponent>(new_registry, other_registry, entt_map);
+    Utilities::CopyComponent(AllComponents{}, new_registry, other_registry, entt_map);
 
     return new_scene;
   }
@@ -218,14 +226,7 @@ namespace Buckshot {
 
     Entity new_entity = CreateEntity(new_name);
 
-    Utilities::CopyComponentIfExists<TransformComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<SpriteRendererComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<CircleRendererComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<CameraComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<NativeScriptComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<Rigidbody2DComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<BoxCollider2DComponent>(new_entity, other_entity);
-    Utilities::CopyComponentIfExists<CircleCollider2DComponent>(new_entity, other_entity);
+    Utilities::CopyComponentIfExists(AllComponents{}, new_entity, other_entity);
 
     return new_entity;
   }
