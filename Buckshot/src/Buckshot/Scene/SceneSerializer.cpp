@@ -266,7 +266,18 @@ namespace Buckshot {
 
   bool SceneSerializer::Deserialize(const std::string& filepath)
   {
-    YAML::Node data = YAML::LoadFile(filepath);
+    YAML::Node data;
+      
+    try 
+    {
+      data = YAML::LoadFile(filepath);
+    }
+    catch (YAML::ParserException e)
+    {
+      BS_TRACE("Failed to load the .bshot file \"{0}\". {1}", filepath, e.what());
+      return false;
+    }
+      
     if (!data["Scene"])
       return false;
 
