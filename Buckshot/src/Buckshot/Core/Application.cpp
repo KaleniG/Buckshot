@@ -5,7 +5,10 @@
 #include "Buckshot/Core/Application.h"
 #include "Buckshot/Core/Timestep.h"
 #include "Buckshot/Renderer/Renderer.h"
+#include "Buckshot/Scripting/ScriptEngine.h"
 
+
+#include <mono/jit/jit.h>
 
 namespace Buckshot {
 
@@ -22,7 +25,7 @@ namespace Buckshot {
     m_Window->SetEventCallback(BS_BIND_EVENT_FN(Application::OnEvent));
 
     Renderer::Init();
-    
+    ScriptEngine::Init();
 
     m_ImGuiLayer = new ImGuiLayer();
     PushOverlay(m_ImGuiLayer);
@@ -32,6 +35,7 @@ namespace Buckshot {
   {
     BS_PROFILE_FUNCTION();
 
+    ScriptEngine::Shutdown();
     Renderer::Shutdown();
   }
 

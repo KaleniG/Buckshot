@@ -37,6 +37,7 @@ IncludeDir["stb_image"] = "Buckshot/vendor/stb_image"
 IncludeDir["YAML"] 		= "Buckshot/vendor/YAML/include"
 IncludeDir["ImGuizmo"]  = "Buckshot/vendor/ImGuizmo"
 IncludeDir["Box2D"]  	= "Buckshot/vendor/Box2D/include"
+IncludeDir["mono"]  	= "Buckshot/vendor/mono/include"
 
 group "Dependencies"
 	include "Buckshot/vendor/GLFW"
@@ -51,7 +52,7 @@ project "Buckshot"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++latest"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -83,7 +84,8 @@ project "Buckshot"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.YAML}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.Box2D}"
+		"%{IncludeDir.Box2D}",
+		"%{IncludeDir.mono}"
 	}
 
 	links 
@@ -93,7 +95,8 @@ project "Buckshot"
 		"ImGui",
 		"YAML",
 		"Box2D",
-		"opengl32.lib"
+		"opengl32.lib",
+		"Buckshot/vendor/mono/lib/%{cfg.buildcfg}/libmono-static-sgen.lib" -- Mono
 	}
 
 	filter "files:Buckshot/vendor/ImGuizmo/**.cpp"
@@ -101,6 +104,14 @@ project "Buckshot"
 
 	filter "system:windows"
 		systemversion "latest"
+
+		links 
+		{
+			"Ws2_32.lib", -- Mono -> Windows
+			"Winmm.lib",
+			"Version.lib",
+			"Bcrypt.lib"
+		}
 
 		defines
 		{
@@ -128,7 +139,7 @@ project "BuckshotEditor"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++latest"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -230,3 +241,30 @@ project "Sandbox"
 		runtime "Release"
 		defines "BS_DIST"
 		optimize "on"
+
+project "Buckshot-ScriptCore"
+	location "Buckshot-ScriptCore"
+	kind "SharedLib"
+	language "C#"
+	dotnetframework "4.7.2"
+
+	targetdir ("BuckshotEditor/scripts")
+	objdir ("BuckshotEditor/scripts/intermediates")
+	
+	files 
+	{
+		"%{prj.name}/Source/**.cs",
+		"%{prj.name}/Properties/**.cs"
+	}
+	
+	filter "configurations:Debug"
+		optimize "Off"
+		symbols "Default"
+	
+	filter "configurations:Release"
+		optimize "On"
+		symbols "Default"
+	
+	filter "configurations:Dist"
+		optimize "Full"
+		symbols "Off"

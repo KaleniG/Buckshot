@@ -28,6 +28,9 @@
     <Filter Include="src\Buckshot\Scene">
       <UniqueIdentifier>{7C88198C-686C-DAE1-D1CC-D434BDCFC463}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Buckshot\Scripting">
+      <UniqueIdentifier>{E1277574-CD21-9EC6-B68E-34D7A2270433}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Buckshot\Utilities">
       <UniqueIdentifier>{4AD7815F-36D1-AAB1-1F3E-41C20BD7101E}</UniqueIdentifier>
     </Filter>
@@ -103,6 +106,9 @@
       <Filter>src\Buckshot\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Core\Timestep.h">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Core\UUID.h">
       <Filter>src\Buckshot\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Core\Window.h">
@@ -191,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="src\Buckshot\Scene\ScriptableEntity.h">
       <Filter>src\Buckshot\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Scripting\ScriptEngine.h">
+      <Filter>src\Buckshot\Scripting</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Utilities\PlatformUtils.h">
       <Filter>src\Buckshot\Utilities</Filter>
@@ -1506,7 +1515,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Buckshot\Core\UUID.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buckshot\Core\Application.cpp">
@@ -1519,6 +1527,9 @@
       <Filter>src\Buckshot\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Core\Log.cpp">
+      <Filter>src\Buckshot\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Core\UUID.cpp">
       <Filter>src\Buckshot\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Core\Window.cpp">
@@ -1587,6 +1598,9 @@
     <ClCompile Include="src\Buckshot\Scene\SceneSerializer.cpp">
       <Filter>src\Buckshot\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Buckshot\Scripting\ScriptEngine.cpp">
+      <Filter>src\Buckshot\Scripting</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1647,6 +1661,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Buckshot\Core\UUID.cpp" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,8 @@
 **/bin/
 !vendor/bin/premake/
 bin-int/
+BuckshotEditor/scripts/intermediates/
+BuckshotEditor/scripts/**.pdb
 
 # Buckshot Files
 **.log
@@ -14,3 +16,4 @@ bin-int/
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+**.csproj
