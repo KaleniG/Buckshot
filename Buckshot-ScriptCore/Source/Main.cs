@@ -1,24 +1,36 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Buckshot {
-  public class Main
+
+  public struct Vector3
   {
-    public float Var { get; set; }
+    public float x;
+    public float y;
+    public float z;
 
-    public Main()
+    public Vector3(float x, float y, float z)
     {
-      Console.WriteLine("Main Constructor");
+      this.x = x;
+      this.y = y;
+      this.z = z;
     }
+  }
 
+  public static class InternalCalls
+  {
+    [MethodImplAttribute(MethodImplOptions.InternalCall)]
+    internal extern static void NativeLog(string text, int parameter);
+
+    [MethodImplAttribute(MethodImplOptions.InternalCall)]
+    internal extern static void NativeLogVector(ref Vector3 vector, out Vector3 result);
+  }
+
+  public class Entity
+  {
     public void PrintMessage()
     {
-      Console.WriteLine("\n#2");
+      Console.WriteLine("Message");
     }
-
-    public void PrintMessageEx(string message)
-    {
-      Console.WriteLine(message);
-    }
-
   }
 }

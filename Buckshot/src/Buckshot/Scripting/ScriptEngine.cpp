@@ -1,15 +1,17 @@
 #include <bspch.h>
+#include <glm/glm.hpp>
 #include <mono/jit/jit.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/assembly.h>
 
 #include "Buckshot/Scripting/ScriptEngine.h"
+#include "Buckshot/Scripting/ScriptRegistry.h"
 
 namespace Buckshot {
 
   namespace Utilities {
 
-		char* ReadBytes(const std::string& filepath, uint32_t* outSize)
+		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
 		{
 			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
 
@@ -35,7 +37,7 @@ namespace Buckshot {
 			return buffer;
 		}
 
-		MonoAssembly* LoadCSharpAssembly(const std::string& assemblyPath)
+		static MonoAssembly* LoadCSharpAssembly(const std::filesystem::path& assemblyPath)
 		{
 			uint32_t fileSize = 0;
 			char* fileData = ReadBytes(assemblyPath, &fileSize);
@@ -49,7 +51,8 @@ namespace Buckshot {
 				return nullptr;
 			}
 
-			MonoAssembly* assembly = mono_assembly_load_from_full(image, assemblyPath.c_str(), &status, 0);
+			std::string path_string = assemblyPath.string();
+			MonoAssembly* assembly = mono_assembly_load_from_full(image, path_string.c_str(), &status, 0);
 			mono_image_close(image);
 
 			delete[] fileData;
@@ -57,7 +60,7 @@ namespace Buckshot {
 			return assembly;
 		}
 
-		void PrintAssemblyTypes(MonoAssembly* assembly)
+		static void PrintAssemblyTypes(MonoAssembly* assembly)
 		{
 			MonoImage* image = mono_assembly_get_image(assembly);
 			const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
@@ -83,6 +86,9 @@ namespace Buckshot {
     MonoDomain* AppDomain = nullptr;
 
     MonoAssembly* CoreAssembly = nullptr;
+		MonoImage* CoreAssemblyImage = nullptr;
+
+		ScriptClass EntityClass;
   };
 
   static ScriptEngineData* s_Data = nullptr;
@@ -92,6 +98,17 @@ namespace Buckshot {
     s_Data = new ScriptEngineData();
 
     InitMono();
+		LoadAssembly("scripts/Buckshot-ScriptCore.dll");
+
+		ScriptRegistry::RegisterFunctions();
+
+		// Retrieving and instantiating class
+		s_Data->EntityClass = ScriptClass("Buckshot", "Entity");
+		MonoObject* instance = s_Data->EntityClass.Instantiate();
+
+		// Invoking functions
+		MonoMethod* print_message_method = s_Data->EntityClass.GetMethod("PrintMessage", 0);
+		s_Data->EntityClass.InvokeMethod(instance, print_message_method);
   }
 
   void ScriptEngine::Shutdown()
@@ -104,34 +121,29 @@ namespace Buckshot {
   {
     mono_set_assemblies_path("mono/lib");
 
+		// Setting root domain
 		MonoDomain* rootDomain = mono_jit_init("BuckshotJITRuntime");
 		BS_ASSERT(rootDomain, "No root domain");
 		s_Data->RootDomain = rootDomain;
+  }
 
-		const char* name = "BuckshotScriptRuntime";
-		s_Data->AppDomain = mono_domain_create_appdomain(const_cast<char*>(name), nullptr);
+	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
+	{
+		s_Data->AppDomain = mono_domain_create_appdomain(const_cast<char*>("BuckshotScriptRuntime"), nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 
-		s_Data->CoreAssembly = Utilities::LoadCSharpAssembly("scripts/Buckshot-ScriptCore.dll");
+		s_Data->CoreAssembly = Utilities::LoadCSharpAssembly(filepath);
 		Utilities::PrintAssemblyTypes(s_Data->CoreAssembly);
 
-		MonoImage* core_image = mono_assembly_get_image(s_Data->CoreAssembly);
-		MonoClass* core_class = mono_class_from_name(core_image, "Buckshot", "Main");
-		MonoObject* instance = mono_object_new(s_Data->AppDomain, core_class);
+		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
+	}
 
-		MonoMethod* method_1 = mono_class_get_method_from_name(core_class, "PrintMessage", 0);
-		MonoMethod* method_2 = mono_class_get_method_from_name(core_class, "PrintMessageEx", 1);
-
+	MonoObject* ScriptEngine::InstantiateClass(MonoClass* mono_class)
+	{
+		MonoObject* instance = mono_object_new(s_Data->AppDomain, mono_class);
 		mono_runtime_object_init(instance);
-		mono_runtime_invoke(method_1, instance, nullptr, nullptr);
-
-		MonoString* value = mono_string_new(s_Data->AppDomain, "HELLO");
-		void* params[1] =
-		{
-			value
-		};
-		mono_runtime_invoke(method_2, instance, params, nullptr);
-  }
+		return instance;
+	}
 
 	void ScriptEngine::ShutdownMono()
 	{
@@ -139,6 +151,29 @@ namespace Buckshot {
 		s_Data->RootDomain = nullptr;
 		//mono_domain_unload(s_Data->AppDomain);
 		s_Data->AppDomain = nullptr;
+	}
+
+	ScriptClass::ScriptClass(const std::string& class_namespace, const std::string& class_name)
+	{
+		m_ClassNamespace = class_namespace;
+		m_ClassName = class_name;
+
+		m_Class = mono_class_from_name(s_Data->CoreAssemblyImage, class_namespace.c_str(), class_name.c_str());
+	}
+
+	MonoObject* ScriptClass::Instantiate()
+	{
+		return ScriptEngine::InstantiateClass(m_Class);
+	}
+
+	MonoMethod* ScriptClass::GetMethod(const std::string& name, int parameter_count)
+	{
+		return mono_class_get_method_from_name(m_Class, name.c_str(), parameter_count);
+	}
+
+	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** parameters)
+	{
+		return mono_runtime_invoke(method, instance, parameters, nullptr);
 	}
 
 }
