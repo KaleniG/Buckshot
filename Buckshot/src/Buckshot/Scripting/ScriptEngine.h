@@ -60,6 +60,7 @@ namespace Buckshot {
 
     static void LoadAssembly(const std::filesystem::path& filepath);
     static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
+    static MonoImage* GetCoreAssemblyImage();
     static Scene* GetSceneContext();
 
   private:
@@ -69,7 +70,9 @@ namespace Buckshot {
     static MonoObject* InstantiateClass(MonoClass* mono_class);
     static void LoadAssemblyClasses(MonoAssembly* assembly);
 
+
     friend class ScriptClass;
+    friend class ScriptRegistry;
   };
 
 }

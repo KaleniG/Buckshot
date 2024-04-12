@@ -1,6 +1,4 @@
-﻿using Buckshot;
-
-namespace Buckshot
+﻿namespace Buckshot
 {
   public class Input
   {

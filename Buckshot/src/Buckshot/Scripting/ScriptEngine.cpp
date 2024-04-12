@@ -109,6 +109,7 @@ namespace Buckshot {
 		
 		s_Data->EntityClass = ScriptClass("Buckshot", "Entity");
 
+		ScriptRegistry::RegisterComponents();
 		ScriptRegistry::RegisterFunctions();
   }
 
@@ -230,6 +231,11 @@ namespace Buckshot {
 		}
 	}
 
+	MonoImage* ScriptEngine::GetCoreAssemblyImage()
+	{
+		return s_Data->CoreAssemblyImage;
+	}
+
 	void ScriptEngine::ShutdownMono()
 	{
 		mono_jit_cleanup(s_Data->RootDomain);
@@ -277,13 +283,17 @@ namespace Buckshot {
 
 	void ScriptInstance::InvokeOnCreate()
 	{
-		m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
+		if (m_OnCreateMethod)
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
 	}
 
 	void ScriptInstance::InvokeOnUpdate(Timestep timestep)
 	{
-		void* parameter = &timestep;
-		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &parameter);
+		if (m_OnUpdateMethod)
+		{
+			void* parameter = &timestep;
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &parameter);
+		}
 	}
 
 }

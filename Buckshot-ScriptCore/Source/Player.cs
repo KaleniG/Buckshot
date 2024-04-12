@@ -1,21 +1,23 @@
-﻿using System;
-using Buckshot;
-using static System.Runtime.CompilerServices.RuntimeHelpers;
+﻿using Buckshot;
+using System;
 
 namespace Sandbox
 {
   public class Player : Entity
   {
+
+    private TransformComponent m_Transform;
+    private Rigidbody2DComponent m_Rigidbody2D;
+
     public void OnCreate()
     {
-      Console.WriteLine("OnCreate");
-      Console.WriteLine(ID);
+      m_Transform = GetComponent<TransformComponent>();
+      m_Rigidbody2D = GetComponent<Rigidbody2DComponent>();
     }
 
     public void OnUpdate(float timestep)
     {
-      float speed = 1.5f;
-      Vector3 velocity = Vector3.Zero;
+      Vector3 velocity = Vector3.zero;
 
       if (Input.IsKeyDown(KeyCode.A))
         velocity.x = -1.0f;
@@ -27,11 +29,9 @@ namespace Sandbox
       if (Input.IsKeyDown(KeyCode.S))
         velocity.y = -1.0f;
 
-      velocity *= speed;
+      velocity *= 0.5f;
 
-      Vector3 pos = Position;
-      pos += velocity * timestep;
-      Position = pos;
+      m_Rigidbody2D.ApplyLinearImpulse(velocity.xy, true);
     }
   }
 
