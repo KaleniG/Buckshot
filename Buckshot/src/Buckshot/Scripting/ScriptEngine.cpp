@@ -4,6 +4,7 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/assembly.h>
 
+#include "Buckshot/Scene/Entity.h"
 #include "Buckshot/Scripting/ScriptEngine.h"
 #include "Buckshot/Scripting/ScriptRegistry.h"
 
@@ -89,6 +90,11 @@ namespace Buckshot {
 		MonoImage* CoreAssemblyImage = nullptr;
 
 		ScriptClass EntityClass;
+
+		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
+		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
+
+		Scene* SceneContext;
   };
 
   static ScriptEngineData* s_Data = nullptr;
@@ -99,16 +105,11 @@ namespace Buckshot {
 
     InitMono();
 		LoadAssembly("scripts/Buckshot-ScriptCore.dll");
+		LoadAssemblyClasses(s_Data->CoreAssembly);
+		
+		s_Data->EntityClass = ScriptClass("Buckshot", "Entity");
 
 		ScriptRegistry::RegisterFunctions();
-
-		// Retrieving and instantiating class
-		s_Data->EntityClass = ScriptClass("Buckshot", "Entity");
-		MonoObject* instance = s_Data->EntityClass.Instantiate();
-
-		// Invoking functions
-		MonoMethod* print_message_method = s_Data->EntityClass.GetMethod("PrintMessage", 0);
-		s_Data->EntityClass.InvokeMethod(instance, print_message_method);
   }
 
   void ScriptEngine::Shutdown()
@@ -127,15 +128,60 @@ namespace Buckshot {
 		s_Data->RootDomain = rootDomain;
   }
 
+	void ScriptEngine::OnRuntimeStart(Scene* scene)
+	{
+		s_Data->SceneContext = scene;
+	}
+
+	void ScriptEngine::OnRuntimeStop()
+	{
+		s_Data->SceneContext = nullptr;
+		s_Data->EntityInstances.clear();
+	}
+
+	bool ScriptEngine::EntityClassExists(const std::string& full_name)
+	{
+		return s_Data->EntityClasses.find(full_name) != s_Data->EntityClasses.end();
+	}
+
+	void ScriptEngine::OnCreateEntity(Entity& entity)
+	{
+		const auto& script_component = entity.GetComponent<ScriptComponent>();
+		if (ScriptEngine::EntityClassExists(script_component.Name))
+		{
+			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[script_component.Name], entity);
+			s_Data->EntityInstances[entity.GetUUID()] = instance;
+			instance->InvokeOnCreate();
+		}
+	}
+
+	void ScriptEngine::OnUpdateEntity(Entity& entity, Timestep timestep)
+	{
+		UUID entity_uuid = entity.GetUUID();
+		BS_ASSERT(s_Data->EntityInstances.find(entity_uuid) != s_Data->EntityInstances.end(), "Invalid Entity");
+
+		Ref<ScriptInstance> instance = s_Data->EntityInstances[entity_uuid];
+		instance->InvokeOnUpdate(timestep);
+	}
+
 	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
 	{
 		s_Data->AppDomain = mono_domain_create_appdomain(const_cast<char*>("BuckshotScriptRuntime"), nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 
 		s_Data->CoreAssembly = Utilities::LoadCSharpAssembly(filepath);
-		Utilities::PrintAssemblyTypes(s_Data->CoreAssembly);
 
 		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
+	}
+
+	std::unordered_map<std::string, Ref<ScriptClass>> ScriptEngine::GetEntityClasses()
+	{
+		return s_Data->EntityClasses;
+	}
+
+	Scene* ScriptEngine::GetSceneContext()
+	{
+		return s_Data->SceneContext;
 	}
 
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* mono_class)
@@ -143,6 +189,45 @@ namespace Buckshot {
 		MonoObject* instance = mono_object_new(s_Data->AppDomain, mono_class);
 		mono_runtime_object_init(instance);
 		return instance;
+	}
+
+	void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
+	{
+		s_Data->EntityClasses.clear();
+
+		MonoImage* image = mono_assembly_get_image(assembly);
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+
+		MonoClass* entity_class = mono_class_from_name(s_Data->CoreAssemblyImage, "Buckshot", "Entity");
+
+		for (int32_t i = 0; i < numTypes; i++)
+		{
+			uint32_t cols[MONO_TYPEDEF_SIZE];
+			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+			const char* name_space = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+			std::string full_name;
+			if (std::strlen(name_space) != 0)
+				full_name = fmt::format("{0}.{1}", name_space, name);
+			else
+				full_name = name;
+
+			MonoClass* mono_class = mono_class_from_name(s_Data->CoreAssemblyImage, name_space, name);
+
+			if (mono_class == entity_class)
+				continue;
+
+			bool is_subclass = mono_class_is_subclass_of(mono_class, entity_class, false);
+
+			if (is_subclass)
+			{
+				s_Data->EntityClasses[full_name] = CreateRef<ScriptClass>(name_space, name);
+			}
+
+			BS_TRACE("{0}.{1} is subclass:{2}", name_space, name, is_subclass);
+		}
 	}
 
 	void ScriptEngine::ShutdownMono()
@@ -174,6 +259,31 @@ namespace Buckshot {
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** parameters)
 	{
 		return mono_runtime_invoke(method, instance, parameters, nullptr);
+	}
+
+	ScriptInstance::ScriptInstance(Ref<ScriptClass> script_class, Entity entity)
+	{
+		m_ScriptClass = script_class;
+		m_Instance = script_class->Instantiate();
+		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
+		m_OnCreateMethod = script_class->GetMethod("OnCreate", 0);
+		m_OnUpdateMethod = script_class->GetMethod("OnUpdate", 1);
+
+		// Calling entity constructor
+		UUID entityID = entity.GetUUID();
+		void* param = &entityID;
+		m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &param);
+	}
+
+	void ScriptInstance::InvokeOnCreate()
+	{
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
+	}
+
+	void ScriptInstance::InvokeOnUpdate(Timestep timestep)
+	{
+		void* parameter = &timestep;
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &parameter);
 	}
 
 }

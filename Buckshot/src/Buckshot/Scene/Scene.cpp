@@ -12,6 +12,7 @@
 #include "Buckshot/Scene/Components.h"
 #include "Buckshot/Scene/Entity.h"
 #include "Buckshot/Scene/Scene.h"
+#include "Buckshot/Scripting/ScriptEngine.h"
 
 namespace Buckshot {
 
@@ -216,6 +217,8 @@ namespace Buckshot {
 
     entity.AddComponent<TransformComponent>();
 
+    m_EntityMap[uuid] = entity;
+
     return entity;
   }
 
@@ -228,22 +231,41 @@ namespace Buckshot {
 
     Utilities::CopyComponentIfExists(AllComponents{}, new_entity, other_entity);
 
+    m_EntityMap[new_entity.GetUUID()] = new_entity;
+
     return new_entity;
   }
 
   void Scene::DestroyEntity(Entity entity)
   {
     m_Registry.destroy(entity);
+    m_EntityMap.erase(entity.GetUUID());
   }
 
   void Scene::OnRuntimeStart()
   {
-    OnPhysics2DStart();
+    // Physics
+    {
+      OnPhysics2DStart();
+    }
+
+    // Scripts
+    {
+      ScriptEngine::OnRuntimeStart(this);
+
+      auto view = m_Registry.view<ScriptComponent>();
+      for (auto e : view)
+      {
+        Entity entity = Entity(e, this);
+        ScriptEngine::OnCreateEntity(entity);
+      }
+    }
   }
 
   void Scene::OnRuntimeStop()
   {
     OnPhysics2DStop();
+    ScriptEngine::OnRuntimeStop();
   }
 
   void Scene::OnSimulationStart()
@@ -263,7 +285,17 @@ namespace Buckshot {
 
   void Scene::OnUpdateRuntime(Timestep timestep)
   {
-    // Scripts Update
+    // C# Scripts Update
+    {
+      auto view = m_Registry.view<ScriptComponent>();
+      for (auto e : view)
+      {
+        Entity entity = Entity(e, this);
+        ScriptEngine::OnUpdateEntity(entity, timestep);
+      }
+    }
+
+    // Native Scripts Update
     {
       m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
         {
@@ -405,6 +437,14 @@ namespace Buckshot {
       if (!cameraComponent.FixedAspectRatio)
         cameraComponent.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
     }
+  }
+
+  Entity Scene::GetEntityByUUID(UUID uuid)
+  {
+    if (m_EntityMap.find(uuid) != m_EntityMap.end())
+      return Entity(m_EntityMap.at(uuid), this);
+
+    return Entity();
   }
 
   Entity Scene::GetPrimaryCameraEntity()

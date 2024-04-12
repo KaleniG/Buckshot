@@ -36,6 +36,8 @@ Entities:
       HasTexture: true
       Path: assets\textures\RPGpack_sheet_2X.png
       Tiling Factor: 1
+    ScriptComponent:
+      Name: Sandbox.Player
   - Entity: 11769319992300575038
     TagComponent:
       Tag: Camera

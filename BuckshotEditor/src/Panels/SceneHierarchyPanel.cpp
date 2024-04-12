@@ -340,6 +340,16 @@ namespace Buckshot {
         }
       }
 
+      if (!entity.HasComponent<ScriptComponent>())
+      {
+        present_any_component = true;
+        if (ImGui::MenuItem("Script"))
+        {
+          m_SelectionContext.AddComponent<ScriptComponent>();
+          ImGui::CloseCurrentPopup();
+        }
+      }
+
       if (!present_any_component)
       {
         ImGui::Text("No Components Available");
@@ -506,6 +516,23 @@ namespace Buckshot {
       ImGui::DragFloat("Friction", &component.Friction, 0.1f);
       ImGui::DragFloat("Restituition", &component.Restituition, 0.1f);
       ImGui::DragFloat("RestituitionThreshold", &component.RestituitionThreshold, 0.1f);
+    });
+
+    DrawComponent<ScriptComponent>("Script", entity, [](auto& component)
+    {
+        bool script_class_exists = ScriptEngine::EntityClassExists(component.Name);
+
+        static char buffer[64];
+        std::strcpy(buffer, component.Name.c_str());
+
+        if (!script_class_exists)
+          ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+
+        if (ImGui::InputText("Class", buffer, sizeof(buffer) / sizeof(char)))
+          component.Name = buffer;
+
+        if (!script_class_exists)
+          ImGui::PopStyleColor();
     });
 
     // TODO: NativeScriptComponent

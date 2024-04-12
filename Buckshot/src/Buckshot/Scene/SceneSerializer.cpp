@@ -235,6 +235,17 @@ namespace Buckshot {
       out << YAML::EndMap; // CircleCollider2DComponent
     }
 
+    if (entity.HasComponent<ScriptComponent>())
+    {
+      out << YAML::Key << "ScriptComponent";
+      out << YAML::BeginMap; // ScriptComponent
+
+      auto& script_component = entity.GetComponent<ScriptComponent>();
+      out << YAML::Key << "Name" << YAML::Value << script_component.Name;
+
+      out << YAML::EndMap; // ScriptComponent
+    }
+
     out << YAML::EndMap; // Entity
   }
 
@@ -381,6 +392,13 @@ namespace Buckshot {
           cc2d.Friction = circlecollider2d_component["Friction"].as<float>();
           cc2d.Restituition = circlecollider2d_component["Restituition"].as<float>();
           cc2d.RestituitionThreshold = circlecollider2d_component["Restituition Threshold"].as<float>();
+        }
+
+        auto script_component = entity["ScriptComponent"];
+        if (script_component)
+        {
+          auto& script = deserializedEntity.AddComponent<ScriptComponent>();
+          script.Name = script_component["Name"].as<std::string>();
         }
       }
     }

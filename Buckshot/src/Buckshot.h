@@ -13,6 +13,10 @@
 #include "Buckshot/Core/Base.h"
 #include "Buckshot/Core/Log.h"
 
+// Scripting
+#include "Buckshot/Scripting/ScriptEngine.h"
+
+
 // Utils
 #include "Buckshot/Utilities/PlatformUtils.h"
 

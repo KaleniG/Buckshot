@@ -96,6 +96,14 @@ namespace Buckshot {
     }
   };
 
+  struct ScriptComponent
+  {
+    std::string Name;
+
+    ScriptComponent() = default;
+    ScriptComponent(const ScriptComponent&) = default;
+  };
+
   struct Rigidbody2DComponent
   {
     enum class BodyType
@@ -149,8 +157,8 @@ namespace Buckshot {
 
   using AllComponents = ComponentGroup
   <
-    TransformComponent, SpriteRendererComponent,
-    CircleRendererComponent, CameraComponent, NativeScriptComponent,
+    TransformComponent, SpriteRendererComponent, CircleRendererComponent, 
+    CameraComponent, NativeScriptComponent, ScriptComponent,
     Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent
   >;
 
