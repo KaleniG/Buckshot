@@ -3,12 +3,34 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/tabledefs.h>
 
 #include "Buckshot/Scene/Entity.h"
 #include "Buckshot/Scripting/ScriptEngine.h"
 #include "Buckshot/Scripting/ScriptRegistry.h"
 
 namespace Buckshot {
+
+	static std::unordered_map<std::string, ScriptFieldType> s_ScriptFieldTypeMap = {
+		{"System.Boolean", ScriptFieldType::Bool},
+		{"System.Char", ScriptFieldType::Char},
+		{"System.String", ScriptFieldType::String},
+		{"System.Single", ScriptFieldType::Float},
+		{"System.Double", ScriptFieldType::Double},
+		{"System.Decimal", ScriptFieldType::Decimal},
+		{"System.Int64", ScriptFieldType::Long},
+		{"System.Int32", ScriptFieldType::Int},
+		{"System.Int16", ScriptFieldType::Short},
+		{"System.SByte", ScriptFieldType::Byte},
+		{"System.UInt64", ScriptFieldType::ULong},
+		{"System.UInt32", ScriptFieldType::UInt},
+		{"System.UInt16", ScriptFieldType::UShort},
+		{"System.Byte", ScriptFieldType::UByte},
+		{"Buckshot.Vector2", ScriptFieldType::Vector2},
+		{"Buckshot.Vector3", ScriptFieldType::Vector3},
+		{"Buckshot.Vector4", ScriptFieldType::Vector4},
+		{"Buckshot.Entity", ScriptFieldType::Entity}
+	};
 
   namespace Utilities {
 
@@ -77,6 +99,42 @@ namespace Buckshot {
 
 				BS_TRACE("{0}.{1}", nameSpace, name);
 			}
+		}
+
+		static ScriptFieldType FieldType_MonoToBuckshot(MonoType* mono_type)
+		{
+			std::string mono_type_name = mono_type_get_name(mono_type);
+
+			BS_ASSERT(s_ScriptFieldTypeMap.find(mono_type_name) != s_ScriptFieldTypeMap.end(), "Invalid MonoType-to-ScriptFieldType conversion, invalid type: {0}", mono_type_name);
+
+			return s_ScriptFieldTypeMap.at(mono_type_name);
+		}
+
+		static const char* FieldType_ScriptFieldTypeToString(ScriptFieldType script_field_type)
+		{
+			switch (script_field_type)
+			{
+			case ScriptFieldType::Bool: return "Bool";
+			case ScriptFieldType::Char: return "Char";
+			case ScriptFieldType::String: return "String";
+			case ScriptFieldType::Float: return "Float";
+			case ScriptFieldType::Double: return "Double";
+			case ScriptFieldType::Decimal: return "Decimal";
+			case ScriptFieldType::Long: return "Long";
+			case ScriptFieldType::Int: return "Int";
+			case ScriptFieldType::Short: return "Short";
+			case ScriptFieldType::Byte: return "Byte";
+			case ScriptFieldType::ULong: return "ULong";
+			case ScriptFieldType::UInt: return "UInt";
+			case ScriptFieldType::UShort: return "UShort";
+			case ScriptFieldType::UByte: return "UByte";
+			case ScriptFieldType::Vector2: return "Vector2";
+			case ScriptFieldType::Vector3: return "Vector3";
+			case ScriptFieldType::Vector4: return "Vector4";
+			case ScriptFieldType::Entity: return "Entity";
+			}
+
+			return "<Invalid>";
 		}
 
   }
@@ -216,32 +274,57 @@ namespace Buckshot {
 			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
 
 			const char* name_space = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
-			const char* name = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAME]);
+			const char* class_name = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAME]);
 			std::string full_name;
 			if (std::strlen(name_space) != 0)
-				full_name = fmt::format("{0}.{1}", name_space, name);
+				full_name = fmt::format("{0}.{1}", name_space, class_name);
 			else
-				full_name = name;
+				full_name = class_name;
 
-			MonoClass* mono_class = mono_class_from_name(s_Data->AppAssemblyImage, name_space, name);
+			MonoClass* mono_class = mono_class_from_name(s_Data->AppAssemblyImage, name_space, class_name);
 
 			if (mono_class == entity_class)
 				continue;
 
-			bool is_subclass = mono_class_is_subclass_of(mono_class, entity_class, false);
+			bool is_subclass_of_entity = mono_class_is_subclass_of(mono_class, entity_class, false);
 
-			if (is_subclass)
+			if (!is_subclass_of_entity)
+				continue;
+
+			Ref<ScriptClass> script_class = CreateRef<ScriptClass>(name_space, class_name);
+			s_Data->EntityClasses[full_name] = script_class;
+
+			BS_WARN("{0} fields:", full_name);
+			void* iterator = nullptr;
+			MonoClassField* field;
+			while ((field = mono_class_get_fields(mono_class, &iterator)))
 			{
-				s_Data->EntityClasses[full_name] = CreateRef<ScriptClass>(name_space, name);
-			}
+				std::string field_name = mono_field_get_name(field);
+				uint32_t flags = mono_field_get_flags(field);
+				if (flags & FIELD_ATTRIBUTE_PUBLIC)
+				{
+					MonoType* type  = mono_field_get_type(field);
+					ScriptFieldType script_field_type = Utilities::FieldType_MonoToBuckshot(type);
+					BS_WARN("- {0} {1}", Utilities::FieldType_ScriptFieldTypeToString(script_field_type), field_name);
 
-			BS_TRACE("{0}.{1} is subclass:{2}", name_space, name, is_subclass);
+					script_class->m_Fields[field_name] = ScriptField(field_name, script_field_type, field);
+				}
+			}
 		}
 	}
 
 	MonoImage* ScriptEngine::GetCoreAssemblyImage()
 	{
 		return s_Data->CoreAssemblyImage;
+	}
+
+	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID entity_id)
+	{
+		auto it = s_Data->EntityInstances.find(entity_id);
+		if (it == s_Data->EntityInstances.end())
+			return nullptr;
+
+		return it->second;
 	}
 
 	void ScriptEngine::ShutdownMono()
@@ -304,4 +387,32 @@ namespace Buckshot {
 		}
 	}
 
+	Ref<ScriptClass> ScriptInstance::GetScriptClass()
+	{
+		return m_ScriptClass;
+	}
+
+	bool ScriptInstance::GetFieldValueInternal(const std::string& name, void* buffer)
+	{
+		const auto& fields = m_ScriptClass->GetScriptFields();
+		auto it = fields.find(name);
+		if (it == fields.end())
+			return false;
+
+		const ScriptField& field = it->second;
+		mono_field_get_value(m_Instance, field.MonoField, buffer);
+		return true;
+	}
+
+	bool ScriptInstance::SetFieldValueInternal(const std::string& name, const void* value)
+	{
+		const auto& fields = m_ScriptClass->GetScriptFields();
+		auto it = fields.find(name);
+		if (it == fields.end())
+			return false;
+
+		const ScriptField& field = it->second;
+		mono_field_set_value(m_Instance, field.MonoField, const_cast<void*>(value));
+		return true;
+	}
 }

@@ -518,7 +518,7 @@ namespace Buckshot {
       ImGui::DragFloat("RestituitionThreshold", &component.RestituitionThreshold, 0.1f);
     });
 
-    DrawComponent<ScriptComponent>("Script", entity, [](auto& component)
+    DrawComponent<ScriptComponent>("Script", entity, [entity](auto& component) mutable
     {
         bool script_class_exists = ScriptEngine::EntityClassExists(component.Name);
 
@@ -530,6 +530,23 @@ namespace Buckshot {
 
         if (ImGui::InputText("Class", buffer, sizeof(buffer) / sizeof(char)))
           component.Name = buffer;
+
+        Ref<ScriptInstance> script_instance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+        if (script_instance)
+        {
+          const auto& fields = script_instance->GetScriptClass()->GetScriptFields();
+          for (const auto& [name, field] : fields)
+          {
+            if (field.Type == ScriptFieldType::Float)
+            {
+              float data = script_instance->GetFieldValue<float>(name);
+              if (ImGui::DragFloat(name.c_str(), &data))
+              {
+                script_instance->SetFieldValue(name, data);
+              }
+            }
+          }
+        }
 
         if (!script_class_exists)
           ImGui::PopStyleColor();
