@@ -17,7 +17,7 @@ namespace Buckshot {
   {
   public:
     ScriptClass() = default;
-    ScriptClass(const std::string& class_namespace, const std::string& class_name);
+    ScriptClass(const std::string& class_namespace, const std::string& class_name, bool is_core = false);
 
     MonoObject* Instantiate();
     MonoMethod* GetMethod(const std::string& name, int parameter_count);
@@ -59,6 +59,7 @@ namespace Buckshot {
     static void OnUpdateEntity(Entity& entity, Timestep timestep);
 
     static void LoadAssembly(const std::filesystem::path& filepath);
+    static void LoadAppAssembly(const std::filesystem::path& filepath);
     static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
     static MonoImage* GetCoreAssemblyImage();
     static Scene* GetSceneContext();
@@ -68,7 +69,7 @@ namespace Buckshot {
     static void ShutdownMono();
 
     static MonoObject* InstantiateClass(MonoClass* mono_class);
-    static void LoadAssemblyClasses(MonoAssembly* assembly);
+    static void LoadAssemblyClasses();
 
 
     friend class ScriptClass;

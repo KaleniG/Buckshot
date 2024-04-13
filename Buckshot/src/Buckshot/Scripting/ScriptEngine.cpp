@@ -89,6 +89,9 @@ namespace Buckshot {
     MonoAssembly* CoreAssembly = nullptr;
 		MonoImage* CoreAssemblyImage = nullptr;
 
+		MonoAssembly* AppAssembly = nullptr;
+		MonoImage* AppAssemblyImage = nullptr;
+
 		ScriptClass EntityClass;
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
@@ -105,9 +108,10 @@ namespace Buckshot {
 
     InitMono();
 		LoadAssembly("scripts/Buckshot-ScriptCore.dll");
-		LoadAssemblyClasses(s_Data->CoreAssembly);
+		LoadAppAssembly("scripts/Sandbox.dll");
+		LoadAssemblyClasses();
 		
-		s_Data->EntityClass = ScriptClass("Buckshot", "Entity");
+		s_Data->EntityClass = ScriptClass("Buckshot", "Entity", true);
 
 		ScriptRegistry::RegisterComponents();
 		ScriptRegistry::RegisterFunctions();
@@ -171,8 +175,13 @@ namespace Buckshot {
 		mono_domain_set(s_Data->AppDomain, true);
 
 		s_Data->CoreAssembly = Utilities::LoadCSharpAssembly(filepath);
-
 		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
+	}
+
+	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
+	{
+		s_Data->AppAssembly = Utilities::LoadCSharpAssembly(filepath);
+		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 	}
 
 	std::unordered_map<std::string, Ref<ScriptClass>> ScriptEngine::GetEntityClasses()
@@ -192,12 +201,11 @@ namespace Buckshot {
 		return instance;
 	}
 
-	void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
+	void ScriptEngine::LoadAssemblyClasses()
 	{
 		s_Data->EntityClasses.clear();
 
-		MonoImage* image = mono_assembly_get_image(assembly);
-		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+		const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(s_Data->AppAssemblyImage, MONO_TABLE_TYPEDEF);
 		int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
 
 		MonoClass* entity_class = mono_class_from_name(s_Data->CoreAssemblyImage, "Buckshot", "Entity");
@@ -207,15 +215,15 @@ namespace Buckshot {
 			uint32_t cols[MONO_TYPEDEF_SIZE];
 			mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
 
-			const char* name_space = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-			const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+			const char* name_space = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAMESPACE]);
+			const char* name = mono_metadata_string_heap(s_Data->AppAssemblyImage, cols[MONO_TYPEDEF_NAME]);
 			std::string full_name;
 			if (std::strlen(name_space) != 0)
 				full_name = fmt::format("{0}.{1}", name_space, name);
 			else
 				full_name = name;
 
-			MonoClass* mono_class = mono_class_from_name(s_Data->CoreAssemblyImage, name_space, name);
+			MonoClass* mono_class = mono_class_from_name(s_Data->AppAssemblyImage, name_space, name);
 
 			if (mono_class == entity_class)
 				continue;
@@ -244,12 +252,12 @@ namespace Buckshot {
 		s_Data->AppDomain = nullptr;
 	}
 
-	ScriptClass::ScriptClass(const std::string& class_namespace, const std::string& class_name)
+	ScriptClass::ScriptClass(const std::string& class_namespace, const std::string& class_name, bool is_core)
 	{
 		m_ClassNamespace = class_namespace;
 		m_ClassName = class_name;
 
-		m_Class = mono_class_from_name(s_Data->CoreAssemblyImage, class_namespace.c_str(), class_name.c_str());
+		m_Class = mono_class_from_name(is_core ? s_Data->CoreAssemblyImage : s_Data->AppAssemblyImage, class_namespace.c_str(), class_name.c_str());
 	}
 
 	MonoObject* ScriptClass::Instantiate()
