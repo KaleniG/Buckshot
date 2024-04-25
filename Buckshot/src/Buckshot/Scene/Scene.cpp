@@ -80,6 +80,8 @@ namespace Buckshot {
     new_scene->m_ViewportWidth = other->m_ViewportWidth;
     new_scene->m_ViewportHeight = other->m_ViewportHeight;
 
+    new_scene->m_IsRunning = other->m_IsRunning;
+
     auto& other_registry = other->m_Registry;
     auto& new_registry = new_scene->m_Registry;
 
@@ -193,7 +195,6 @@ namespace Buckshot {
 
   Scene::Scene()
   {
-
   } 
 
   Scene::~Scene()
@@ -244,6 +245,8 @@ namespace Buckshot {
 
   void Scene::OnRuntimeStart()
   {
+    m_IsRunning = true;
+
     // Physics
     {
       OnPhysics2DStart();
@@ -264,6 +267,7 @@ namespace Buckshot {
 
   void Scene::OnRuntimeStop()
   {
+    m_IsRunning = false;
     OnPhysics2DStop();
     ScriptEngine::OnRuntimeStop();
   }

@@ -23,6 +23,7 @@ namespace Buckshot {
     void DrawComponents(Entity entity);
 
   private:
+    bool m_SceneRunning;
     Ref<Scene> m_Context;
     Entity m_SelectionContext;
   };

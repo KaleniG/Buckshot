@@ -38,5 +38,7 @@ namespace Buckshot
     
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
     internal extern static void Rigidbody2DComponent_ApplyLinearImpulseToCenter(ulong entity_id, ref Vector2 impulse, bool wake);
+
+
   }
 }

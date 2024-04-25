@@ -20,7 +20,6 @@ namespace Buckshot {
   {
     None,
     Bool,
-    Char, String,
     Float, Double, Decimal,
     Long, Int, Short, Byte, 
     ULong, UInt, UShort, UByte,
@@ -31,13 +30,44 @@ namespace Buckshot {
   struct ScriptField
   {
     std::string Name;
-    ScriptFieldType Type;
-    MonoClassField* MonoField;
+    ScriptFieldType Type = ScriptFieldType::None;
+    MonoClassField* MonoField = nullptr;
 
     ScriptField() = default;
     ScriptField(std::string name, ScriptFieldType type, MonoClassField* mono_class_field) 
       : Name(name), Type(type), MonoField(mono_class_field) {}
   };
+
+  struct ScriptFieldInstance
+  {
+    ScriptField Field;
+
+    ScriptFieldInstance()
+    {
+      std::memset(m_DataBuffer, 0, sizeof(m_DataBuffer));
+    }
+
+    template<typename T>
+    T GetValue()
+    {
+      static_assert(sizeof(T) <= 8, "Type too large");
+      return *(T*)m_DataBuffer;
+    }
+
+    template<typename T>
+    void SetValue(T value)
+    {
+      static_assert(sizeof(T) <= 8, "Type too large");
+      std::memcpy(m_DataBuffer, &value, sizeof(T));
+    }
+
+  private:
+    uint8_t m_DataBuffer[8];
+
+    friend class ScriptEngine;
+  };
+
+  using ScriptFieldMap = std::unordered_map<std::string, ScriptFieldInstance>;
 
   class ScriptClass
   {
@@ -88,6 +118,7 @@ namespace Buckshot {
         BS_ERROR("Unsuccessful setting of field value \"{0}\"", name);
       }
     }
+
   private:
     bool GetFieldValueInternal(const std::string& name, void* buffer);
     bool SetFieldValueInternal(const std::string& name, const void* value);
@@ -100,6 +131,8 @@ namespace Buckshot {
     MonoMethod* m_OnUpdateMethod = nullptr;
 
     inline static char s_FieldValueBuffer[8];
+
+    friend class ScriptEngine;
   };
 
   class ScriptEngine
@@ -118,7 +151,9 @@ namespace Buckshot {
 
     static Scene* GetSceneContext();
     static MonoImage* GetCoreAssemblyImage();
+    static ScriptFieldMap& GetScriptFieldMap(UUID entity_id);
     static Ref<ScriptInstance> GetEntityScriptInstance(UUID entity_id);
+    static Ref<ScriptClass> GetEntityClass(const std::string& class_name);
     static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
 
   private:

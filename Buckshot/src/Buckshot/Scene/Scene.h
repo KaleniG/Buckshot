@@ -38,6 +38,8 @@ namespace Buckshot {
     Entity GetEntityByUUID(UUID uuid);
     Entity GetPrimaryCameraEntity();
 
+    bool IsRunning() const { return m_IsRunning; }
+
     static Ref<Scene> Copy(Ref<Scene> other);
 
     template<typename... Components>
@@ -52,6 +54,8 @@ namespace Buckshot {
     void RenderScene(EditorCamera& camera);
 
   private:
+    bool m_IsRunning = false;
+
     entt::registry m_Registry;
     uint32_t m_ViewportWidth = 0;
     uint32_t m_ViewportHeight = 0;

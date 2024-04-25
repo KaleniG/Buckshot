@@ -518,7 +518,7 @@ namespace Buckshot {
       ImGui::DragFloat("RestituitionThreshold", &component.RestituitionThreshold, 0.1f);
     });
 
-    DrawComponent<ScriptComponent>("Script", entity, [entity](auto& component) mutable
+    DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
     {
         bool script_class_exists = ScriptEngine::EntityClassExists(component.Name);
 
@@ -531,18 +531,60 @@ namespace Buckshot {
         if (ImGui::InputText("Class", buffer, sizeof(buffer) / sizeof(char)))
           component.Name = buffer;
 
-        Ref<ScriptInstance> script_instance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
-        if (script_instance)
+        bool scene_running = scene->IsRunning();
+
+        if (scene_running)
         {
-          const auto& fields = script_instance->GetScriptClass()->GetScriptFields();
-          for (const auto& [name, field] : fields)
+          Ref<ScriptInstance> script_instance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+          if (script_instance)
           {
-            if (field.Type == ScriptFieldType::Float)
+            const auto& fields = script_instance->GetScriptClass()->GetScriptFields();
+            for (const auto& [name, field] : fields)
             {
-              float data = script_instance->GetFieldValue<float>(name);
-              if (ImGui::DragFloat(name.c_str(), &data))
+              if (field.Type == ScriptFieldType::Float)
               {
-                script_instance->SetFieldValue(name, data);
+                float data = script_instance->GetFieldValue<float>(name);
+                if (ImGui::DragFloat(name.c_str(), &data))
+                {
+                  script_instance->SetFieldValue(name, data);
+                }
+              }
+            }
+          }
+        }
+        else
+        {
+          if (script_class_exists)
+          {
+            Ref<ScriptClass> entity_class = ScriptEngine::GetEntityClass(component.Name);
+            const auto& class_fields = entity_class->GetScriptFields();
+
+            auto& entity_fields = ScriptEngine::GetScriptFieldMap(entity.GetUUID());
+            for (const auto& [name, field] : class_fields)
+            {
+              if (entity_fields.find(name) != entity_fields.end())
+              {
+                ScriptFieldInstance& script_field = entity_fields.at(name);
+
+                if (field.Type == ScriptFieldType::Float)
+                {
+                  float data = script_field.GetValue<float>();
+                  if (ImGui::DragFloat(name.c_str(), &data))
+                    script_field.SetValue(data);
+                }
+              }
+              else
+              {
+                if (field.Type == ScriptFieldType::Float)
+                {
+                  float data = 0.0f;
+                  if (ImGui::DragFloat(name.c_str(), &data))
+                  {
+                    ScriptFieldInstance& field_instance = entity_fields[name];
+                    field_instance.Field = field;
+                    field_instance.SetValue(data);
+                  }
+                }
               }
             }
           }

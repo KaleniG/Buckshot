@@ -13,8 +13,6 @@ namespace Buckshot {
 
 	static std::unordered_map<std::string, ScriptFieldType> s_ScriptFieldTypeMap = {
 		{"System.Boolean", ScriptFieldType::Bool},
-		{"System.Char", ScriptFieldType::Char},
-		{"System.String", ScriptFieldType::String},
 		{"System.Single", ScriptFieldType::Float},
 		{"System.Double", ScriptFieldType::Double},
 		{"System.Decimal", ScriptFieldType::Decimal},
@@ -115,8 +113,6 @@ namespace Buckshot {
 			switch (script_field_type)
 			{
 			case ScriptFieldType::Bool: return "Bool";
-			case ScriptFieldType::Char: return "Char";
-			case ScriptFieldType::String: return "String";
 			case ScriptFieldType::Float: return "Float";
 			case ScriptFieldType::Double: return "Double";
 			case ScriptFieldType::Decimal: return "Decimal";
@@ -154,11 +150,16 @@ namespace Buckshot {
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
 		std::unordered_map<UUID, Ref<ScriptInstance>> EntityInstances;
+		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
 
-		Scene* SceneContext;
+		Scene* SceneContext = nullptr;
   };
 
   static ScriptEngineData* s_Data = nullptr;
+
+	/////////////////////////////////
+	// SCRIPT ENGINE ////////////////
+	/////////////////////////////////
 
   void ScriptEngine::Init()
   {
@@ -191,9 +192,12 @@ namespace Buckshot {
 		s_Data->RootDomain = rootDomain;
   }
 
-	void ScriptEngine::OnRuntimeStart(Scene* scene)
+	void ScriptEngine::ShutdownMono()
 	{
-		s_Data->SceneContext = scene;
+		mono_jit_cleanup(s_Data->RootDomain);
+		s_Data->RootDomain = nullptr;
+		//mono_domain_unload(s_Data->AppDomain);
+		s_Data->AppDomain = nullptr;
 	}
 
 	void ScriptEngine::OnRuntimeStop()
@@ -202,9 +206,9 @@ namespace Buckshot {
 		s_Data->EntityInstances.clear();
 	}
 
-	bool ScriptEngine::EntityClassExists(const std::string& full_name)
+	void ScriptEngine::OnRuntimeStart(Scene* scene)
 	{
-		return s_Data->EntityClasses.find(full_name) != s_Data->EntityClasses.end();
+		s_Data->SceneContext = scene;
 	}
 
 	void ScriptEngine::OnCreateEntity(Entity& entity)
@@ -212,8 +216,18 @@ namespace Buckshot {
 		const auto& script_component = entity.GetComponent<ScriptComponent>();
 		if (ScriptEngine::EntityClassExists(script_component.Name))
 		{
+			UUID entity_id = entity.GetUUID();
+
 			Ref<ScriptInstance> instance = CreateRef<ScriptInstance>(s_Data->EntityClasses[script_component.Name], entity);
-			s_Data->EntityInstances[entity.GetUUID()] = instance;
+			s_Data->EntityInstances[entity_id] = instance;
+
+			if (s_Data->EntityScriptFields.find(entity_id) != s_Data->EntityScriptFields.end())
+			{
+				const ScriptFieldMap& field_map = s_Data->EntityScriptFields.at(entity_id);
+				for (const auto& [name, field_instance] : field_map)
+					instance->SetFieldValueInternal(name, (void*)field_instance.m_DataBuffer);
+			}
+			
 			instance->InvokeOnCreate();
 		}
 	}
@@ -242,14 +256,46 @@ namespace Buckshot {
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 	}
 
-	std::unordered_map<std::string, Ref<ScriptClass>> ScriptEngine::GetEntityClasses()
+	bool ScriptEngine::EntityClassExists(const std::string& full_name)
 	{
-		return s_Data->EntityClasses;
+		return s_Data->EntityClasses.find(full_name) != s_Data->EntityClasses.end();
 	}
-
+	
 	Scene* ScriptEngine::GetSceneContext()
 	{
 		return s_Data->SceneContext;
+	}
+
+	MonoImage* ScriptEngine::GetCoreAssemblyImage()
+	{
+		return s_Data->CoreAssemblyImage;
+	}
+
+	ScriptFieldMap& ScriptEngine::GetScriptFieldMap(UUID entity_id)
+	{
+		return s_Data->EntityScriptFields[entity_id];
+	}
+
+	Ref<ScriptClass> ScriptEngine::GetEntityClass(const std::string& class_name)
+	{
+		if (s_Data->EntityClasses.find(class_name) == s_Data->EntityClasses.end())
+			return nullptr;
+
+		return s_Data->EntityClasses.at(class_name);
+	}
+
+	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID entity_id)
+	{
+		auto it = s_Data->EntityInstances.find(entity_id);
+		if (it == s_Data->EntityInstances.end())
+			return nullptr;
+
+		return it->second;
+	}
+
+	std::unordered_map<std::string, Ref<ScriptClass>> ScriptEngine::GetEntityClasses()
+	{
+		return s_Data->EntityClasses;
 	}
 
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* mono_class)
@@ -313,27 +359,9 @@ namespace Buckshot {
 		}
 	}
 
-	MonoImage* ScriptEngine::GetCoreAssemblyImage()
-	{
-		return s_Data->CoreAssemblyImage;
-	}
-
-	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID entity_id)
-	{
-		auto it = s_Data->EntityInstances.find(entity_id);
-		if (it == s_Data->EntityInstances.end())
-			return nullptr;
-
-		return it->second;
-	}
-
-	void ScriptEngine::ShutdownMono()
-	{
-		mono_jit_cleanup(s_Data->RootDomain);
-		s_Data->RootDomain = nullptr;
-		//mono_domain_unload(s_Data->AppDomain);
-		s_Data->AppDomain = nullptr;
-	}
+	/////////////////////////////////
+	// SCRIPT CLASS /////////////////
+	/////////////////////////////////
 
 	ScriptClass::ScriptClass(const std::string& class_namespace, const std::string& class_name, bool is_core)
 	{
@@ -357,6 +385,10 @@ namespace Buckshot {
 	{
 		return mono_runtime_invoke(method, instance, parameters, nullptr);
 	}
+
+	/////////////////////////////////
+	// SCRIPT INSTANCE //////////////
+	/////////////////////////////////
 
 	ScriptInstance::ScriptInstance(Ref<ScriptClass> script_class, Entity entity)
 	{
@@ -415,4 +447,5 @@ namespace Buckshot {
 		mono_field_set_value(m_Instance, field.MonoField, const_cast<void*>(value));
 		return true;
 	}
+
 }

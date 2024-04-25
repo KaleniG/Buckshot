@@ -14,7 +14,6 @@ namespace Sandbox
     {
       m_Transform = GetComponent<TransformComponent>();
       m_Rigidbody2D = GetComponent<Rigidbody2DComponent>();
-      Speed = 0.0f;
     }
 
     public void OnUpdate(float timestep)
@@ -32,7 +31,6 @@ namespace Sandbox
         velocity.y = -1.0f;
 
       velocity *= 0.5f * Speed;
-
       m_Rigidbody2D.ApplyLinearImpulse(velocity.xy, true);
     }
   }
