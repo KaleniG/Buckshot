@@ -108,31 +108,6 @@ namespace Buckshot {
 			return s_ScriptFieldTypeMap.at(mono_type_name);
 		}
 
-		static const char* FieldType_ScriptFieldTypeToString(ScriptFieldType script_field_type)
-		{
-			switch (script_field_type)
-			{
-			case ScriptFieldType::Bool: return "Bool";
-			case ScriptFieldType::Float: return "Float";
-			case ScriptFieldType::Double: return "Double";
-			case ScriptFieldType::Decimal: return "Decimal";
-			case ScriptFieldType::Long: return "Long";
-			case ScriptFieldType::Int: return "Int";
-			case ScriptFieldType::Short: return "Short";
-			case ScriptFieldType::Byte: return "Byte";
-			case ScriptFieldType::ULong: return "ULong";
-			case ScriptFieldType::UInt: return "UInt";
-			case ScriptFieldType::UShort: return "UShort";
-			case ScriptFieldType::UByte: return "UByte";
-			case ScriptFieldType::Vector2: return "Vector2";
-			case ScriptFieldType::Vector3: return "Vector3";
-			case ScriptFieldType::Vector4: return "Vector4";
-			case ScriptFieldType::Entity: return "Entity";
-			}
-
-			return "<Invalid>";
-		}
-
   }
 
   struct ScriptEngineData

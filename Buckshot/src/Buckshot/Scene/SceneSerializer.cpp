@@ -1,9 +1,11 @@
 #include <bspch.h>
 #include <yaml-cpp/yaml.h>
 
+#include "Buckshot/Core/UUID.h"
 #include "Buckshot/Scene/SceneSerializer.h"
 #include "Buckshot/Scene/Components.h"
 #include "Buckshot/Scene/Entity.h"
+#include "Buckshot/Scripting/ScriptEngine.h"
 
 namespace YAML {
 
@@ -75,6 +77,23 @@ namespace YAML {
       rhs.y = node[1].as<float>();
       rhs.z = node[2].as<float>();
       rhs.w = node[3].as<float>();
+      return true;
+    }
+  };
+
+  template<>
+  struct convert<Buckshot::UUID>
+  {
+    static Node encode(const Buckshot::UUID& uuid)
+    {
+      Node node;
+      node.push_back((uint64_t)uuid);
+      return node;
+    }
+
+    static bool decode(const Node& node, Buckshot::UUID& uuid)
+    {
+      uuid = node.as<uint64_t>();
       return true;
     }
   };
@@ -243,6 +262,50 @@ namespace Buckshot {
       auto& script_component = entity.GetComponent<ScriptComponent>();
       out << YAML::Key << "Name" << YAML::Value << script_component.Name;
 
+      Ref<ScriptClass> entity_class = ScriptEngine::GetEntityClass(script_component.Name);
+      const auto& fields = entity_class->GetScriptFields();
+
+      if (fields.size() > 0)
+      {
+        out << YAML::Key << "ScriptFields";
+        out << YAML::BeginSeq;
+        auto& entity_fields = ScriptEngine::GetScriptFieldMap(entity.GetUUID());
+        for (const auto& [name, field] : fields)
+        {
+          if (entity_fields.find(name) == entity_fields.end())
+            continue;
+
+          out << YAML::BeginMap;
+          out << YAML::Key << "Name" << YAML::Value << name;
+          out << YAML::Key << "Type" << YAML::Value << Utilities::FieldType_ScriptFieldTypeToString(field.Type);
+
+          out << YAML::Key << "Value" << YAML::Value;
+          ScriptFieldInstance& script_field = entity_fields.at(name);
+          switch (field.Type)
+          {
+            case ScriptFieldType::Bool:     out << script_field.GetValue<bool>(); break;
+            case ScriptFieldType::Float:    out << script_field.GetValue<float>(); break;
+            case ScriptFieldType::Double:   out << script_field.GetValue<double>(); break;
+            case ScriptFieldType::Decimal:  out << script_field.GetValue<double>(); break;
+            case ScriptFieldType::Long:     out << script_field.GetValue<int64_t>(); break;
+            case ScriptFieldType::Int:      out << script_field.GetValue<int64_t>(); break;
+            case ScriptFieldType::Short:    out << script_field.GetValue<int32_t>(); break;
+            case ScriptFieldType::Byte:     out << script_field.GetValue<int16_t>(); break;
+            case ScriptFieldType::ULong:    out << script_field.GetValue<uint64_t>(); break;
+            case ScriptFieldType::UInt:     out << script_field.GetValue<uint64_t>(); break;
+            case ScriptFieldType::UShort:   out << script_field.GetValue<uint32_t>(); break;
+            case ScriptFieldType::UByte:    out << script_field.GetValue<uint16_t>(); break;
+            case ScriptFieldType::Vector2:  out << script_field.GetValue<glm::vec2>(); break;
+            case ScriptFieldType::Vector3:  out << script_field.GetValue<glm::vec3>(); break;
+            case ScriptFieldType::Vector4:  out << script_field.GetValue<glm::vec3>(); break;
+            case ScriptFieldType::Entity:   out << script_field.GetValue<UUID>(); break;
+          }
+
+          out << YAML::EndMap;
+        }
+        out << YAML::EndSeq;
+      }
+
       out << YAML::EndMap; // ScriptComponent
     }
 
@@ -399,6 +462,131 @@ namespace Buckshot {
         {
           auto& script = deserializedEntity.AddComponent<ScriptComponent>();
           script.Name = script_component["Name"].as<std::string>();
+
+          auto script_fields = script_component["ScriptFields"];
+          if (script_fields)
+          {
+            Ref<ScriptClass> entity_class = ScriptEngine::GetEntityClass(script.Name);
+            BS_ASSERT(entity_class, "No class");
+            const auto& class_fields = entity_class->GetScriptFields();
+            auto& entity_fields = ScriptEngine::GetScriptFieldMap(deserializedEntity.GetUUID());
+
+            for (auto script_field : script_fields)
+            {
+              std::string name = script_field["Name"].as<std::string>();
+              std::string typeString = script_field["Type"].as<std::string>();
+              ScriptFieldType type = Utilities::FieldType_ScriptToScriptFieldType(typeString);
+              ScriptFieldInstance& field_instance = entity_fields[name];
+
+              // Make it an error instead of assert
+              BS_ASSERT(class_fields.find(name) != class_fields.end(), "Unexpected Error");
+
+              if (class_fields.find(name) == class_fields.end())
+                continue;
+
+              field_instance.Field = class_fields.at(name);
+
+              switch (type)
+              {
+                case ScriptFieldType::Bool:
+                {
+                  bool value = script_field["Value"].as<bool>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Float: 
+                {
+                  float value = script_field["Value"].as<float>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Double:
+                {
+                  double value = script_field["Value"].as<double>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Decimal:
+                {
+                  double value = script_field["Value"].as<double>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Long:
+                {
+                  int64_t value = script_field["Value"].as<int64_t>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Int:
+                {
+                  int32_t value = script_field["Value"].as<int32_t>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Short:
+                {
+                  int16_t value = script_field["Value"].as<int16_t>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Byte:
+                {
+                  int8_t value = script_field["Value"].as<int8_t>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::ULong:
+                {
+                  uint64_t value = script_field["Value"].as<uint64_t>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::UInt:
+                {
+                  uint32_t value = script_field["Value"].as<uint32_t>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::UShort:
+                {
+                  uint16_t value = script_field["Value"].as<uint16_t>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::UByte:
+                {
+                  uint8_t value = script_field["Value"].as<uint8_t>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Vector2:
+                {
+                  glm::vec2 value = script_field["Value"].as<glm::vec2>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Vector3:
+                {
+                  glm::vec3 value = script_field["Value"].as<glm::vec3>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Vector4:
+                {
+                  glm::vec4 value = script_field["Value"].as<glm::vec4>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+                case ScriptFieldType::Entity:
+                {
+                  UUID value = script_field["Value"].as<UUID>();
+                  field_instance.SetValue(value);
+                  break;
+                }
+              }
+            }
+          }
         }
       }
     }

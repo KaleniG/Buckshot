@@ -50,19 +50,19 @@ namespace Buckshot {
     template<typename T>
     T GetValue()
     {
-      static_assert(sizeof(T) <= 8, "Type too large");
+      static_assert(sizeof(T) <= 16, "Type too large");
       return *(T*)m_DataBuffer;
     }
 
     template<typename T>
     void SetValue(T value)
     {
-      static_assert(sizeof(T) <= 8, "Type too large");
+      //static_assert(sizeof(T) <= 16, "Type too large");
       std::memcpy(m_DataBuffer, &value, sizeof(T));
     }
 
   private:
-    uint8_t m_DataBuffer[8];
+    uint8_t m_DataBuffer[16];
 
     friend class ScriptEngine;
   };
@@ -130,7 +130,7 @@ namespace Buckshot {
     MonoMethod* m_OnCreateMethod = nullptr;
     MonoMethod* m_OnUpdateMethod = nullptr;
 
-    inline static char s_FieldValueBuffer[8];
+    inline static char s_FieldValueBuffer[16];
 
     friend class ScriptEngine;
   };
@@ -166,5 +166,55 @@ namespace Buckshot {
     friend class ScriptClass;
     friend class ScriptRegistry;
   };
+
+  namespace Utilities
+  {
+    inline const char* FieldType_ScriptFieldTypeToString(ScriptFieldType script_field_type)
+    {
+      switch (script_field_type)
+      {
+      case ScriptFieldType::None:     return "None";
+      case ScriptFieldType::Bool:     return "Bool";
+      case ScriptFieldType::Float:    return "Float";
+      case ScriptFieldType::Double:   return "Double";
+      case ScriptFieldType::Decimal:  return "Decimal";
+      case ScriptFieldType::Long:     return "Long";
+      case ScriptFieldType::Int:      return "Int";
+      case ScriptFieldType::Short:    return "Short";
+      case ScriptFieldType::Byte:     return "Byte";
+      case ScriptFieldType::ULong:    return "ULong";
+      case ScriptFieldType::UInt:     return "UInt";
+      case ScriptFieldType::UShort:   return "UShort";
+      case ScriptFieldType::UByte:    return "UByte";
+      case ScriptFieldType::Vector2:  return "Vector2";
+      case ScriptFieldType::Vector3:  return "Vector3";
+      case ScriptFieldType::Vector4:  return "Vector4";
+      case ScriptFieldType::Entity:   return "Entity";
+      default:                        return "None";
+      }
+    }
+
+    inline ScriptFieldType FieldType_ScriptToScriptFieldType(std::string type_string)
+    {
+      if (type_string == "Bool")    return ScriptFieldType::Bool;
+      if (type_string == "Float")   return ScriptFieldType::Float;
+      if (type_string == "Double")  return ScriptFieldType::Double;
+      if (type_string == "Decimal") return ScriptFieldType::Decimal;
+      if (type_string == "Long")    return ScriptFieldType::Long;
+      if (type_string == "Int")     return ScriptFieldType::Int;
+      if (type_string == "Short")   return ScriptFieldType::Short;
+      if (type_string == "Byte")    return ScriptFieldType::Byte;
+      if (type_string == "ULong")   return ScriptFieldType::ULong;
+      if (type_string == "UInt")    return ScriptFieldType::UInt;
+      if (type_string == "UShort")  return ScriptFieldType::UShort;
+      if (type_string == "UByte")   return ScriptFieldType::UByte;
+      if (type_string == "Vector2") return ScriptFieldType::Vector2;
+      if (type_string == "Vector3") return ScriptFieldType::Vector3;
+      if (type_string == "Vector4") return ScriptFieldType::Vector4;
+      if (type_string == "Entity")  return ScriptFieldType::Entity;
+      
+      return ScriptFieldType::None;
+    }
+  }
 
 }
