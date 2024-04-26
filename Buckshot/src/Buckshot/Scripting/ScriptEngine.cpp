@@ -112,6 +112,9 @@ namespace Buckshot {
 
   struct ScriptEngineData
   {
+		std::filesystem::path CoreAssemblyFilepath;
+		std::filesystem::path AppAssemblyFilepath;
+
     MonoDomain* RootDomain = nullptr;
     MonoDomain* AppDomain = nullptr;
 
@@ -169,10 +172,11 @@ namespace Buckshot {
 
 	void ScriptEngine::ShutdownMono()
 	{
+		mono_domain_set(mono_get_root_domain(), false);
+		mono_domain_unload(s_Data->AppDomain);
+		s_Data->AppDomain = nullptr;
 		mono_jit_cleanup(s_Data->RootDomain);
 		s_Data->RootDomain = nullptr;
-		//mono_domain_unload(s_Data->AppDomain);
-		s_Data->AppDomain = nullptr;
 	}
 
 	void ScriptEngine::OnRuntimeStop()
@@ -218,6 +222,8 @@ namespace Buckshot {
 
 	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
 	{
+		s_Data->CoreAssemblyFilepath = filepath;
+
 		s_Data->AppDomain = mono_domain_create_appdomain(const_cast<char*>("BuckshotScriptRuntime"), nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 
@@ -227,8 +233,25 @@ namespace Buckshot {
 
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
+		s_Data->AppAssemblyFilepath = filepath;
+
 		s_Data->AppAssembly = Utilities::LoadCSharpAssembly(filepath);
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
+	}
+
+	void ScriptEngine::ReloadAssenbly()
+	{
+		mono_domain_set(mono_get_root_domain(), false);
+		mono_domain_unload(s_Data->AppDomain);
+
+		LoadAssembly(s_Data->CoreAssemblyFilepath);
+		LoadAppAssembly(s_Data->AppAssemblyFilepath);
+
+		LoadAssemblyClasses();
+
+		s_Data->EntityClass = ScriptClass("Buckshot", "Entity", true);
+
+		ScriptRegistry::RegisterComponents();
 	}
 
 	bool ScriptEngine::EntityClassExists(const std::string& full_name)

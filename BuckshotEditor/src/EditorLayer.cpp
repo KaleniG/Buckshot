@@ -181,6 +181,7 @@ namespace Buckshot {
 
         ImGui::EndMenu();
       }
+
       if (ImGui::BeginMenu("Scene"))
       {
         if (ImGui::MenuItem("New Entity"))
@@ -192,6 +193,18 @@ namespace Buckshot {
         {
           Entity selected_entity = m_SceneHierarchyPanel.GetSelectedEntity();
           m_ActiveScene->DuplicateEntity(selected_entity);
+        }
+
+        ImGui::EndMenu();
+      }
+
+      if (ImGui::BeginMenu("Script"))
+      {
+        if (ImGui::MenuItem("Reaload", "Ctrl + R"))
+        {
+          if (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate)
+            OnSceneStop();
+          ScriptEngine::ReloadAssenbly();
         }
 
         ImGui::EndMenu();
@@ -422,6 +435,19 @@ namespace Buckshot {
       }
     }
 
+    // Scripting Shortcuts
+
+    case Key::R:
+    {
+      if (control_pressed)
+      {
+        if (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate)
+          OnSceneStop();
+        ScriptEngine::ReloadAssenbly();
+      }
+      return false;
+    }
+
     // Gizmo
 
     case Key::Z:
@@ -590,7 +616,7 @@ namespace Buckshot {
           glm::vec3 scale = transform.Scale * glm::vec3(cc2d.Radius * 2.0f);
           glm::mat4 offset = glm::translate(glm::mat4(1.0f), translation) * glm::scale(glm::mat4(1.0f), scale);
 
-          Renderer2D::DrawCircle(offset, glm::vec4(0, 1, 0, 1), 0.01f);
+          Renderer2D::DrawCircle(offset, glm::vec4(0, 1, 0, 1), 0.03f);
         }
       }
     }

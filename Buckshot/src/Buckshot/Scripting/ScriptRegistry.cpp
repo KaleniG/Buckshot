@@ -166,6 +166,7 @@ namespace Buckshot {
   template<typename... Component>
   static void RegisterComponent()
   {
+    s_EntityHasComponentFunctions.clear();
     RegisterComponent<Component...>();
   }
 

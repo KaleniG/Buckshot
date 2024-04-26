@@ -57,7 +57,7 @@ namespace Buckshot {
     template<typename T>
     void SetValue(T value)
     {
-      //static_assert(sizeof(T) <= 16, "Type too large");
+      static_assert(sizeof(T) <= 16, "Type too large");
       std::memcpy(m_DataBuffer, &value, sizeof(T));
     }
 
@@ -147,6 +147,7 @@ namespace Buckshot {
     static void OnUpdateEntity(Entity& entity, Timestep timestep);
     static void LoadAssembly(const std::filesystem::path& filepath);
     static void LoadAppAssembly(const std::filesystem::path& filepath);
+    static void ReloadAssenbly();
     
     static bool EntityClassExists(const std::string& full_name);
 

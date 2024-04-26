@@ -41,8 +41,8 @@ namespace Sandbox
         if (Input.IsKeyDown(KeyCode.KPAdd))
           camera.DistanceFromPlayer += 3.0f * timestep;
       }
-      
 
+      
       velocity *= 0.5f * Speed;
       m_Rigidbody2D.ApplyLinearImpulse(velocity.xy, true);
     }
