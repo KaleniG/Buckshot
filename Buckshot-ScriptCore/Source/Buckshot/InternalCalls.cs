@@ -13,6 +13,13 @@ namespace Buckshot
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
     internal extern static bool Entity_HasComponent(ulong entity_id, Type component_type);
 
+    [MethodImplAttribute(MethodImplOptions.InternalCall)]
+    internal extern static ulong Entity_FindEntityByName(string name);
+
+    // ScriptEngine
+    [MethodImplAttribute(MethodImplOptions.InternalCall)]
+    internal extern static object ScriptEngine_GetScriptInstance(ulong entity_id);
+
     // Transform
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
     internal extern static void TransformComponent_GetPosition(ulong entity_id, out Vector3 position);

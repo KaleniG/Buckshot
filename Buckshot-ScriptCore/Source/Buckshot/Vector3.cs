@@ -42,6 +42,20 @@
       this.z = z;
     }
 
+    public Vector3(Vector2 vec2, float z)
+    {
+      this.x = vec2.x;
+      this.y = vec2.y;
+      this.z = z;
+    }
+
+    public Vector3(float x, Vector2 vec2)
+    {
+      this.x = x;
+      this.y = vec2.y;
+      this.z = vec2.x;
+    }
+
     public static Vector3 operator *(Vector3 vector, float scalar)
     {
       return new Vector3(vector.x * scalar, vector.y * scalar, vector.z * scalar);

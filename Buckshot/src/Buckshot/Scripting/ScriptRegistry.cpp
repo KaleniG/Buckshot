@@ -35,6 +35,28 @@ namespace Buckshot {
     return s_EntityHasComponentFunctions.at(mono_component_type)(entity);
   }
 
+  static uint64_t Entity_FindEntityByName(MonoString* name)
+  {
+    char* entity_name = mono_string_to_utf8(name);
+
+    Scene* scene = ScriptEngine::GetSceneContext();
+    BS_ASSERT(scene, "No scene");
+    Entity entity = scene->GetEntityByName(entity_name);
+
+    mono_free(entity_name);
+
+    if (entity)
+      return entity.GetUUID();
+    else
+      return 0;
+  }
+
+  // ScriptEngine
+  static MonoObject* ScriptEngine_GetScriptInstance(UUID entity_id)
+  {
+    return ScriptEngine::GetEntityMonoScriptInstance(entity_id);
+  }
+
   // TransformComponent
   static void TransformComponent_GetPosition(UUID entity_id, glm::vec3* out_position)
   {
@@ -159,6 +181,10 @@ namespace Buckshot {
 
     // Entity
     BS_ADD_INTERNAL_CALL(Entity_HasComponent);
+    BS_ADD_INTERNAL_CALL(Entity_FindEntityByName);
+
+    // ScriptEngine
+    BS_ADD_INTERNAL_CALL(ScriptEngine_GetScriptInstance);
 
     // Transform
     BS_ADD_INTERNAL_CALL(TransformComponent_GetPosition);

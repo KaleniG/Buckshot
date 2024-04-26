@@ -36,6 +36,7 @@ namespace Buckshot {
     void OnViewportResize();
 
     Entity GetEntityByUUID(UUID uuid);
+    Entity GetEntityByName(const std::string& name);
     Entity GetPrimaryCameraEntity();
 
     bool IsRunning() const { return m_IsRunning; }

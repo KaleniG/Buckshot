@@ -259,6 +259,12 @@ namespace Buckshot {
 		return s_Data->EntityClasses.at(class_name);
 	}
 
+	MonoObject* ScriptEngine::GetEntityMonoScriptInstance(UUID entity_id)
+	{
+		BS_ASSERT(s_Data->EntityInstances.find(entity_id) != s_Data->EntityInstances.end(), "Error");
+		return s_Data->EntityInstances.at(entity_id)->GetScriptInstance();
+	}
+
 	Ref<ScriptInstance> ScriptEngine::GetEntityScriptInstance(UUID entity_id)
 	{
 		auto it = s_Data->EntityInstances.find(entity_id);

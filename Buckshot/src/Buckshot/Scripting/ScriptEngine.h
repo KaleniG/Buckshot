@@ -96,6 +96,7 @@ namespace Buckshot {
     void InvokeOnCreate();
     void InvokeOnUpdate(Timestep timestep);
     Ref<ScriptClass> GetScriptClass();
+    MonoObject* GetScriptInstance() { return m_Instance; }
 
     template<typename T>
     T GetFieldValue(const std::string& name)
@@ -152,6 +153,7 @@ namespace Buckshot {
     static Scene* GetSceneContext();
     static MonoImage* GetCoreAssemblyImage();
     static ScriptFieldMap& GetScriptFieldMap(UUID entity_id);
+    static MonoObject* GetEntityMonoScriptInstance(UUID entity_id);
     static Ref<ScriptInstance> GetEntityScriptInstance(UUID entity_id);
     static Ref<ScriptClass> GetEntityClass(const std::string& class_name);
     static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();

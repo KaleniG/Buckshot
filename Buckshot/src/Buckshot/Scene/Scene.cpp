@@ -420,6 +420,9 @@ namespace Buckshot {
 
   void Scene::OnViewportResize(uint32_t width, uint32_t height)
   {
+    if (m_ViewportWidth == width && m_ViewportHeight == height)
+      return;
+
     m_ViewportWidth = width;
     m_ViewportHeight = height;
 
@@ -448,6 +451,18 @@ namespace Buckshot {
     if (m_EntityMap.find(uuid) != m_EntityMap.end())
       return Entity(m_EntityMap.at(uuid), this);
 
+    return Entity();
+  }
+
+  Entity Scene::GetEntityByName(const std::string& name)
+  {
+    auto view = m_Registry.view<TagComponent>();
+    for (auto entity : view)
+    {
+      auto& tag_component = view.get<TagComponent>(entity);
+      if (tag_component.Tag == name)
+        return Entity(entity, this);
+    }
     return Entity();
   }
 
