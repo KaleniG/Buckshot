@@ -204,7 +204,7 @@ namespace Buckshot {
         {
           if (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate)
             OnSceneStop();
-          ScriptEngine::ReloadAssenbly();
+          ScriptEngine::ReloadAssembly();
         }
 
         ImGui::EndMenu();
@@ -443,7 +443,7 @@ namespace Buckshot {
       {
         if (m_SceneState == SceneState::Play || m_SceneState == SceneState::Simulate)
           OnSceneStop();
-        ScriptEngine::ReloadAssenbly();
+        ScriptEngine::ReloadAssembly();
       }
       return false;
     }

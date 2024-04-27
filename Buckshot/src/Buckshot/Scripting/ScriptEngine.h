@@ -147,7 +147,7 @@ namespace Buckshot {
     static void OnUpdateEntity(Entity& entity, Timestep timestep);
     static void LoadAssembly(const std::filesystem::path& filepath);
     static void LoadAppAssembly(const std::filesystem::path& filepath);
-    static void ReloadAssenbly();
+    static void ReloadAssembly();
     
     static bool EntityClassExists(const std::string& full_name);
 

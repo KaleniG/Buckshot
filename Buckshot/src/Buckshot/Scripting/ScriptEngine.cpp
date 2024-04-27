@@ -1,10 +1,13 @@
 #include <bspch.h>
 #include <glm/glm.hpp>
+#include <filewatch.hpp>
 #include <mono/jit/jit.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tabledefs.h>
 
+#include "Buckshot/Core/Timer.h"
+#include "Buckshot/Core/Application.h"
 #include "Buckshot/Scene/Entity.h"
 #include "Buckshot/Scripting/ScriptEngine.h"
 #include "Buckshot/Scripting/ScriptRegistry.h"
@@ -131,9 +134,29 @@ namespace Buckshot {
 		std::unordered_map<UUID, ScriptFieldMap> EntityScriptFields;
 
 		Scene* SceneContext = nullptr;
+
+		Scope<filewatch::FileWatch<std::string>> AppAssemblyWatcher;
+		bool AppAssemblyReloadPending = false;
+		Timer ReloadTimer;
   };
 
   static ScriptEngineData* s_Data = nullptr;
+
+	static void OnAppAssemblyFilesystemEvent(const std::string& path, const filewatch::Event change_type)
+	{
+		if (!s_Data->AppAssemblyReloadPending && change_type == filewatch::Event::modified)
+		{
+			s_Data->AppAssemblyReloadPending = true;
+
+			s_Data->ReloadTimer = Timer();
+
+			Application::Get().SubmitToMainThread([]()
+				{
+					s_Data->AppAssemblyWatcher.reset();
+					ScriptEngine::ReloadAssembly();
+				});
+		}
+	}
 
 	/////////////////////////////////
 	// SCRIPT ENGINE ////////////////
@@ -237,10 +260,15 @@ namespace Buckshot {
 
 		s_Data->AppAssembly = Utilities::LoadCSharpAssembly(filepath);
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
+
+		s_Data->AppAssemblyWatcher = CreateScope<filewatch::FileWatch<std::string>>(filepath.string(), OnAppAssemblyFilesystemEvent);
+		s_Data->AppAssemblyReloadPending = false;
 	}
 
-	void ScriptEngine::ReloadAssenbly()
+	void ScriptEngine::ReloadAssembly()
 	{
+		BS_WARN("{}", s_Data->ReloadTimer.ElapsedMillis());
+
 		mono_domain_set(mono_get_root_domain(), false);
 		mono_domain_unload(s_Data->AppDomain);
 

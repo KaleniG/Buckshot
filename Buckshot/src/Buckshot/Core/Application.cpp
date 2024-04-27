@@ -60,6 +60,13 @@ namespace Buckshot {
     overlay->OnAttach();
   }
 
+  void Application::SubmitToMainThread(const std::function<void()>& func)
+  {
+    std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+    m_MainThreadQueue.emplace_back(func);
+  }
+
   void Application::OnEvent(Event& e)
   {
     BS_PROFILE_FUNCTION();
@@ -88,6 +95,8 @@ namespace Buckshot {
       Timestep timestep = time - m_LastFrameTime;
       m_LastFrameTime = time;
 
+      ExecuteMainThreadQueue();
+
       if (!m_Minimized)
       {
         {
@@ -112,6 +121,16 @@ namespace Buckshot {
 
       m_Window->OnUpdate();
     }
+  }
+
+  void Application::ExecuteMainThreadQueue()
+  {
+    std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+    for (auto& func : m_MainThreadQueue)
+      func();
+
+    m_MainThreadQueue.clear();
   }
 
   bool Application::OnWindowClose(WindowCloseEvent& e)

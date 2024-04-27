@@ -28,6 +28,7 @@ workspace "Buckshot"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
+IncludeDir["spdlog"] 	= "Buckshot/vendor/spdlog/include"
 IncludeDir["GLFW"] 		= "Buckshot/vendor/GLFW/include"
 IncludeDir["GLAD"] 		= "Buckshot/vendor/GLAD/include"
 IncludeDir["ImGui"] 	= "Buckshot/vendor/ImGui"
@@ -38,6 +39,7 @@ IncludeDir["YAML"] 		= "Buckshot/vendor/YAML/include"
 IncludeDir["ImGuizmo"]  = "Buckshot/vendor/ImGuizmo"
 IncludeDir["Box2D"]  	= "Buckshot/vendor/Box2D/include"
 IncludeDir["mono"]  	= "Buckshot/vendor/mono/include"
+IncludeDir["filewatch"] = "Buckshot/vendor/filewatch"
 
 group "Dependencies"
 	include "Buckshot/vendor/GLFW"
@@ -72,13 +74,15 @@ project "Buckshot"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/ImGuizmo/**.h",
-		"%{prj.name}/vendor/ImGuizmo/**.cpp"
+		"%{prj.name}/vendor/ImGuizmo/**.cpp",
+		"%{prj.name}/vendor/filewatch/**.hpp",
+		"%{prj.name}/vendor/filewatch/**.cpp"
 	}
 
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.ImGui}",
@@ -88,7 +92,8 @@ project "Buckshot"
 		"%{IncludeDir.YAML}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.Box2D}",
-		"%{IncludeDir.mono}"
+		"%{IncludeDir.mono}",
+		"%{IncludeDir.filewatch}"
 	}
 
 	links 
@@ -157,9 +162,9 @@ project "BuckshotEditor"
 
 	includedirs
 	{
-		"Buckshot/vendor/spdlog/include",
 		"Buckshot/src",
 		"Buckshot/vendor",
+		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.EnTT}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGuizmo}"

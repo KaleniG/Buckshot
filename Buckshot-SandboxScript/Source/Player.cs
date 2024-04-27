@@ -8,7 +8,7 @@ namespace Sandbox
     private TransformComponent m_Transform;
     private Rigidbody2DComponent m_Rigidbody2D;
 
-    public float Speed;
+    public float Speed ;
 
     public void OnCreate()
     {
@@ -43,7 +43,7 @@ namespace Sandbox
       }
 
       
-      velocity *= 0.5f * Speed;
+      velocity *= 3.0f * Speed;
       m_Rigidbody2D.ApplyLinearImpulse(velocity.xy, true);
     }
   }

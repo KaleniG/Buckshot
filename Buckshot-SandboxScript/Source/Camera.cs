@@ -20,6 +20,8 @@ namespace Sandbox
         Position = new Vector3(square.Position.xy, DistanceFromPlayer);
       }
 
+      float b = 233;
+
       Vector3 position = new Vector3(Position.xy, DistanceFromPlayer);
       GetComponent<TransformComponent>().Position = position;
     }

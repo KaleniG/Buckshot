@@ -52,6 +52,9 @@
     <Filter Include="vendor\ImGuizmo\example">
       <UniqueIdentifier>{4E948965-BACB-D1FC-C3D5-35202F8CF8F5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\filewatch">
+      <UniqueIdentifier>{79235159-651C-70AB-8E4E-55307AA64FB7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
     </Filter>
@@ -204,6 +207,9 @@
     <ClInclude Include="src\Buckshot\Scripting\ScriptRegistry.h">
       <Filter>src\Buckshot\Scripting</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buckshot\Scripting\ScriptWatcher.h">
+      <Filter>src\Buckshot\Scripting</Filter>
+    </ClInclude>
     <ClInclude Include="src\Buckshot\Utilities\PlatformUtils.h">
       <Filter>src\Buckshot\Utilities</Filter>
     </ClInclude>
@@ -269,6 +275,9 @@
     </ClInclude>
     <ClInclude Include="vendor\ImGuizmo\example\stb_image.h">
       <Filter>vendor\ImGuizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\filewatch\filewatch.hpp">
+      <Filter>vendor\filewatch</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -1663,6 +1672,9 @@
     </ClCompile>
     <ClCompile Include="vendor\ImGuizmo\example\main.cpp">
       <Filter>vendor\ImGuizmo\example</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\filewatch\filewatch.cpp">
+      <Filter>vendor\filewatch</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>

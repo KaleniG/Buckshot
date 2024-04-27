@@ -23,6 +23,8 @@ namespace Buckshot {
     void PushLayer(Layer* layer);
     void PushOverlay(Layer* layer);
 
+    void SubmitToMainThread(const std::function<void()>& func);
+
     ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
     Window& GetWindow() { return *m_Window; }
@@ -30,6 +32,7 @@ namespace Buckshot {
 
   private:
     void Run();
+    void ExecuteMainThreadQueue();
 
     bool OnWindowClose(WindowCloseEvent& e);
     bool OnWindowResize(WindowResizeEvent& e);
@@ -41,6 +44,9 @@ namespace Buckshot {
     bool m_Running = true;
     bool m_Minimized = false;
     float m_LastFrameTime = 0.0f;
+
+    std::mutex m_MainThreadQueueMutex;
+    std::vector<std::function<void()>> m_MainThreadQueue;
 
   private:
     static Application* s_Instance;
