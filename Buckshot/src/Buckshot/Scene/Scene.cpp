@@ -289,52 +289,55 @@ namespace Buckshot {
 
   void Scene::OnUpdateRuntime(Timestep timestep)
   {
-    // C# Scripts Update
+    if (!m_IsPaused || m_StepFrames-- > 0)
     {
-      auto view = m_Registry.view<ScriptComponent>();
-      for (auto e : view)
+      // C# Scripts Update
       {
-        Entity entity = Entity(e, this);
-        ScriptEngine::OnUpdateEntity(entity, timestep);
-      }
-    }
-
-    // Native Scripts Update
-    {
-      m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+        auto view = m_Registry.view<ScriptComponent>();
+        for (auto e : view)
         {
-          if (!nsc.Instance)
-          {
-            nsc.Instance = nsc.InstanciateScript();
-            nsc.Instance->m_Entity = Entity(entity, this);
-            nsc.Instance->OnCreate();
-          }
-          nsc.Instance->OnUpdate(timestep);
+          Entity entity = Entity(e, this);
+          ScriptEngine::OnUpdateEntity(entity, timestep);
         }
-      );
-    }
+      }
 
-    // Physics
-    {
-      const int32_t velocity_iterations = 6;
-      const int32_t position_iterations = 2;
-      m_PhysicsWorld->Step(timestep, velocity_iterations, position_iterations);
-
-      auto view = m_Registry.view<Rigidbody2DComponent>();
-      for (auto e : view)
+      // Native Scripts Update
       {
-        Entity entity(e, this);
+        m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+          {
+            if (!nsc.Instance)
+            {
+              nsc.Instance = nsc.InstanciateScript();
+              nsc.Instance->m_Entity = Entity(entity, this);
+              nsc.Instance->OnCreate();
+            }
+            nsc.Instance->OnUpdate(timestep);
+          }
+        );
+      }
 
-        auto& transform_component = entity.GetComponent<TransformComponent>();
-        auto& rb2d_component = entity.GetComponent<Rigidbody2DComponent>();
+      // Physics
+      {
+        const int32_t velocity_iterations = 6;
+        const int32_t position_iterations = 2;
+        m_PhysicsWorld->Step(timestep, velocity_iterations, position_iterations);
 
-        b2Body* body = (b2Body*)rb2d_component.RuntimeBody;
-        const auto& position = body->GetPosition();
-        transform_component.Position.x = position.x;
-        transform_component.Position.y = position.y;
-        const auto& rotation = body->GetAngle();
-        transform_component.Rotation.z = rotation;
+        auto view = m_Registry.view<Rigidbody2DComponent>();
+        for (auto e : view)
+        {
+          Entity entity(e, this);
 
+          auto& transform_component = entity.GetComponent<TransformComponent>();
+          auto& rb2d_component = entity.GetComponent<Rigidbody2DComponent>();
+
+          b2Body* body = (b2Body*)rb2d_component.RuntimeBody;
+          const auto& position = body->GetPosition();
+          transform_component.Position.x = position.x;
+          transform_component.Position.y = position.y;
+          const auto& rotation = body->GetAngle();
+          transform_component.Rotation.z = rotation;
+
+        }
       }
     }
 
@@ -391,27 +394,30 @@ namespace Buckshot {
 
   void Scene::OnUpdateSimulation(Timestep timestep, EditorCamera& camera)
   {
-    // Physics
+    if (!m_IsPaused || m_StepFrames-- > 0)
     {
-      const int32_t velocity_iterations = 6;
-      const int32_t position_iterations = 2;
-      m_PhysicsWorld->Step(timestep, velocity_iterations, position_iterations);
-
-      auto view = m_Registry.view<Rigidbody2DComponent>();
-      for (auto e : view)
+      // Physics
       {
-        Entity entity(e, this);
+        const int32_t velocity_iterations = 6;
+        const int32_t position_iterations = 2;
+        m_PhysicsWorld->Step(timestep, velocity_iterations, position_iterations);
 
-        auto& transform_component = entity.GetComponent<TransformComponent>();
-        auto& rb2d_component = entity.GetComponent<Rigidbody2DComponent>();
+        auto view = m_Registry.view<Rigidbody2DComponent>();
+        for (auto e : view)
+        {
+          Entity entity(e, this);
 
-        b2Body* body = (b2Body*)rb2d_component.RuntimeBody;
-        const auto& position = body->GetPosition();
-        transform_component.Position.x = position.x;
-        transform_component.Position.y = position.y;
-        const auto& rotation = body->GetAngle();
-        transform_component.Rotation.z = rotation;
+          auto& transform_component = entity.GetComponent<TransformComponent>();
+          auto& rb2d_component = entity.GetComponent<Rigidbody2DComponent>();
 
+          b2Body* body = (b2Body*)rb2d_component.RuntimeBody;
+          const auto& position = body->GetPosition();
+          transform_component.Position.x = position.x;
+          transform_component.Position.y = position.y;
+          const auto& rotation = body->GetAngle();
+          transform_component.Rotation.z = rotation;
+
+        }
       }
     }
 
@@ -476,6 +482,11 @@ namespace Buckshot {
         return Entity(entity, this);
     }
     return Entity();
+  }
+
+  void Scene::Step(int frames)
+  {
+    m_StepFrames = frames;
   }
 
 }

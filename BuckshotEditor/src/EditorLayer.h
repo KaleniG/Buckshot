@@ -25,8 +25,9 @@ namespace Buckshot {
     void OnOverlayRender();
 
     void OnScenePlay();
-    void OnSceneSimulate();
     void OnSceneStop();
+    void OnScenePause();
+    void OnSceneSimulate();
 
     bool OnKeyPressed(KeyPressedEvent& event);
     bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
@@ -46,23 +47,25 @@ namespace Buckshot {
     // GENERAL
     EditorCamera m_EditorCamera;
     Ref<Scene> m_ActiveScene;
-    Ref<Scene> m_RuntimeScene;
     Ref<Scene> m_EditorScene;
     std::string m_CurrentlyOpenScene = std::string();
 
     enum class SceneState
     {
+      Play,
       Edit,
-      Simulate,
-      Play
+      Simulate
     };
 
     SceneState m_SceneState = SceneState::Edit;
 
     // GUI
     Ref<Texture2D> m_IconPlay;
-    Ref<Texture2D> m_IconSimulate;
     Ref<Texture2D> m_IconStop;
+    Ref<Texture2D> m_IconStep;
+    Ref<Texture2D> m_IconPause;
+    Ref<Texture2D> m_IconUnpause;
+    Ref<Texture2D> m_IconSimulate;
 
     Ref<Framebuffer> m_Framebuffer;
     glm::vec2 m_ViewportSize = { 0.0f, 0.0f };

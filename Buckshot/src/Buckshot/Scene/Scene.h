@@ -40,6 +40,10 @@ namespace Buckshot {
     Entity GetPrimaryCameraEntity();
 
     bool IsRunning() const { return m_IsRunning; }
+    bool IsPaused() const { return m_IsPaused; }
+
+    void SetPaused(bool status) { m_IsPaused = status; }
+    void Step(int frames = 1);
 
     static Ref<Scene> Copy(Ref<Scene> other);
 
@@ -56,6 +60,8 @@ namespace Buckshot {
 
   private:
     bool m_IsRunning = false;
+    bool m_IsPaused = false;
+    int m_StepFrames = 0;
 
     entt::registry m_Registry;
     uint32_t m_ViewportWidth = 0;

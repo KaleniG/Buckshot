@@ -14,8 +14,11 @@ namespace Buckshot {
 
   void EditorLayer::OnAttach()
   {
-    m_IconStop = Texture2D::Create("assets/textures/IconStop.png");
     m_IconPlay = Texture2D::Create("assets/textures/IconPlay.png");
+    m_IconStop = Texture2D::Create("assets/textures/IconStop.png");
+    m_IconStep = Texture2D::Create("assets/textures/IconStep.png");
+    m_IconPause = Texture2D::Create("assets/textures/IconPause.png");
+    m_IconUnpause = Texture2D::Create("assets/textures/IconPlay.png");
     m_IconSimulate = Texture2D::Create("assets/textures/IconSimulate.png");
 
     FramebufferSpecification fbSpec;
@@ -341,7 +344,8 @@ namespace Buckshot {
     ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
     float size = ImGui::GetWindowHeight() - 4.0f;
-    ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x / 2.0f) - (size / 2.0f));
+
+    ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x / 2.0f) - (size / 2.0f) * (m_SceneState != SceneState::Edit ? 3.0f : 2.0f));
     {
       Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
       if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
@@ -368,6 +372,31 @@ namespace Buckshot {
         else if (m_SceneState == SceneState::Simulate)
         {
           OnSceneStop();
+        }
+      }
+    }
+    if (m_SceneState != SceneState::Edit)
+    {
+      bool is_paused = m_ActiveScene->IsPaused();
+
+      {
+        ImGui::SameLine();
+        Ref<Texture2D> icon = is_paused ? m_IconUnpause : m_IconPause;
+
+        if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+        {
+          m_ActiveScene->SetPaused(!is_paused);
+        }
+      }
+
+      if (is_paused)
+      {
+        ImGui::SameLine();
+        Ref<Texture2D> icon = m_IconStep;
+
+        if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
+        {
+          m_ActiveScene->Step(5);
         }
       }
     }
@@ -668,6 +697,11 @@ namespace Buckshot {
     m_SceneState = SceneState::Edit;
     m_ActiveScene = m_EditorScene;
     m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+  }
+
+  void EditorLayer::OnScenePause()
+  {
+    m_ActiveScene->SetPaused(true);
   }
 
 }
