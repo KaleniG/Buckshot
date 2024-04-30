@@ -3,8 +3,10 @@
 #include <filewatch.hpp>
 #include <mono/jit/jit.h>
 #include <mono/metadata/object.h>
+#include <mono/metadata/threads.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tabledefs.h>
+#include <mono/metadata/mono-debug.h>
 
 #include "Buckshot/Core/Timer.h"
 #include "Buckshot/Core/Application.h"
@@ -61,29 +63,6 @@ namespace Buckshot {
 			return buffer;
 		}
 
-		static MonoAssembly* LoadCSharpAssembly(const std::filesystem::path& assemblyPath)
-		{
-			uint32_t fileSize = 0;
-			char* fileData = ReadBytes(assemblyPath, &fileSize);
-
-			MonoImageOpenStatus status;
-			MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
-
-			if (status != MONO_IMAGE_OK)
-			{
-				const char* errorMessage = mono_image_strerror(status);
-				return nullptr;
-			}
-
-			std::string path_string = assemblyPath.string();
-			MonoAssembly* assembly = mono_assembly_load_from_full(image, path_string.c_str(), &status, 0);
-			mono_image_close(image);
-
-			delete[] fileData;
-
-			return assembly;
-		}
-
 		static void PrintAssemblyTypes(MonoAssembly* assembly)
 		{
 			MonoImage* image = mono_assembly_get_image(assembly);
@@ -138,6 +117,8 @@ namespace Buckshot {
 		Scope<filewatch::FileWatch<std::string>> AppAssemblyWatcher;
 		bool AppAssemblyReloadPending = false;
 		Timer ReloadTimer;
+
+		bool EnableDebugging = false; // Couldn't make it work
   };
 
   static ScriptEngineData* s_Data = nullptr;
@@ -187,17 +168,35 @@ namespace Buckshot {
   {
     mono_set_assemblies_path("mono/lib");
 
+		if (s_Data->EnableDebugging)
+		{
+			const char* argv[2] = {
+				"--debugger-agent=transport=dt_socket,address=127.0.0.1:2550,server=y,suspend=n,loglevel=3,logfile=MonoDebugger.log",
+				"--soft-breakpoints"
+			};
+
+			mono_jit_parse_options(2, (char**)argv);
+			mono_debug_init(MONO_DEBUG_FORMAT_MONO);
+		}
+
 		// Setting root domain
 		MonoDomain* rootDomain = mono_jit_init("BuckshotJITRuntime");
 		BS_ASSERT(rootDomain, "No root domain");
 		s_Data->RootDomain = rootDomain;
+
+		if (s_Data->EnableDebugging)
+			mono_debug_domain_create(s_Data->RootDomain);
+		mono_thread_set_main(mono_thread_current());
   }
 
 	void ScriptEngine::ShutdownMono()
 	{
+		mono_debug_domain_unload(s_Data->RootDomain);
+
 		mono_domain_set(mono_get_root_domain(), false);
 		mono_domain_unload(s_Data->AppDomain);
 		s_Data->AppDomain = nullptr;
+
 		mono_jit_cleanup(s_Data->RootDomain);
 		s_Data->RootDomain = nullptr;
 	}
@@ -250,7 +249,7 @@ namespace Buckshot {
 		s_Data->AppDomain = mono_domain_create_appdomain(const_cast<char*>("BuckshotScriptRuntime"), nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 
-		s_Data->CoreAssembly = Utilities::LoadCSharpAssembly(filepath);
+		s_Data->CoreAssembly = LoadCSharpAssembly(filepath);
 		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
 	}
 
@@ -258,7 +257,7 @@ namespace Buckshot {
 	{
 		s_Data->AppAssemblyFilepath = filepath;
 
-		s_Data->AppAssembly = Utilities::LoadCSharpAssembly(filepath);
+		s_Data->AppAssembly = LoadCSharpAssembly(filepath);
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 
 		s_Data->AppAssemblyWatcher = CreateScope<filewatch::FileWatch<std::string>>(filepath.string(), OnAppAssemblyFilesystemEvent);
@@ -391,6 +390,43 @@ namespace Buckshot {
 		}
 	}
 
+	MonoAssembly* ScriptEngine::LoadCSharpAssembly(const std::filesystem::path& assemblyPath)
+	{
+		uint32_t fileSize = 0;
+		char* fileData = Utilities::ReadBytes(assemblyPath, &fileSize);
+
+		MonoImageOpenStatus status;
+		MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+
+		if (status != MONO_IMAGE_OK)
+		{
+			const char* errorMessage = mono_image_strerror(status);
+			return nullptr;
+		}
+
+		if (s_Data->EnableDebugging)
+		{
+			uint32_t pdbFileSize = 0;
+			std::filesystem::path pdb_path = assemblyPath;
+			pdb_path.replace_extension(".pdb");
+
+			if (std::filesystem::exists(pdb_path))
+			{
+				char* pdb_file_data = Utilities::ReadBytes(pdb_path, &pdbFileSize);
+				mono_debug_open_image_from_memory(image, (const mono_byte*)pdb_file_data, pdbFileSize);
+				delete[] pdb_file_data;
+			}
+		}
+
+		std::string path_string = assemblyPath.string();
+		MonoAssembly* assembly = mono_assembly_load_from_full(image, path_string.c_str(), &status, 0);
+		mono_image_close(image);
+
+		delete[] fileData;
+
+		return assembly;
+	}
+
 	/////////////////////////////////
 	// SCRIPT CLASS /////////////////
 	/////////////////////////////////
@@ -415,7 +451,8 @@ namespace Buckshot {
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** parameters)
 	{
-		return mono_runtime_invoke(method, instance, parameters, nullptr);
+		MonoObject* exeption = nullptr;
+		return mono_runtime_invoke(method, instance, parameters, &exeption);
 	}
 
 	/////////////////////////////////

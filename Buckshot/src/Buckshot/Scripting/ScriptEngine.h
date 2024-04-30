@@ -164,6 +164,7 @@ namespace Buckshot {
     static void ShutdownMono();
     static MonoObject* InstantiateClass(MonoClass* mono_class);
     static void LoadAssemblyClasses();
+    static MonoAssembly* LoadCSharpAssembly(const std::filesystem::path& assemblyPath);
 
   private:
     friend class ScriptClass;
