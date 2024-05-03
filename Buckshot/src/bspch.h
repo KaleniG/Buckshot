@@ -8,6 +8,7 @@
 #include <functional>
 #include <filesystem>
 #include <random>
+#include <cstdint>
 
 #include <xhash>
 #include <cstring>

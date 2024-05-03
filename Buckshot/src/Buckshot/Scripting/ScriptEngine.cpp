@@ -8,11 +8,13 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/mono-debug.h>
 
-#include "Buckshot/Core/Timer.h"
 #include "Buckshot/Core/Application.h"
 #include "Buckshot/Scene/Entity.h"
 #include "Buckshot/Scripting/ScriptEngine.h"
 #include "Buckshot/Scripting/ScriptRegistry.h"
+#include "Buckshot/Utilities/Timer.h"
+#include "Buckshot/Utilities/Buffer.h"
+#include "Buckshot/Utilities/FileSystem.h"
 
 namespace Buckshot {
 
@@ -36,32 +38,6 @@ namespace Buckshot {
 	};
 
   namespace Utilities {
-
-		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
-		{
-			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
-
-			if (!stream)
-			{
-				return nullptr;
-			}
-
-			std::streampos end = stream.tellg();
-			stream.seekg(0, std::ios::beg);
-			uint32_t size = end - stream.tellg();
-
-			if (size == 0)
-			{
-				return nullptr;
-			}
-
-			char* buffer = new char[size];
-			stream.read((char*)buffer, size);
-			stream.close();
-
-			*outSize = size;
-			return buffer;
-		}
 
 		static void PrintAssemblyTypes(MonoAssembly* assembly)
 		{
@@ -392,11 +368,10 @@ namespace Buckshot {
 
 	MonoAssembly* ScriptEngine::LoadCSharpAssembly(const std::filesystem::path& assemblyPath)
 	{
-		uint32_t fileSize = 0;
-		char* fileData = Utilities::ReadBytes(assemblyPath, &fileSize);
+		ScopedBuffer fileData = FileSystem::ReadFileBinary(assemblyPath);
 
 		MonoImageOpenStatus status;
-		MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+		MonoImage* image = mono_image_open_from_data_full(fileData.As<char>(), fileData.Size, 1, &status, 0);
 
 		if (status != MONO_IMAGE_OK)
 		{
@@ -406,23 +381,20 @@ namespace Buckshot {
 
 		if (s_Data->EnableDebugging)
 		{
-			uint32_t pdbFileSize = 0;
 			std::filesystem::path pdb_path = assemblyPath;
 			pdb_path.replace_extension(".pdb");
 
 			if (std::filesystem::exists(pdb_path))
 			{
-				char* pdb_file_data = Utilities::ReadBytes(pdb_path, &pdbFileSize);
-				mono_debug_open_image_from_memory(image, (const mono_byte*)pdb_file_data, pdbFileSize);
-				delete[] pdb_file_data;
+				ScopedBuffer pdb_file_data = FileSystem::ReadFileBinary(pdb_path);
+				mono_debug_open_image_from_memory(image, pdb_file_data.As<const mono_byte>(), pdb_file_data.Size);
+				pdb_file_data.Release();
 			}
 		}
 
 		std::string path_string = assemblyPath.string();
 		MonoAssembly* assembly = mono_assembly_load_from_full(image, path_string.c_str(), &status, 0);
 		mono_image_close(image);
-
-		delete[] fileData;
 
 		return assembly;
 	}

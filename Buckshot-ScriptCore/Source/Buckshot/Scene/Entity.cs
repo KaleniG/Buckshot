@@ -5,18 +5,13 @@ namespace Buckshot {
   public class Entity
   {
     public readonly ulong ID;
-
-    public Vector3 Position
+    public string Name
     {
       get
       {
-        InternalCalls.TransformComponent_GetPosition(ID, out Vector3 result);
-        return result;
+        return InternalCalls.Entity_GetName(ID);
       }
-      set
-      {
-        InternalCalls.TransformComponent_SetPosition(ID, ref value);
-      }
+      set { }
     }
 
 
@@ -45,6 +40,12 @@ namespace Buckshot {
       return component;
     }
 
+    public T As<T>() where T : Entity, new()
+    {
+      object instance = InternalCalls.ScriptEngine_GetScriptInstance(ID);
+      return instance as T;
+    }
+
     public Entity FindEntityByName(string name)
     {
       ulong entity_id = InternalCalls.Entity_FindEntityByName(name);
@@ -54,12 +55,5 @@ namespace Buckshot {
       else
         return null;
     }
-
-    public T As<T>() where T : Entity, new()
-    {
-      object instance = InternalCalls.ScriptEngine_GetScriptInstance(ID);
-      return instance as T;
-    }
-
   }
 }

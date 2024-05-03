@@ -21,6 +21,10 @@ Entities:
       Friction: 0.5
       Restituition: 0
       Restituition Threshold: 0.5
+    ScriptComponent:
+      Name: Sandbox.Player
+      ScriptFields:
+        []
   - Entity: 13923480623587484344
     TagComponent:
       Tag: Camera
@@ -40,7 +44,7 @@ Entities:
       Primary: true
       FixedAspectRatio: false
     ScriptComponent:
-      Name: Sandbox.Camera
+      Name: Sandbox.CameraEntity
       ScriptFields:
         []
   - Entity: 17723100141425431687
@@ -88,4 +92,4 @@ Entities:
       ScriptFields:
         - Name: Speed
           Type: Float
-          Value: 1
+          Value: 0.5

@@ -150,6 +150,7 @@
     <ClInclude Include="src\Buckshot.h" />
     <ClInclude Include="src\Buckshot\Core\Application.h" />
     <ClInclude Include="src\Buckshot\Core\Base.h" />
+    <ClInclude Include="src\Buckshot\Utilities\Buffer.h" />
     <ClInclude Include="src\Buckshot\Core\EntryPoint.h" />
     <ClInclude Include="src\Buckshot\Core\Input.h" />
     <ClInclude Include="src\Buckshot\Core\KeyCodes.h" />
@@ -157,7 +158,8 @@
     <ClInclude Include="src\Buckshot\Core\LayerStack.h" />
     <ClInclude Include="src\Buckshot\Core\Log.h" />
     <ClInclude Include="src\Buckshot\Core\MouseCodes.h" />
-    <ClInclude Include="src\Buckshot\Core\Timer.h" />
+    <ClInclude Include="src\Buckshot\Utilities\FileSystem.h" />
+    <ClInclude Include="src\Buckshot\Utilities\Timer.h" />
     <ClInclude Include="src\Buckshot\Core\Timestep.h" />
     <ClInclude Include="src\Buckshot\Core\UUID.h" />
     <ClInclude Include="src\Buckshot\Core\Window.h" />
@@ -661,6 +663,7 @@
     <ClCompile Include="src\Buckshot\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\Buckshot\Scripting\ScriptEngine.cpp" />
     <ClCompile Include="src\Buckshot\Scripting\ScriptRegistry.cpp" />
+    <ClCompile Include="src\Buckshot\Utilities\FileSystem.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
