@@ -35,7 +35,7 @@ namespace Sandbox
       {
       }
 
-      velocity *= 3.0f * Speed;
+      velocity *= Speed;
       m_Rigidbody2D.ApplyLinearImpulse(velocity.xy, true);
     }
   }

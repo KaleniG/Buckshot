@@ -467,34 +467,35 @@ namespace Buckshot {
           if (script_fields)
           {
             Ref<ScriptClass> entity_class = ScriptEngine::GetEntityClass(script.Name);
-            BS_ASSERT(entity_class, "No class");
-            const auto& class_fields = entity_class->GetScriptFields();
-            auto& entity_fields = ScriptEngine::GetScriptFieldMap(deserializedEntity.GetUUID());
-
-            for (auto script_field : script_fields)
+            if (entity_class)
             {
-              std::string name = script_field["Name"].as<std::string>();
-              std::string typeString = script_field["Type"].as<std::string>();
-              ScriptFieldType type = Utilities::FieldType_ScriptToScriptFieldType(typeString);
-              ScriptFieldInstance& field_instance = entity_fields[name];
+              const auto& class_fields = entity_class->GetScriptFields();
+              auto& entity_fields = ScriptEngine::GetScriptFieldMap(deserializedEntity.GetUUID());
 
-              // Make it an error instead of assert
-              BS_ASSERT(class_fields.find(name) != class_fields.end(), "Unexpected Error");
-
-              if (class_fields.find(name) == class_fields.end())
-                continue;
-
-              field_instance.Field = class_fields.at(name);
-
-              switch (type)
+              for (auto script_field : script_fields)
               {
+                std::string name = script_field["Name"].as<std::string>();
+                std::string typeString = script_field["Type"].as<std::string>();
+                ScriptFieldType type = Utilities::FieldType_ScriptToScriptFieldType(typeString);
+                ScriptFieldInstance& field_instance = entity_fields[name];
+
+                // Make it an error instead of assert
+                BS_ASSERT(class_fields.find(name) != class_fields.end(), "Unexpected Error");
+
+                if (class_fields.find(name) == class_fields.end())
+                  continue;
+
+                field_instance.Field = class_fields.at(name);
+
+                switch (type)
+                {
                 case ScriptFieldType::Bool:
                 {
                   bool value = script_field["Value"].as<bool>();
                   field_instance.SetValue(value);
                   break;
                 }
-                case ScriptFieldType::Float: 
+                case ScriptFieldType::Float:
                 {
                   float value = script_field["Value"].as<float>();
                   field_instance.SetValue(value);
@@ -583,6 +584,7 @@ namespace Buckshot {
                   UUID value = script_field["Value"].as<UUID>();
                   field_instance.SetValue(value);
                   break;
+                }
                 }
               }
             }

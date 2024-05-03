@@ -124,8 +124,21 @@ namespace Buckshot {
     s_Data = new ScriptEngineData();
 
     InitMono();
-		LoadAssembly("scripts/Buckshot-ScriptCore.dll");
-		LoadAppAssembly("scripts/Sandbox.dll");
+
+		bool load_status;
+		load_status = LoadAssembly("scripts/Buckshot-ScriptCore.dll");
+		if (load_status == false)
+		{
+			BS_ERROR("[ScriptEngine] Couldn't load \"{0}\"", s_Data->CoreAssemblyFilepath.string());
+			return;
+		}
+		load_status = LoadAppAssembly("scripts/Sandbox.dll");
+		if (load_status == false)
+		{
+			BS_ERROR("[ScriptEngine] Couldn't load \"{0}\"", s_Data->AppAssemblyFilepath.string());
+			return;
+		}
+
 		LoadAssemblyClasses();
 		
 		s_Data->EntityClass = ScriptClass("Buckshot", "Entity", true);
@@ -212,13 +225,18 @@ namespace Buckshot {
 	void ScriptEngine::OnUpdateEntity(Entity& entity, Timestep timestep)
 	{
 		UUID entity_uuid = entity.GetUUID();
-		BS_ASSERT(s_Data->EntityInstances.find(entity_uuid) != s_Data->EntityInstances.end(), "Invalid Entity");
-
-		Ref<ScriptInstance> instance = s_Data->EntityInstances[entity_uuid];
-		instance->InvokeOnUpdate(timestep);
+		if (s_Data->EntityInstances.find(entity_uuid) != s_Data->EntityInstances.end())
+		{
+			Ref<ScriptInstance> instance = s_Data->EntityInstances[entity_uuid];
+			instance->InvokeOnUpdate(timestep);
+		}
+		else
+		{
+			BS_ERROR("Couldn't find ScriptInstance for entity \"{0}\" ({1})", entity.GetName(), entity_uuid);
+		}
 	}
 
-	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
 	{
 		s_Data->CoreAssemblyFilepath = filepath;
 
@@ -226,18 +244,26 @@ namespace Buckshot {
 		mono_domain_set(s_Data->AppDomain, true);
 
 		s_Data->CoreAssembly = LoadCSharpAssembly(filepath);
+		if (s_Data->CoreAssembly == nullptr)
+			return false;
+
 		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
+		return true;
 	}
 
-	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
 		s_Data->AppAssemblyFilepath = filepath;
 
 		s_Data->AppAssembly = LoadCSharpAssembly(filepath);
+		if (s_Data->AppAssembly == nullptr)
+			return false;
+
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 
 		s_Data->AppAssemblyWatcher = CreateScope<filewatch::FileWatch<std::string>>(filepath.string(), OnAppAssemblyFilesystemEvent);
 		s_Data->AppAssemblyReloadPending = false;
+		return true;
 	}
 
 	void ScriptEngine::ReloadAssembly()
