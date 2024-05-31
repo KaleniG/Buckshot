@@ -9,7 +9,7 @@ public:
   Sandbox()
     : Application("SandboxApp")
   {
-		PushLayer(new Sandbox2D());
+    PushLayer(new Sandbox2D());
   }
 };
 

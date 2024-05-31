@@ -150,6 +150,8 @@
     <ClInclude Include="src\Buckshot.h" />
     <ClInclude Include="src\Buckshot\Core\Application.h" />
     <ClInclude Include="src\Buckshot\Core\Base.h" />
+    <ClInclude Include="src\Buckshot\Project\Project.h" />
+    <ClInclude Include="src\Buckshot\Project\ProjectSerializer.h" />
     <ClInclude Include="src\Buckshot\Utilities\Buffer.h" />
     <ClInclude Include="src\Buckshot\Core\EntryPoint.h" />
     <ClInclude Include="src\Buckshot\Core\Input.h" />
@@ -643,6 +645,8 @@
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Buckshot\ImGui\ImGuiLayerBuild.cpp" />
     <ClCompile Include="src\Buckshot\Math\Math.cpp" />
+    <ClCompile Include="src\Buckshot\Project\Project.cpp" />
+    <ClCompile Include="src\Buckshot\Project\ProjectSerializer.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\Buffers.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Buckshot\Renderer\Framebuffer.cpp" />

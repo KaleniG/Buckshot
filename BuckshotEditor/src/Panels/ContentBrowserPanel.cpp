@@ -17,7 +17,7 @@ namespace Buckshot {
   void ContentBrowserPanel::OnImGuiRender()
   {
     ImGui::Begin("Content Browser");
-    
+
     if (m_CurrentDirectory != g_AssetsPath)
     {
       if (ImGui::Button("<-"))
@@ -43,7 +43,7 @@ namespace Buckshot {
       const auto& path = directory_entry.path();
       auto relative_path = std::filesystem::relative(path, g_AssetsPath);
       std::string filename_string = relative_path.filename().string();
-      
+
       ImGui::PushID(filename_string.c_str());
 
       Ref<Texture2D> icon = directory_entry.is_directory() ? m_DirectoryIcon : m_FileIcon;
@@ -61,7 +61,7 @@ namespace Buckshot {
         if (directory_entry.is_directory())
           m_CurrentDirectory /= path.filename();
       }
-      
+
       ImGui::TextWrapped(filename_string.c_str());
 
       ImGui::NextColumn();

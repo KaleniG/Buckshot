@@ -10,10 +10,29 @@ int main(int argc, char** argv);
 
 namespace Buckshot {
 
+  struct ApplicationCommandLineArgs
+  {
+    int Count = 0;
+    char** Args = nullptr;
+
+    const char* operator[](int index) const
+    {
+      BS_ASSERT(index < Count);
+      return Args[index];
+    }
+  };
+
+  struct ApplicationSpecification
+  {
+    std::string Name = "BushApp";
+    std::string WorkingDirectory;
+    ApplicationCommandLineArgs CommandLineArgs;
+  };
+
   class Application
   {
   public:
-    Application(const std::string& name = "BushApp");
+    Application(const ApplicationSpecification& specification);
     virtual ~Application();
 
     void Close();
@@ -29,6 +48,7 @@ namespace Buckshot {
 
     Window& GetWindow() { return *m_Window; }
     static Application& Get() { return *s_Instance; }
+    const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 
   private:
     void Run();
@@ -44,6 +64,7 @@ namespace Buckshot {
     bool m_Running = true;
     bool m_Minimized = false;
     float m_LastFrameTime = 0.0f;
+    ApplicationSpecification m_Specification;
 
     std::mutex m_MainThreadQueueMutex;
     std::vector<std::function<void()>> m_MainThreadQueue;
@@ -53,5 +74,5 @@ namespace Buckshot {
     friend int ::main(int argc, char** argv);
   };
 
-  Application* CreateApplication();
+  Application* CreateApplication(ApplicationCommandLineArgs args);
 }

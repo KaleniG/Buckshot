@@ -101,7 +101,7 @@ namespace YAML {
 }
 
 namespace Buckshot {
-  
+
   YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
   {
     out << YAML::Flow;
@@ -283,22 +283,22 @@ namespace Buckshot {
           ScriptFieldInstance& script_field = entity_fields.at(name);
           switch (field.Type)
           {
-            case ScriptFieldType::Bool:     out << script_field.GetValue<bool>(); break;
-            case ScriptFieldType::Float:    out << script_field.GetValue<float>(); break;
-            case ScriptFieldType::Double:   out << script_field.GetValue<double>(); break;
-            case ScriptFieldType::Decimal:  out << script_field.GetValue<double>(); break;
-            case ScriptFieldType::Long:     out << script_field.GetValue<int64_t>(); break;
-            case ScriptFieldType::Int:      out << script_field.GetValue<int64_t>(); break;
-            case ScriptFieldType::Short:    out << script_field.GetValue<int32_t>(); break;
-            case ScriptFieldType::Byte:     out << script_field.GetValue<int16_t>(); break;
-            case ScriptFieldType::ULong:    out << script_field.GetValue<uint64_t>(); break;
-            case ScriptFieldType::UInt:     out << script_field.GetValue<uint64_t>(); break;
-            case ScriptFieldType::UShort:   out << script_field.GetValue<uint32_t>(); break;
-            case ScriptFieldType::UByte:    out << script_field.GetValue<uint16_t>(); break;
-            case ScriptFieldType::Vector2:  out << script_field.GetValue<glm::vec2>(); break;
-            case ScriptFieldType::Vector3:  out << script_field.GetValue<glm::vec3>(); break;
-            case ScriptFieldType::Vector4:  out << script_field.GetValue<glm::vec3>(); break;
-            case ScriptFieldType::Entity:   out << script_field.GetValue<UUID>(); break;
+          case ScriptFieldType::Bool:     out << script_field.GetValue<bool>(); break;
+          case ScriptFieldType::Float:    out << script_field.GetValue<float>(); break;
+          case ScriptFieldType::Double:   out << script_field.GetValue<double>(); break;
+          case ScriptFieldType::Decimal:  out << script_field.GetValue<double>(); break;
+          case ScriptFieldType::Long:     out << script_field.GetValue<int64_t>(); break;
+          case ScriptFieldType::Int:      out << script_field.GetValue<int64_t>(); break;
+          case ScriptFieldType::Short:    out << script_field.GetValue<int32_t>(); break;
+          case ScriptFieldType::Byte:     out << script_field.GetValue<int16_t>(); break;
+          case ScriptFieldType::ULong:    out << script_field.GetValue<uint64_t>(); break;
+          case ScriptFieldType::UInt:     out << script_field.GetValue<uint64_t>(); break;
+          case ScriptFieldType::UShort:   out << script_field.GetValue<uint32_t>(); break;
+          case ScriptFieldType::UByte:    out << script_field.GetValue<uint16_t>(); break;
+          case ScriptFieldType::Vector2:  out << script_field.GetValue<glm::vec2>(); break;
+          case ScriptFieldType::Vector3:  out << script_field.GetValue<glm::vec3>(); break;
+          case ScriptFieldType::Vector4:  out << script_field.GetValue<glm::vec3>(); break;
+          case ScriptFieldType::Entity:   out << script_field.GetValue<UUID>(); break;
           }
 
           out << YAML::EndMap;
@@ -315,22 +315,22 @@ namespace Buckshot {
   void SceneSerializer::Serialize(const std::string& filepath)
   {
     YAML::Emitter out;
-		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
-		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-		m_Scene->m_Registry.each([&](auto entityID)
-		{
-			Entity entity = { entityID, m_Scene.get() };
-			if (!entity)
-				return;
+    out << YAML::BeginMap;
+    out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+    out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+    m_Scene->m_Registry.each([&](auto entityID)
+      {
+        Entity entity = { entityID, m_Scene.get() };
+        if (!entity)
+          return;
 
-			SerializeEntity(out, entity);
-		});
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
+        SerializeEntity(out, entity);
+      });
+    out << YAML::EndSeq;
+    out << YAML::EndMap;
 
-		std::ofstream fout(filepath);
-		fout << out.c_str();
+    std::ofstream fout(filepath);
+    fout << out.c_str();
   }
 
   void SceneSerializer::SerializeRuntime(const std::string& filepath)
@@ -341,8 +341,8 @@ namespace Buckshot {
   bool SceneSerializer::Deserialize(const std::string& filepath)
   {
     YAML::Node data;
-      
-    try 
+
+    try
     {
       data = YAML::LoadFile(filepath);
     }
@@ -351,7 +351,7 @@ namespace Buckshot {
       BS_TRACE("Failed to load the .bshot file \"{0}\". {1}", filepath, e.what());
       return false;
     }
-      
+
     if (!data["Scene"])
       return false;
 

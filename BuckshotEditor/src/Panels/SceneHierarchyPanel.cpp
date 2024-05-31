@@ -164,10 +164,10 @@ namespace Buckshot {
     ImGui::Begin("Scene Hierarchy");
 
     m_Context->m_Registry.each([&](auto entity_id)
-    {
-      Entity entity = Entity(entity_id, m_Context.get());
-      DrawEntityNode(entity);
-    });
+      {
+        Entity entity = Entity(entity_id, m_Context.get());
+        DrawEntityNode(entity);
+      });
 
     if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
       m_SelectionContext = {};
@@ -202,7 +202,7 @@ namespace Buckshot {
   void SceneHierarchyPanel::DrawEntityNode(Entity entity)
   {
     auto& tag = entity.GetComponent<TagComponent>().Tag;
-    
+
     ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
     flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
     bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
@@ -361,86 +361,86 @@ namespace Buckshot {
     ImGui::PopItemWidth();
 
     DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
-    {
+      {
         ImGui::Separator();
         DrawVec3Control("Position", component.Position);
         DrawVec3Control("Rotation", component.Rotation);
         DrawVec3Control("Scale", component.Scale, 1.0f);
         ImGui::Separator();
-    });
+      });
 
     DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
-    {
-      const char* projection_type_strings[] = { "Perspective", "Orthographic" };
-      const char* current_projection_type_string = projection_type_strings[(int)component.Camera.GetProjectionType()];
-
-      ImGui::Checkbox("Primary", &component.Primary);
-
-      if (ImGui::BeginCombo("Projection", current_projection_type_string))
       {
-        for (int i = 0; i < 2; i++)
+        const char* projection_type_strings[] = { "Perspective", "Orthographic" };
+        const char* current_projection_type_string = projection_type_strings[(int)component.Camera.GetProjectionType()];
+
+        ImGui::Checkbox("Primary", &component.Primary);
+
+        if (ImGui::BeginCombo("Projection", current_projection_type_string))
         {
-          bool isSelected = current_projection_type_string == projection_type_strings[i];
-          if (ImGui::Selectable(projection_type_strings[i], isSelected))
+          for (int i = 0; i < 2; i++)
           {
-            current_projection_type_string = projection_type_strings[i];
-            component.Camera.SetProjectionType((SceneCamera::ProjectionType)i);
+            bool isSelected = current_projection_type_string == projection_type_strings[i];
+            if (ImGui::Selectable(projection_type_strings[i], isSelected))
+            {
+              current_projection_type_string = projection_type_strings[i];
+              component.Camera.SetProjectionType((SceneCamera::ProjectionType)i);
+            }
+
+            if (isSelected)
+              ImGui::SetItemDefaultFocus();
           }
 
-          if (isSelected)
-            ImGui::SetItemDefaultFocus();
+          ImGui::EndCombo();
         }
 
-        ImGui::EndCombo();
-      }
-
-      if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
-      {
-        float fov = glm::degrees(component.Camera.GetPerspectiveFOV());
-        if (ImGui::DragFloat("FOV", &fov, 1.0f, 0.0f, 0.0f, "%.0f"))
+        if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
         {
-          component.Camera.SetPerspectiveFOV(glm::radians(fov));
+          float fov = glm::degrees(component.Camera.GetPerspectiveFOV());
+          if (ImGui::DragFloat("FOV", &fov, 1.0f, 0.0f, 0.0f, "%.0f"))
+          {
+            component.Camera.SetPerspectiveFOV(glm::radians(fov));
+          }
+
+          float near_clip = component.Camera.GetPerspectiveNearClip();
+          if (ImGui::DragFloat("Near Clip", &near_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
+          {
+            component.Camera.SetPerspectiveNearClip(near_clip);
+          }
+
+          float far_clip = component.Camera.GetPerspectiveFarClip();
+          if (ImGui::DragFloat("Far Clip", &far_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
+          {
+            component.Camera.SetPerspectiveFarClip(far_clip);
+          }
         }
 
-        float near_clip = component.Camera.GetPerspectiveNearClip();
-        if (ImGui::DragFloat("Near Clip", &near_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
+        if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
         {
-          component.Camera.SetPerspectiveNearClip(near_clip);
-        }
+          ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
 
-        float far_clip = component.Camera.GetPerspectiveFarClip();
-        if (ImGui::DragFloat("Far Clip", &far_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
-        {
-          component.Camera.SetPerspectiveFarClip(far_clip);
-        }
-      }
+          float size = component.Camera.GetOrthographicSize();
+          if (ImGui::DragFloat("Size", &size, 1.0f, 0.0f, 0.0f, "%.0f"))
+          {
+            component.Camera.SetOrthographicSize(size);
+          }
 
-      if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
-      {
-        ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
+          float near_clip = component.Camera.GetOrthographicNearClip();
+          if (ImGui::DragFloat("Near Clip", &near_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
+          {
+            component.Camera.SetOrthographicNearClip(near_clip);
+          }
 
-        float size = component.Camera.GetOrthographicSize();
-        if (ImGui::DragFloat("Size", &size, 1.0f, 0.0f, 0.0f, "%.0f"))
-        {
-          component.Camera.SetOrthographicSize(size);
+          float far_clip = component.Camera.GetOrthographicFarClip();
+          if (ImGui::DragFloat("Far Clip", &far_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
+          {
+            component.Camera.SetOrthographicFarClip(far_clip);
+          }
         }
-
-        float near_clip = component.Camera.GetOrthographicNearClip();
-        if (ImGui::DragFloat("Near Clip", &near_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
-        {
-          component.Camera.SetOrthographicNearClip(near_clip);
-        }
-
-        float far_clip = component.Camera.GetOrthographicFarClip();
-        if (ImGui::DragFloat("Far Clip", &far_clip, 1.0f, 0.0f, 0.0f, "%.0f"))
-        {
-          component.Camera.SetOrthographicFarClip(far_clip);
-        }
-      }
-    });
+      });
 
     DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
-    {
+      {
         ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 
         ImGui::Button("Texture");
@@ -456,70 +456,70 @@ namespace Buckshot {
         }
         if (component.Texture)
           ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
-    });
+      });
 
     DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
-    {
-      ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-      ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
-      ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
-    });
+      {
+        ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+        ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
+        ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
+      });
 
     DrawComponent<Rigidbody2DComponent>("Rigidbody2D", entity, [](auto& component)
-    {
-      const char* body_type_strings[] = { "Static", "Dynamic", "Kinematic"};
-      const char* current_body_type_string = body_type_strings[(int)component.Type];
-
-      if (ImGui::BeginCombo("Body Type", current_body_type_string))
       {
-        for (int i = 0; i < 3; i++)
+        const char* body_type_strings[] = { "Static", "Dynamic", "Kinematic" };
+        const char* current_body_type_string = body_type_strings[(int)component.Type];
+
+        if (ImGui::BeginCombo("Body Type", current_body_type_string))
         {
-          bool isSelected = current_body_type_string == body_type_strings[i];
-          if (ImGui::Selectable(body_type_strings[i], isSelected))
+          for (int i = 0; i < 3; i++)
           {
-            current_body_type_string = body_type_strings[i];
-            component.Type = (Rigidbody2DComponent::BodyType)i;
+            bool isSelected = current_body_type_string == body_type_strings[i];
+            if (ImGui::Selectable(body_type_strings[i], isSelected))
+            {
+              current_body_type_string = body_type_strings[i];
+              component.Type = (Rigidbody2DComponent::BodyType)i;
+            }
+
+            if (isSelected)
+              ImGui::SetItemDefaultFocus();
           }
 
-          if (isSelected)
-            ImGui::SetItemDefaultFocus();
+          ImGui::EndCombo();
         }
 
-        ImGui::EndCombo();
-      }
+        ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
 
-      ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
-
-    });
+      });
 
     DrawComponent<BoxCollider2DComponent>("BoxCollider2D", entity, [](auto& component)
-    {
-      ImGui::Separator();
-      DrawVec2Control("Size", component.Size, 0.5f);
-      DrawVec2Control("Offset", component.Offset);
-      ImGui::Separator();
+      {
+        ImGui::Separator();
+        DrawVec2Control("Size", component.Size, 0.5f);
+        DrawVec2Control("Offset", component.Offset);
+        ImGui::Separator();
 
-      ImGui::DragFloat("Density", &component.Density, 0.1f);
-      ImGui::DragFloat("Friction", &component.Friction, 0.1f);
-      ImGui::DragFloat("Restituition", &component.Restituition, 0.1f);
-      ImGui::DragFloat("RestituitionThreshold", &component.RestituitionThreshold, 0.1f);
-    });
+        ImGui::DragFloat("Density", &component.Density, 0.1f);
+        ImGui::DragFloat("Friction", &component.Friction, 0.1f);
+        ImGui::DragFloat("Restituition", &component.Restituition, 0.1f);
+        ImGui::DragFloat("RestituitionThreshold", &component.RestituitionThreshold, 0.1f);
+      });
 
     DrawComponent<CircleCollider2DComponent>("CircleCollider2D", entity, [](auto& component)
-    {
-      ImGui::Separator();
-      DrawVec2Control("Offset", component.Offset);
-      ImGui::Separator();
+      {
+        ImGui::Separator();
+        DrawVec2Control("Offset", component.Offset);
+        ImGui::Separator();
 
-      ImGui::DragFloat("Radius", &component.Radius, 0.1f);
-      ImGui::DragFloat("Density", &component.Density, 0.1f);
-      ImGui::DragFloat("Friction", &component.Friction, 0.1f);
-      ImGui::DragFloat("Restituition", &component.Restituition, 0.1f);
-      ImGui::DragFloat("RestituitionThreshold", &component.RestituitionThreshold, 0.1f);
-    });
+        ImGui::DragFloat("Radius", &component.Radius, 0.1f);
+        ImGui::DragFloat("Density", &component.Density, 0.1f);
+        ImGui::DragFloat("Friction", &component.Friction, 0.1f);
+        ImGui::DragFloat("Restituition", &component.Restituition, 0.1f);
+        ImGui::DragFloat("RestituitionThreshold", &component.RestituitionThreshold, 0.1f);
+      });
 
     DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
-    {
+      {
         bool script_class_exists = ScriptEngine::EntityClassExists(component.Name);
 
         static char buffer[64];
@@ -592,7 +592,7 @@ namespace Buckshot {
 
         if (!script_class_exists)
           ImGui::PopStyleColor();
-    });
+      });
 
     // TODO: NativeScriptComponent
 

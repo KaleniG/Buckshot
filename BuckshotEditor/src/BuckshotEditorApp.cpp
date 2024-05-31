@@ -8,16 +8,20 @@ namespace Buckshot {
   class BuckshotEditor : public Application
   {
   public:
-    BuckshotEditor()
-      : Application("BuckshotEditor")
+    BuckshotEditor(const ApplicationSpecification& spec)
+      : Application(spec)
     {
       PushLayer(new EditorLayer());
     }
   };
 
-  Application* CreateApplication()
+  Application* CreateApplication(ApplicationCommandLineArgs args)
   {
-    return new BuckshotEditor;
+    ApplicationSpecification spec;
+    spec.Name = "Buckshot Editor";
+    spec.CommandLineArgs = args;
+
+    return new BuckshotEditor(spec);
   }
 
 }

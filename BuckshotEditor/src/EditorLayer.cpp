@@ -32,6 +32,13 @@ namespace Buckshot {
     m_ActiveScene = CreateRef<Scene>();
     m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
+    auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
+    if (commandLineArgs.Count > 1)
+    {
+      auto sceneFilePath = commandLineArgs[1];
+      OpenScene(sceneFilePath);
+    }
+
     Renderer2D::SetLineWidth(4.0f);
   }
 
@@ -57,32 +64,32 @@ namespace Buckshot {
     RenderCommand::ClearColor({ 0.1f, 0.1f, 0.1f, 1 });
     RenderCommand::Clear();
     m_Framebuffer->ClearAttachment(1, -1);
-    
+
     // Update scene
     switch (m_SceneState)
     {
-      case SceneState::Edit:
-      {
-        if (m_ViewportFocused)
-          m_EditorCamera.OnUpdate(timestep);
+    case SceneState::Edit:
+    {
+      if (m_ViewportFocused)
+        m_EditorCamera.OnUpdate(timestep);
 
-        m_ActiveScene->OnUpdateEditor(timestep, m_EditorCamera);
-        break;
-      }
-      case SceneState::Simulate:
-      {
-        if (m_ViewportFocused)
-          m_EditorCamera.OnUpdate(timestep);
+      m_ActiveScene->OnUpdateEditor(timestep, m_EditorCamera);
+      break;
+    }
+    case SceneState::Simulate:
+    {
+      if (m_ViewportFocused)
+        m_EditorCamera.OnUpdate(timestep);
 
-        m_ActiveScene->OnUpdateSimulation(timestep, m_EditorCamera);
-        break;
-      }
-      case SceneState::Play: 
-      {
-        m_GizmoType = -1;
-        m_ActiveScene->OnUpdateRuntime(timestep);
-        break;
-      }
+      m_ActiveScene->OnUpdateSimulation(timestep, m_EditorCamera);
+      break;
+    }
+    case SceneState::Play:
+    {
+      m_GizmoType = -1;
+      m_ActiveScene->OnUpdateRuntime(timestep);
+      break;
+    }
     }
 
     OnOverlayRender();
@@ -177,7 +184,7 @@ namespace Buckshot {
 
         ImGui::Separator();
 
-        if (ImGui::MenuItem("Exit")) 
+        if (ImGui::MenuItem("Exit"))
         {
           Application::Get().Close();
         }
@@ -425,7 +432,7 @@ namespace Buckshot {
 
     switch (event.GetKeyCode())
     {
-    // File Options Shortcuts
+      // File Options Shortcuts
     case Key::N:
     {
       if (control_pressed)
@@ -441,7 +448,7 @@ namespace Buckshot {
     case Key::S:
     {
       if (control_pressed)
-      { 
+      {
         if (shift_pressed)
           SaveSceneAs();
         else
@@ -553,7 +560,7 @@ namespace Buckshot {
       m_SceneHierarchyPanel.SetContext(m_EditorScene);
       m_ActiveScene = m_EditorScene;
     }
-    
+
   }
 
   void EditorLayer::SaveSceneAs()

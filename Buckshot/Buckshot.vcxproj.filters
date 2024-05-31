@@ -1527,6 +1527,8 @@
     <ClInclude Include="src\Buckshot\Utilities\Timer.h" />
     <ClInclude Include="src\Buckshot\Utilities\Buffer.h" />
     <ClInclude Include="src\Buckshot\Utilities\FileSystem.h" />
+    <ClInclude Include="src\Buckshot\Project\Project.h" />
+    <ClInclude Include="src\Buckshot\Project\ProjectSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buckshot\Core\Application.cpp">
@@ -1680,5 +1682,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Utilities\FileSystem.cpp" />
+    <ClCompile Include="src\Buckshot\Project\Project.cpp" />
+    <ClCompile Include="src\Buckshot\Project\ProjectSerializer.cpp" />
   </ItemGroup>
 </Project>
