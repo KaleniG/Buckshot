@@ -1,41 +1,40 @@
 #include <bspch.h>
 #include <yaml-cpp/yaml.h>
 
-#include "Buckshot/Project/ProjectSerializer.h"
+#include "ProjectSerializer.h"
 
 namespace Buckshot {
 
-  ProjectSerializer::ProjectSerializer(Ref<Project> project)
+  ProjectSerializer::ProjectSerializer(const Ref<Project>& project)
+    : m_Project(project)
   {
-    m_Project = project;
+
   }
 
   bool ProjectSerializer::Serialize(const std::filesystem::path& filepath)
   {
-    const auto& configuration = m_Project->GetConfiguration();
+    const ProjectConfiguration& config = m_Project->GetConfiguration();
 
-		YAML::Emitter out;
-		out << YAML::BeginMap;
-		out << YAML::Key << "Project" << YAML::Value;
+    YAML::Emitter out;
+    out << YAML::BeginMap;
+    out << YAML::Key << "Project" << YAML::Value;
+    out << YAML::BeginMap;
+    out << YAML::Key << "Name" << YAML::Value << config.Name;
+    out << YAML::Key << "AssetsDirectory" << YAML::Value << config.AssetsDirectory.string();
+    out << YAML::Key << "ScriptModulePath" << YAML::Value << config.ScriptModulePath.string();
+    out << YAML::Key << "StartScenePath" << YAML::Value << config.StartScenePath.string();
+    out << YAML::EndMap;
+    out << YAML::EndMap;
 
-		out << YAML::BeginMap;
-		out << YAML::Key << "Name" << YAML::Value << configuration.Name;
-		out << YAML::Key << "StartScene" << YAML::Value << configuration.StartScene;
-		out << YAML::Key << "AssetDirectory" << YAML::Value << configuration.AssetDirectory.string();
-		out << YAML::Key << "ScriptModulePath" << YAML::Value << configuration.ScriptModulePath.string();
-		out << YAML::EndMap;
+    std::ofstream fout(filepath);
+    fout << out.c_str();
 
-		out << YAML::EndMap;
-
-		std::ofstream fout(filepath);
-		fout << out.c_str();
-
-    return true;
+    return true; // Why?
   }
 
   bool ProjectSerializer::Deserialize(const std::filesystem::path& filepath)
   {
-    auto& configuration = m_Project->GetConfiguration();
+    ProjectConfiguration& config = m_Project->GetConfiguration();
 
     YAML::Node data;
 
@@ -49,14 +48,14 @@ namespace Buckshot {
       return false;
     }
 
-    auto project_data = data["Project"];
-    if (!project_data)
+    YAML::Node project = data["Project"];
+    if (!project)
       return false;
 
-    configuration.Name = project_data["Name"].as<std::string>();
-    configuration.StartScene = project_data["StartScene"].as<std::string>();
-    configuration.AssetDirectory = project_data["AssetDirectory"].as<std::string>();
-    configuration.ScriptModulePath = project_data["ScriptModulePath"].as<std::string>();
+    config.Name = project["Name"].as<std::string>();
+    config.AssetsDirectory = project["AssetsDirectory"].as<std::string>();
+    config.ScriptModulePath = project["ScriptModulePath"].as<std::string>();
+    config.StartScenePath = project["StartScenePath"].as<std::string>();
 
     return true;
   }

@@ -5,24 +5,6 @@
 
 namespace Buckshot {
 
-  const std::filesystem::path& Project::GetAssetDirectory()
-  {
-    BS_ASSERT(s_ActiveProject);
-    return s_ActiveProject->m_Configuration.AssetDirectory;
-  }
-
-  const std::filesystem::path& Project::GetProjectDirectory()
-  {
-    BS_ASSERT(s_ActiveProject);
-    return s_ActiveProject->m_ProjectDirectory;
-  }
-
-  const std::filesystem::path& Project::GetAssetFileSystemPath(const std::string& path)
-  {
-    BS_ASSERT(s_ActiveProject);
-    return GetProjectDirectory() / GetAssetDirectory() / path;
-  }
-
   Ref<Project> Project::New()
   {
     s_ActiveProject = CreateRef<Project>();
@@ -36,19 +18,44 @@ namespace Buckshot {
     ProjectSerializer serializer(project);
     if (serializer.Deserialize(filepath))
     {
-      project->m_ProjectDirectory = filepath.parent_path();
       s_ActiveProject = project;
+      s_ActiveProject->GetConfiguration().ProjectDirectory = filepath.parent_path();
       return s_ActiveProject;
     }
+      
 
     return nullptr;
   }
 
-  bool Project::SaveActive(const std::filesystem::path& filepath)
+  bool Project::Save(const std::filesystem::path& filepath)
   {
     ProjectSerializer serializer(s_ActiveProject);
-    s_ActiveProject->m_ProjectDirectory = filepath.parent_path();
-    return serializer.Serialize(filepath);
+    
+    if (serializer.Serialize(filepath))
+    {
+      s_ActiveProject->GetConfiguration().ProjectDirectory = filepath.parent_path();
+      return true;
+    }
+
+    return false;
+  }
+
+  const std::filesystem::path& Project::GetProjectDirectory()
+  {
+    BS_ASSERT(s_ActiveProject);
+    return s_ActiveProject->GetConfiguration().ProjectDirectory;
+  }
+
+  std::filesystem::path Project::GetFileSystemAssetPath(const std::filesystem::path& filepath)
+  {
+    BS_ASSERT(s_ActiveProject);
+    return GetAssetsDirectory() / filepath;
+  }
+
+  std::filesystem::path Project::GetAssetsDirectory()
+  {
+    BS_ASSERT(s_ActiveProject);
+    return GetProjectDirectory() / s_ActiveProject->GetConfiguration().AssetsDirectory;
   }
 
 }

@@ -5,11 +5,9 @@
 
 namespace Buckshot {
 
-  const std::filesystem::path g_AssetsPath("assets");
-
   ContentBrowserPanel::ContentBrowserPanel()
+    : m_BaseDirectory(Project::GetAssetsDirectory()), m_CurrentDirectory(m_BaseDirectory)
   {
-    m_CurrentDirectory = g_AssetsPath;
     m_DirectoryIcon = Texture2D::Create("assets/textures/DirectoryIcon.png");
     m_FileIcon = Texture2D::Create("assets/textures/FileIcon.png");
   }
@@ -18,7 +16,7 @@ namespace Buckshot {
   {
     ImGui::Begin("Content Browser");
 
-    if (m_CurrentDirectory != g_AssetsPath)
+    if (m_CurrentDirectory != m_BaseDirectory)
     {
       if (ImGui::Button("<-"))
       {
@@ -41,8 +39,7 @@ namespace Buckshot {
     for (auto& directory_entry : std::filesystem::directory_iterator(m_CurrentDirectory))
     {
       const auto& path = directory_entry.path();
-      auto relative_path = std::filesystem::relative(path, g_AssetsPath);
-      std::string filename_string = relative_path.filename().string();
+      std::string filename_string = path.filename().string();
 
       ImGui::PushID(filename_string.c_str());
 
@@ -51,6 +48,7 @@ namespace Buckshot {
 
       if (ImGui::BeginDragDropSource())
       {
+        std::filesystem::path relative_path(path);
         const wchar_t* item_path = relative_path.c_str();
         ImGui::SetDragDropPayload("ASSET_BROWSER_FILE", item_path, (std::wcslen(item_path) + 1) * sizeof(wchar_t), ImGuiCond_Once);
         ImGui::EndDragDropSource();

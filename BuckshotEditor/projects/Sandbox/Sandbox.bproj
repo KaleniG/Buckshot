@@ -1,0 +1,5 @@
+Project:
+  Name: Sandbox
+  AssetsDirectory: "Assets"
+  ScriptModulePath: "ScriptBinaries/Sandbox.dll"
+  StartScenePath: "Scenes/PhysicsTest.bshot"

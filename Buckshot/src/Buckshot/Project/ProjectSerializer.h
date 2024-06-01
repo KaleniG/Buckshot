@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Buckshot/Project/ProjectSerializer.h"
 #include "Buckshot/Project/Project.h"
 
 namespace Buckshot
@@ -8,8 +9,7 @@ namespace Buckshot
   class ProjectSerializer
   {
   public:
-    ProjectSerializer(Ref<Project> project);
-
+    ProjectSerializer(const Ref<Project>& project);
     bool Serialize(const std::filesystem::path& filepath);
     bool Deserialize(const std::filesystem::path& filepath);
 

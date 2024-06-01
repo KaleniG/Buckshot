@@ -2,6 +2,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include "Buckshot/Core/UUID.h"
+#include "Buckshot/Project/Project.h"
 #include "Buckshot/Scene/SceneSerializer.h"
 #include "Buckshot/Scene/Components.h"
 #include "Buckshot/Scene/Entity.h"
@@ -411,7 +412,9 @@ namespace Buckshot {
           src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
           if (spriteRendererComponent["HasTexture"].as<bool>() == true)
           {
-            src.Texture = Texture2D::Create(spriteRendererComponent["Path"].as<std::string>());
+            auto texture_path = Project::GetFileSystemAssetPath(spriteRendererComponent["Path"].as<std::string>()); //////////////////////
+
+            src.Texture = Texture2D::Create(texture_path.string()); ///////////////////
             src.TilingFactor = spriteRendererComponent["Tiling Factor"].as<float>();
           }
         }

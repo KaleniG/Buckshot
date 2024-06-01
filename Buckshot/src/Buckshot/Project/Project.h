@@ -2,35 +2,38 @@
 
 #include <filesystem>
 
-#include "Buckshot/Core/Base.h"
+#include "Buckshot/Core/Base.h" 
 
-namespace Buckshot { 
+namespace Buckshot {
 
   struct ProjectConfiguration
   {
+    // SERIALIZED
     std::string Name = "Untitled";
-
-    std::string StartScene;
-    std::filesystem::path AssetDirectory;
+    std::filesystem::path AssetsDirectory;
     std::filesystem::path ScriptModulePath;
+    std::filesystem::path StartScenePath;
+
+    // NOT SERIALIZED
+    std::filesystem::path ProjectDirectory;
   };
 
   class Project
   {
   public:
-    static Ref<Project> GetActive() { return s_ActiveProject; }
-    static const std::filesystem::path& GetAssetDirectory();
-    static const std::filesystem::path& GetProjectDirectory();
-    static const std::filesystem::path& GetAssetFileSystemPath(const std::string& path);
-    ProjectConfiguration& GetConfiguration() { return m_Configuration; }
-
     static Ref<Project> New();
     static Ref<Project> Load(const std::filesystem::path& filepath);
-    static bool SaveActive(const std::filesystem::path& filepath);
+    static bool Save(const std::filesystem::path& filepath);
 
+    static Ref<Project> GetActive() { return s_ActiveProject; }
+    static const std::filesystem::path& GetProjectDirectory();
+    static std::filesystem::path GetFileSystemAssetPath(const std::filesystem::path& filepath);
+    static std::filesystem::path GetAssetsDirectory();
+
+    ProjectConfiguration& GetConfiguration() { return m_Configuration; }
+ 
   private:
     ProjectConfiguration m_Configuration;
-    std::filesystem::path m_ProjectDirectory;
     inline static Ref<Project> s_ActiveProject;
   };
 

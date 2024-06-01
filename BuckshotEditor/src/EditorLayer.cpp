@@ -7,8 +7,6 @@
 
 namespace Buckshot {
 
-  extern const std::filesystem::path g_AssetsPath("assets");
-
   EditorLayer::EditorLayer()
     : Layer("EditorLayer") {}
 
@@ -35,8 +33,12 @@ namespace Buckshot {
     auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
     if (commandLineArgs.Count > 1)
     {
-      auto sceneFilePath = commandLineArgs[1];
-      OpenScene(sceneFilePath);
+      auto project_filepath = commandLineArgs[1];
+      OpenProject(project_filepath);
+    }
+    else
+    {
+      NewProject();
     }
 
     Renderer2D::SetLineWidth(4.0f);
@@ -226,7 +228,7 @@ namespace Buckshot {
     m_SceneHierarchyPanel.OnImGuiRender();
 
     // CONTENT BRWOSER PANEL
-    m_ContentBrowserPanel.OnImGuiRender();
+    m_ContentBrowserPanel->OnImGuiRender();
 
     // STATS PANEL
     ImGui::Begin("Stats");
@@ -272,7 +274,7 @@ namespace Buckshot {
       if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_BROWSER_FILE"))
       {
         const wchar_t* path = (const wchar_t*)payload->Data;
-        OpenScene(std::filesystem::path(g_AssetsPath) / path);
+        OpenScene(path);
       }
       ImGui::EndDragDropTarget();
     }
@@ -522,6 +524,27 @@ namespace Buckshot {
         m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
     }
     return false;
+  }
+
+  void EditorLayer::NewProject()
+  {
+    Project::New();
+  }
+
+  void EditorLayer::OpenProject(const std::filesystem::path filepath)
+  {
+    if (Project::Load(filepath))
+    {
+      auto config = Project::GetActive()->GetConfiguration();
+      auto start_scene_path = Project::GetFileSystemAssetPath(config.StartScenePath);
+      OpenScene(start_scene_path);
+      m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+    }
+  }
+
+  void EditorLayer::SaveProject()
+  {
+    // LATER
   }
 
   void EditorLayer::NewScene()

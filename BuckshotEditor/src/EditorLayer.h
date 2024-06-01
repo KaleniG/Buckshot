@@ -32,6 +32,10 @@ namespace Buckshot {
     bool OnKeyPressed(KeyPressedEvent& event);
     bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 
+    void NewProject();
+    void OpenProject(const std::filesystem::path filepath);
+    void SaveProject();
+
     void NewScene();
     void OpenScene();
     void OpenScene(const std::filesystem::path filepath);
@@ -74,7 +78,7 @@ namespace Buckshot {
     bool m_ViewportHovered = false;
 
     SceneHierarchyPanel m_SceneHierarchyPanel;
-    ContentBrowserPanel m_ContentBrowserPanel;
+    Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 
     // Gizmos
     int m_GizmoType = -1;

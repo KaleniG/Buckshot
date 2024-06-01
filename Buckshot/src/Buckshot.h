@@ -22,6 +22,9 @@
 // Math
 #include "Buckshot/Math/Math.h"
 
+// Project
+#include "Buckshot/Project/Project.h"
+
 // GUI
 #include "Buckshot/ImGui/ImGuiLayer.h"
 

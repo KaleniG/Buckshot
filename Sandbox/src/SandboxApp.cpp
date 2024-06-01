@@ -6,14 +6,18 @@
 class Sandbox : public Buckshot::Application
 {
 public:
-  Sandbox()
-    : Application("SandboxApp")
+  Sandbox(const Buckshot::ApplicationSpecification& spec)
+    : Application(spec)
   {
     PushLayer(new Sandbox2D());
   }
 };
 
-Buckshot::Application* Buckshot::CreateApplication()
+Buckshot::Application* Buckshot::CreateApplication(Buckshot::ApplicationCommandLineArgs args)
 {
-  return new Sandbox;
+  Buckshot::ApplicationSpecification spec;
+  spec.Name = "Buckshot Editor";
+  spec.CommandLineArgs = args;
+
+  return new Sandbox(spec);
 }
