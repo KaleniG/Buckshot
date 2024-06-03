@@ -26,6 +26,7 @@
 #include "Buckshot/Project/Project.h"
 
 // GUI
+#include "Buckshot/UI/UI.h"
 #include "Buckshot/ImGui/ImGuiLayer.h"
 
 // Rendering

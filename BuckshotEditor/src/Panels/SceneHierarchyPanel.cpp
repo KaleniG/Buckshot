@@ -523,11 +523,13 @@ namespace Buckshot {
         static char buffer[64];
         std::strcpy(buffer, component.Name.c_str());
 
-        if (!script_class_exists)
-          ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+        UI::ScopedStyleColor textColor(ImGuiCol_Text, ImVec4(0.85f, 0.2f, 0.2f, 1.0f), !script_class_exists);
 
         if (ImGui::InputText("Class", buffer, sizeof(buffer) / sizeof(char)))
+        {
           component.Name = buffer;
+          return;
+        }
 
         bool scene_running = scene->IsRunning();
 
@@ -587,9 +589,6 @@ namespace Buckshot {
             }
           }
         }
-
-        if (!script_class_exists)
-          ImGui::PopStyleColor();
       });
 
     // TODO: NativeScriptComponent

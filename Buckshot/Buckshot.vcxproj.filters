@@ -1529,6 +1529,7 @@
     <ClInclude Include="src\Buckshot\Utilities\FileSystem.h" />
     <ClInclude Include="src\Buckshot\Project\Project.h" />
     <ClInclude Include="src\Buckshot\Project\ProjectSerializer.h" />
+    <ClInclude Include="src\Buckshot\UI\UI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buckshot\Core\Application.cpp">

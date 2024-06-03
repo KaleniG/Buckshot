@@ -38,7 +38,13 @@ namespace Buckshot {
     }
     else
     {
-      NewProject();
+      if (!OpenProject())
+      {
+        // TEMPORARY
+        BS_FATAL("Can't start the editor without an initial project");
+        Application::Get().Close();
+
+      }
     }
 
     Renderer2D::SetLineWidth(4.0f);
@@ -164,24 +170,26 @@ namespace Buckshot {
     {
       if (ImGui::BeginMenu("File"))
       {
-        if (ImGui::MenuItem("New", "Ctrl + N"))
+        if (ImGui::MenuItem("Open Project"))
+        {
+          OpenProject();
+        }
+
+        ImGui::Separator();
+
+        if (ImGui::MenuItem("New Scene", "Ctrl + N"))
         {
           NewScene();
         }
 
-        if (ImGui::MenuItem("Save As...", "Ctrl + Shift + S"))
-        {
-          SaveSceneAs();
-        }
-
-        if (ImGui::MenuItem("Save", "Ctrl + S"))
+        if (ImGui::MenuItem("Save Scene", "Ctrl + S"))
         {
           SaveScene();
         }
 
-        if (ImGui::MenuItem("Open...", "Ctrl + O"))
+        if (ImGui::MenuItem("Save Scene As...", "Ctrl + Shift + S"))
         {
-          OpenScene();
+          SaveSceneAs();
         }
 
         ImGui::Separator();
@@ -441,12 +449,6 @@ namespace Buckshot {
         NewScene();
       return false;
     }
-    case Key::O:
-    {
-      if (control_pressed)
-        OpenScene();
-      return false;
-    }
     case Key::S:
     {
       if (control_pressed)
@@ -529,6 +531,16 @@ namespace Buckshot {
   void EditorLayer::NewProject()
   {
     Project::New();
+  }
+
+  bool EditorLayer::OpenProject()
+  {
+    std::string filepath = FileDialogs::OpenFile("Buckshot Project (*.bproj)\0*.bproj\0");
+    if (filepath.empty())
+      return false;
+
+    OpenProject(filepath);
+    return true;
   }
 
   void EditorLayer::OpenProject(const std::filesystem::path filepath)

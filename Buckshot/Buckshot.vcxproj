@@ -150,6 +150,7 @@
     <ClInclude Include="src\Buckshot.h" />
     <ClInclude Include="src\Buckshot\Core\Application.h" />
     <ClInclude Include="src\Buckshot\Core\Base.h" />
+    <ClInclude Include="src\Buckshot\UI\UI.h" />
     <ClInclude Include="src\Buckshot\Project\Project.h" />
     <ClInclude Include="src\Buckshot\Project\ProjectSerializer.h" />
     <ClInclude Include="src\Buckshot\Utilities\Buffer.h" />
