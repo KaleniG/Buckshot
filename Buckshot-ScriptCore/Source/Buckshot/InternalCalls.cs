@@ -61,6 +61,9 @@ namespace Buckshot
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
     internal extern static void Rigidbody2DComponent_SetFixedRotation(ulong entity_id, ref bool status);
 
+    [MethodImplAttribute(MethodImplOptions.InternalCall)]
+    internal extern static void Rigidbody2DComponent_GetLinearVelocity(ulong entity_id, out Vector2 velocity);
+
     // SpriteRenderer
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
     internal extern static void SpriteRendererComponent_GetColor(ulong entity_id, out Vector4 color);

@@ -58,4 +58,9 @@ namespace Buckshot {
     return GetProjectDirectory() / s_ActiveProject->GetConfiguration().AssetsDirectory;
   }
 
+  std::filesystem::path Project::GetScriptModulePath()
+  {
+    return GetProjectDirectory() / s_ActiveProject->GetConfiguration().ScriptModulePath;
+  }
+
 }

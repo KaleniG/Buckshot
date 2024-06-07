@@ -1,0 +1,9 @@
+D:\Projects\Buckshot\BuckshotEditor\projects\Sandbox\Scripts\Binaries\Sandbox.dll
+D:\Projects\Buckshot\BuckshotEditor\projects\Sandbox\Scripts\Binaries\Sandbox.pdb
+D:\Projects\Buckshot\BuckshotEditor\projects\Sandbox\Scripts\Binaries\Buckshot-ScriptCore.dll
+D:\Projects\Buckshot\BuckshotEditor\projects\Sandbox\Scripts\Binaries\Buckshot-ScriptCore.pdb
+D:\Projects\Buckshot\BuckshotEditor\projects\Sandbox\Scripts\Intermediates\Debug\Sandbox.csproj.AssemblyReference.cache
+D:\Projects\Buckshot\BuckshotEditor\projects\Sandbox\Scripts\Intermediates\Debug\Sandbox.csproj.CoreCompileInputs.cache
+D:\Projects\Buckshot\BuckshotEditor\projects\Sandbox\Scripts\Intermediates\Debug\Sandbox.csproj.Up2Date
+D:\Projects\Buckshot\BuckshotEditor\projects\Sandbox\Scripts\Intermediates\Debug\Sandbox.dll
+D:\Projects\Buckshot\BuckshotEditor\projects\Sandbox\Scripts\Intermediates\Debug\Sandbox.pdb

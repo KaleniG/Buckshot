@@ -1,0 +1,9 @@
+D:\Projects\Buckshot\BuckshotEditor\projects\Facerun\Scripts\Binaries\Facerun.dll
+D:\Projects\Buckshot\BuckshotEditor\projects\Facerun\Scripts\Binaries\Facerun.pdb
+D:\Projects\Buckshot\BuckshotEditor\projects\Facerun\Scripts\Binaries\Buckshot-ScriptCore.dll
+D:\Projects\Buckshot\BuckshotEditor\projects\Facerun\Scripts\Binaries\Buckshot-ScriptCore.pdb
+D:\Projects\Buckshot\BuckshotEditor\projects\Facerun\Scripts\Intermediates\Debug\Facerun.csproj.AssemblyReference.cache
+D:\Projects\Buckshot\BuckshotEditor\projects\Facerun\Scripts\Intermediates\Debug\Facerun.csproj.CoreCompileInputs.cache
+D:\Projects\Buckshot\BuckshotEditor\projects\Facerun\Scripts\Intermediates\Debug\Facerun.csproj.Up2Date
+D:\Projects\Buckshot\BuckshotEditor\projects\Facerun\Scripts\Intermediates\Debug\Facerun.dll
+D:\Projects\Buckshot\BuckshotEditor\projects\Facerun\Scripts\Intermediates\Debug\Facerun.pdb

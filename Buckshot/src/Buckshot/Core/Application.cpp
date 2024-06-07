@@ -29,7 +29,6 @@ namespace Buckshot {
     m_Window->SetEventCallback(BS_BIND_EVENT_FN(Application::OnEvent));
 
     Renderer::Init();
-    ScriptEngine::Init();
 
     m_ImGuiLayer = new ImGuiLayer();
     PushOverlay(m_ImGuiLayer);

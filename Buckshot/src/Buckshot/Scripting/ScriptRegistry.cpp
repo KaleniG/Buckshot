@@ -1,6 +1,8 @@
 #include <bspch.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <box2d/b2_body.h>
+#include <box2d/b2_fixture.h>
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/appdomain.h>
@@ -170,6 +172,17 @@ namespace Buckshot {
     BS_ASSERT(entity, "No entity");
 
     entity.GetComponent<Rigidbody2DComponent>().FixedRotation = *status;
+  }
+  static void Rigidbody2DComponent_GetLinearVelocity(UUID entity_id, glm::vec2* velocity)
+  {
+    Scene* scene = ScriptEngine::GetSceneContext();
+    BS_ASSERT(scene, "No scene");
+    Entity entity = scene->GetEntityByUUID(entity_id);
+    BS_ASSERT(entity, "No entity");
+
+    auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+    b2Body* body = (b2Body*)rb2d.RuntimeBody;
+    *velocity = glm::vec2(body->GetLinearVelocity().x, body->GetLinearVelocity().y);
   }
 
   // SpriteRendererComponent
@@ -696,6 +709,8 @@ namespace Buckshot {
     BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulseToCenter);
     BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetFixedRotation);
     BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetFixedRotation);
+
+    BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetLinearVelocity);
 
     // SpriteRenderer
     BS_ADD_INTERNAL_CALL(SpriteRendererComponent_GetColor);

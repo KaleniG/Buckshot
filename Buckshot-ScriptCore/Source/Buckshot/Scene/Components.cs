@@ -63,6 +63,15 @@ namespace Buckshot
       }
     }
 
+    public Velocity2D LinearVelocity
+    {
+      get
+      {
+        InternalCalls.Rigidbody2DComponent_GetLinearVelocity(Entity.ID, out Vector2 velocity);
+        return new Velocity2D(velocity);
+      }
+    }
+
     public void ApplyLinearImpulse(Vector2 impulse, Vector2 world_position, bool wake)
     {
       InternalCalls.Rigidbody2DComponent_ApplyLinearImpulse(Entity.ID, ref impulse, ref world_position, wake);

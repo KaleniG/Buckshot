@@ -29,6 +29,7 @@ namespace Buckshot {
     static const std::filesystem::path& GetProjectDirectory();
     static std::filesystem::path GetFileSystemAssetPath(const std::filesystem::path& filepath);
     static std::filesystem::path GetAssetsDirectory();
+    static std::filesystem::path GetScriptModulePath();
 
     ProjectConfiguration& GetConfiguration() { return m_Configuration; }
  

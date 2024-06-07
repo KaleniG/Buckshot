@@ -1,4 +1,5 @@
 #include <ImGui/imgui.h>
+#include <ImGui/imgui_internal.h>
 #include <ImGuizmo.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -45,6 +46,7 @@ namespace Buckshot {
         Application::Get().Close();
 
       }
+
     }
 
     Renderer2D::SetLineWidth(4.0f);
@@ -266,11 +268,12 @@ namespace Buckshot {
     m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
     m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
+    // VIEWPORT CHECKING
     m_ViewportFocused = ImGui::IsWindowFocused();
     m_ViewportHovered = ImGui::IsWindowHovered();
 
-    // SETUP A PROPER EVENT_BLOCKING SYSTEM!!!!
-    Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
+    // EVENT BLOCKING SYSTEM
+    Application::Get().GetImGuiLayer()->BlockEvents(ImGui::GetActiveID());
 
     ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
     m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -466,6 +469,7 @@ namespace Buckshot {
     case Key::Delete:
     {
       OnEntityDelete();
+      return false;
     }
     case Key::D:
     {
@@ -473,6 +477,7 @@ namespace Buckshot {
       {
         OnEntityDuplicate();
       }
+      return false;
     }
 
     // Scripting Shortcuts
@@ -547,6 +552,8 @@ namespace Buckshot {
   {
     if (Project::Load(filepath))
     {
+      ScriptEngine::Init();
+
       auto config = Project::GetActive()->GetConfiguration();
       auto start_scene_path = Project::GetFileSystemAssetPath(config.StartScenePath);
       OpenScene(start_scene_path);

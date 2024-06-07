@@ -9,6 +9,7 @@
 #include <mono/metadata/mono-debug.h>
 
 #include "Buckshot/Core/Application.h"
+#include "Buckshot/Project/Project.h"
 #include "Buckshot/Scene/Entity.h"
 #include "Buckshot/Scripting/ScriptEngine.h"
 #include "Buckshot/Scripting/ScriptRegistry.h"
@@ -132,7 +133,8 @@ namespace Buckshot {
 			BS_ERROR("[ScriptEngine] Couldn't load \"{0}\"", s_Data->CoreAssemblyFilepath.string());
 			return;
 		}
-		load_status = LoadAppAssembly("scripts/Sandbox.dll");
+
+		load_status = LoadAppAssembly(Project::GetScriptModulePath());
 		if (load_status == false)
 		{
 			BS_ERROR("[ScriptEngine] Couldn't load \"{0}\"", s_Data->AppAssemblyFilepath.string());
