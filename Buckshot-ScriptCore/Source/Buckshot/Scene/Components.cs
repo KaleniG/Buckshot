@@ -51,6 +51,42 @@ namespace Buckshot
 
   public class Rigidbody2D : Component
   {
+    public class Velocity2D
+    {
+      public float x;
+      public float y;
+
+      public Velocity2D(Vector2 vec2)
+      {
+        this.x = vec2.x;
+        this.y = vec2.y;
+      }
+
+      public float Length()
+      {
+        return (float)Math.Sqrt(x * x + y * y);
+      }
+    }
+
+    public enum BodyType2D
+    {
+      Static,
+      Dynamic,
+      Kinematic
+    }
+
+    public BodyType2D Type
+    {
+      get
+      {
+        return InternalCalls.Rigidbody2DComponent_GetBodyType(Entity.ID);
+      }
+      set
+      {
+        InternalCalls.Rigidbody2DComponent_SetBodyType(Entity.ID, ref value);
+      }
+    }
+
     public bool FixedRotation
     {
       get

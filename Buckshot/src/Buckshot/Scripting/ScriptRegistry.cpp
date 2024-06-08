@@ -8,8 +8,10 @@
 #include <mono/metadata/appdomain.h>
 
 #include "Buckshot/Core/Input.h"
+#include "Buckshot/Physics/Physics2D.h"
 #include "Buckshot/Scene/Scene.h"
 #include "Buckshot/Scene/Entity.h"
+#include "Buckshot/Scene/Components.h"
 #include "Buckshot/Scripting/ScriptRegistry.h"
 #include "Buckshot/Scripting/ScriptEngine.h"
 
@@ -183,6 +185,29 @@ namespace Buckshot {
     auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
     b2Body* body = (b2Body*)rb2d.RuntimeBody;
     *velocity = glm::vec2(body->GetLinearVelocity().x, body->GetLinearVelocity().y);
+  }
+  static Rigidbody2DComponent::BodyType Rigidbody2DComponent_GetBodyType(UUID entity_id)
+  {
+    Scene* scene = ScriptEngine::GetSceneContext();
+    BS_ASSERT(scene, "No scene");
+    Entity entity = scene->GetEntityByUUID(entity_id);
+    BS_ASSERT(entity, "No entity");
+
+    auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+    b2Body* body = (b2Body*)rb2d.RuntimeBody;
+    return Utilities::Rigidbody2D_Box2DToBuckshot(body->GetType());
+  }
+  static void Rigidbody2DComponent_SetBodyType(UUID entity_id, Rigidbody2DComponent::BodyType type)
+  {
+    Scene* scene = ScriptEngine::GetSceneContext();
+    BS_ASSERT(scene, "No scene");
+    Entity entity = scene->GetEntityByUUID(entity_id);
+    BS_ASSERT(entity, "No entity");
+
+    auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+    b2Body* body = (b2Body*)rb2d.RuntimeBody;
+    body->SetType(Utilities::Rigidbody2D_BuckshotToBox2D(type));
+    rb2d.Type = type;
   }
 
   // SpriteRendererComponent
@@ -709,8 +734,9 @@ namespace Buckshot {
     BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulseToCenter);
     BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetFixedRotation);
     BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetFixedRotation);
-
     BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetLinearVelocity);
+    BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetBodyType);
+    BS_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetBodyType);
 
     // SpriteRenderer
     BS_ADD_INTERNAL_CALL(SpriteRendererComponent_GetColor);

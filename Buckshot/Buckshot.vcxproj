@@ -153,6 +153,7 @@
     <ClInclude Include="src\Buckshot\UI\UI.h" />
     <ClInclude Include="src\Buckshot\Project\Project.h" />
     <ClInclude Include="src\Buckshot\Project\ProjectSerializer.h" />
+    <ClInclude Include="src\Buckshot\Physics\Physics2D.h" />
     <ClInclude Include="src\Buckshot\Utilities\Buffer.h" />
     <ClInclude Include="src\Buckshot\Core\EntryPoint.h" />
     <ClInclude Include="src\Buckshot\Core\Input.h" />

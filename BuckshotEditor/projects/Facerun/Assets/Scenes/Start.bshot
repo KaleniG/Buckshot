@@ -25,7 +25,7 @@ Entities:
       Tag: WallLeftMiddle
     TransformComponent:
       Position: [-29.2633362, 2.73953223, 0]
-      Rotation: [0, 0, 1.57000005]
+      Rotation: [0, 0, 1.57079637]
       Scale: [11.3905315, 0.999966681, 1]
     SpriteRendererComponent:
       Color: [0.354838729, 0, 0, 1]
@@ -45,7 +45,7 @@ Entities:
       Tag: WallRightMiddle
     TransformComponent:
       Position: [22.77561, 2.26257515, 0]
-      Rotation: [0, 0, 1.57000005]
+      Rotation: [0, 0, 1.57079637]
       Scale: [10.1367416, 0.999932468, 1]
     SpriteRendererComponent:
       Color: [0.354838729, 0, 0, 1]
@@ -65,7 +65,7 @@ Entities:
       Tag: WallLeft
     TransformComponent:
       Position: [-45.1135864, 7.28945494, 0]
-      Rotation: [0, 0, 1.57000005]
+      Rotation: [0, 0, 1.57079637]
       Scale: [21.532938, 0.999980927, 1]
     SpriteRendererComponent:
       Color: [0.354838729, 0, 0, 1]
@@ -84,8 +84,8 @@ Entities:
     TagComponent:
       Tag: WallRight
     TransformComponent:
-      Position: [46.238945, 7.21671295, 0]
-      Rotation: [0, 0, 1.57000005]
+      Position: [46.5400009, 7.21671295, 0]
+      Rotation: [0, 0, 1.57079637]
       Scale: [21.532938, 0.99998647, 1]
     SpriteRendererComponent:
       Color: [0.354838729, 0, 0, 1]

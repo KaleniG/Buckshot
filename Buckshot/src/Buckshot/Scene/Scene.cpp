@@ -13,26 +13,11 @@
 #include "Buckshot/Scene/Entity.h"
 #include "Buckshot/Scene/Scene.h"
 #include "Buckshot/Scripting/ScriptEngine.h"
+#include "Buckshot/Physics/Physics2D.h"
 
 namespace Buckshot {
 
   namespace Utilities {
-
-    static b2BodyType Rigidbody2D_BuckshotToBox2D(Rigidbody2DComponent::BodyType type)
-    {
-      switch (type)
-      {
-        case Rigidbody2DComponent::BodyType::Dynamic:
-          return b2_dynamicBody;
-        case Rigidbody2DComponent::BodyType::Static:
-          return b2_staticBody;
-        case Rigidbody2DComponent::BodyType::Kinematic:
-          return b2_kinematicBody;
-      }
-
-      BS_ASSERT(false, "Unknown BodyType");
-      return b2_staticBody;
-    }
 
     template<typename... Component>
     static void CopyComponent(entt::registry& destination, entt::registry& source, const std::unordered_map<UUID, entt::entity>& entt_map)

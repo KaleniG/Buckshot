@@ -21,6 +21,7 @@
 #include <unordered_set>
 
 #include "Buckshot/Core/Log.h"
+#include "Buckshot/Core/Base.h"
 #include "Buckshot/Debug/Instrumentor.h"
 
 #ifdef BS_PLATFORM_WINDOWS

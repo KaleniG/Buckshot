@@ -8,7 +8,7 @@
 
 namespace Buckshot {
 
-  static void DrawVec3Control(const std::string& label, glm::vec3& values, float reset_value = 0.0f, float column_width = 100.0f)
+  static void DrawVec3Control(const std::string& label, glm::vec3& values, float reset_value = 0.0f, float column_width = 100.0f, bool is_radians = false)
   {
     ImGuiIO& io = ImGui::GetIO();
     auto bold_font = io.Fonts->Fonts[0];
@@ -30,7 +30,14 @@ namespace Buckshot {
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+    if (!is_radians)
+      ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+    else
+    {
+      float degrees = glm::degrees(values.x);
+      ImGui::DragFloat("##X", &degrees, 0.1f, 0.0f, 0.0f, "%.2f");
+      values.x = glm::radians(degrees);
+    }
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -40,7 +47,14 @@ namespace Buckshot {
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+    if (!is_radians)
+      ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+    else
+    {
+      float degrees = glm::degrees(values.y);
+      ImGui::DragFloat("##Y", &degrees, 0.1f, 0.0f, 0.0f, "%.2f");
+      values.y = glm::radians(degrees);
+    }
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -50,7 +64,14 @@ namespace Buckshot {
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+    if (!is_radians)
+      ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+    else
+    {
+      float degrees = glm::degrees(values.z);
+      ImGui::DragFloat("##Z", &degrees, 0.1f, 0.0f, 0.0f, "%.2f");
+      values.z = glm::radians(degrees);
+    }
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -362,7 +383,7 @@ namespace Buckshot {
       {
         ImGui::Separator();
         DrawVec3Control("Position", component.Position);
-        DrawVec3Control("Rotation", component.Rotation);
+        DrawVec3Control("Rotation", component.Rotation, 0.0f, 100.0f, true);
         DrawVec3Control("Scale", component.Scale, 1.0f);
         ImGui::Separator();
       });

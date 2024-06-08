@@ -31,6 +31,9 @@ namespace Sandbox
       if (Input.IsKeyPressed(KeyCode.S))
         velocity.y = -1.0f;
 
+      if (Input.IsKeyPressed(KeyCode.Space))
+        Console.WriteLine(m_Rigidbody2D.Type.ToString());
+
       velocity *= Speed;
       m_Rigidbody2D.ApplyLinearImpulse(velocity.xy, true);
     }
