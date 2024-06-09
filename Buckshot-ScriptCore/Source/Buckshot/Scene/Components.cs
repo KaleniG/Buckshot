@@ -83,7 +83,8 @@ namespace Buckshot
       }
       set
       {
-        InternalCalls.Rigidbody2DComponent_SetBodyType(Entity.ID, ref value);
+        Console.WriteLine(value.ToString());
+        InternalCalls.Rigidbody2DComponent_SetBodyType(Entity.ID, value);
       }
     }
 

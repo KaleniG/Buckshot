@@ -68,7 +68,7 @@ namespace Buckshot
     internal extern static Rigidbody2D.BodyType2D Rigidbody2DComponent_GetBodyType(ulong entity_id);
 
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
-    internal extern static void Rigidbody2DComponent_SetBodyType(ulong entity_id, ref Rigidbody2D.BodyType2D type);
+    internal extern static void Rigidbody2DComponent_SetBodyType(ulong entity_id, Rigidbody2D.BodyType2D type);
 
     // SpriteRenderer
     [MethodImplAttribute(MethodImplOptions.InternalCall)]

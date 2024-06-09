@@ -9,7 +9,10 @@
 namespace Buckshot {
 
   EditorLayer::EditorLayer()
-    : Layer("EditorLayer") {}
+    : Layer("EditorLayer") 
+  {
+    Font font("assets/fonts/OpenSans/OpenSans-SemiBold.ttf");
+  }
 
   void EditorLayer::OnAttach()
   {

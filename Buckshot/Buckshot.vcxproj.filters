@@ -22,6 +22,12 @@
     <Filter Include="src\Buckshot\Math">
       <UniqueIdentifier>{58106ABE-C426-6854-0D9E-F37579F338DC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Buckshot\Physics">
+      <UniqueIdentifier>{9172C51E-7D01-4FE8-2620-63E3128E5F8E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Buckshot\Project">
+      <UniqueIdentifier>{65135F35-51A2-E8FE-FAC0-FCF9E62EF9A4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Buckshot\Renderer">
       <UniqueIdentifier>{A5964ECE-1103-0AC9-DAF6-A12646222C31}</UniqueIdentifier>
     </Filter>
@@ -30,6 +36,9 @@
     </Filter>
     <Filter Include="src\Buckshot\Scripting">
       <UniqueIdentifier>{E1277574-CD21-9EC6-B68E-34D7A2270433}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Buckshot\UI">
+      <UniqueIdentifier>{EC92BD98-581E-2B5D-612F-AE51CD39875D}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Buckshot\Utilities">
       <UniqueIdentifier>{4AD7815F-36D1-AAB1-1F3E-41C20BD7101E}</UniqueIdentifier>
@@ -138,6 +147,15 @@
     <ClInclude Include="src\Buckshot\Math\Math.h">
       <Filter>src\Buckshot\Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buckshot\Physics\Physics2D.h">
+      <Filter>src\Buckshot\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Project\Project.h">
+      <Filter>src\Buckshot\Project</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Project\ProjectSerializer.h">
+      <Filter>src\Buckshot\Project</Filter>
+    </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\Buffers.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
@@ -145,6 +163,9 @@
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\EditorCamera.h">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Renderer\Font.h">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Buckshot\Renderer\Framebuffer.h">
@@ -207,7 +228,19 @@
     <ClInclude Include="src\Buckshot\Scripting\ScriptRegistry.h">
       <Filter>src\Buckshot\Scripting</Filter>
     </ClInclude>
+    <ClInclude Include="src\Buckshot\UI\UI.h">
+      <Filter>src\Buckshot\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Utilities\Buffer.h">
+      <Filter>src\Buckshot\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Utilities\FileSystem.h">
+      <Filter>src\Buckshot\Utilities</Filter>
+    </ClInclude>
     <ClInclude Include="src\Buckshot\Utilities\PlatformUtils.h">
+      <Filter>src\Buckshot\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Buckshot\Utilities\Timer.h">
       <Filter>src\Buckshot\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
@@ -1524,13 +1557,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Buckshot\Utilities\Timer.h" />
-    <ClInclude Include="src\Buckshot\Utilities\Buffer.h" />
-    <ClInclude Include="src\Buckshot\Utilities\FileSystem.h" />
-    <ClInclude Include="src\Buckshot\Project\Project.h" />
-    <ClInclude Include="src\Buckshot\Project\ProjectSerializer.h" />
-    <ClInclude Include="src\Buckshot\UI\UI.h" />
-    <ClInclude Include="src\Buckshot\Physics\Physics2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Buckshot\Core\Application.cpp">
@@ -1560,10 +1586,19 @@
     <ClCompile Include="src\Buckshot\Math\Math.cpp">
       <Filter>src\Buckshot\Math</Filter>
     </ClCompile>
+    <ClCompile Include="src\Buckshot\Project\Project.cpp">
+      <Filter>src\Buckshot\Project</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Project\ProjectSerializer.cpp">
+      <Filter>src\Buckshot\Project</Filter>
+    </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\Buffers.cpp">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\EditorCamera.cpp">
+      <Filter>src\Buckshot\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Renderer\Font.cpp">
       <Filter>src\Buckshot\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Buckshot\Renderer\Framebuffer.cpp">
@@ -1619,6 +1654,9 @@
     </ClCompile>
     <ClCompile Include="src\Buckshot\Scripting\ScriptRegistry.cpp">
       <Filter>src\Buckshot\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buckshot\Utilities\FileSystem.cpp">
+      <Filter>src\Buckshot\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
@@ -1683,8 +1721,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Buckshot\Utilities\FileSystem.cpp" />
-    <ClCompile Include="src\Buckshot\Project\Project.cpp" />
-    <ClCompile Include="src\Buckshot\Project\ProjectSerializer.cpp" />
   </ItemGroup>
 </Project>

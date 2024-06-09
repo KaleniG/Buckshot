@@ -41,6 +41,7 @@
 #include "Buckshot/Renderer/Buffers.h"
 #include "Buckshot/Renderer/Texture.h"
 #include "Buckshot/Renderer/Shader.h"
+#include "Buckshot/Renderer/Font.h"
 
 // Scene Management
 #include "Buckshot/Scene/SceneSerializer.h"

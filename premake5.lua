@@ -28,18 +28,20 @@ workspace "Buckshot"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
-IncludeDir["spdlog"] 	= "Buckshot/vendor/spdlog/include"
-IncludeDir["GLFW"] 		= "Buckshot/vendor/GLFW/include"
-IncludeDir["GLAD"] 		= "Buckshot/vendor/GLAD/include"
-IncludeDir["ImGui"] 	= "Buckshot/vendor/ImGui"
-IncludeDir["glm"] 		= "Buckshot/vendor/glm"
-IncludeDir["EnTT"]		= "Buckshot/vendor/EnTT/include"
-IncludeDir["stb_image"] = "Buckshot/vendor/stb_image"
-IncludeDir["YAML"] 		= "Buckshot/vendor/YAML/include"
-IncludeDir["ImGuizmo"]  = "Buckshot/vendor/ImGuizmo"
-IncludeDir["Box2D"]  	= "Buckshot/vendor/Box2D/include"
-IncludeDir["mono"]  	= "Buckshot/vendor/mono/include"
-IncludeDir["filewatch"] = "Buckshot/vendor/filewatch"
+IncludeDir["spdlog"] 			= "Buckshot/vendor/spdlog/include"
+IncludeDir["GLFW"] 				= "Buckshot/vendor/GLFW/include"
+IncludeDir["GLAD"] 				= "Buckshot/vendor/GLAD/include"
+IncludeDir["ImGui"] 			= "Buckshot/vendor/ImGui"
+IncludeDir["glm"] 				= "Buckshot/vendor/glm"
+IncludeDir["EnTT"]				= "Buckshot/vendor/EnTT/include"
+IncludeDir["stb_image"] 		= "Buckshot/vendor/stb_image"
+IncludeDir["YAML"] 				= "Buckshot/vendor/YAML/include"
+IncludeDir["ImGuizmo"]  		= "Buckshot/vendor/ImGuizmo"
+IncludeDir["Box2D"]  			= "Buckshot/vendor/Box2D/include"
+IncludeDir["mono"]  			= "Buckshot/vendor/mono/include"
+IncludeDir["filewatch"] 		= "Buckshot/vendor/filewatch"
+IncludeDir["msdf_atlas_gen"]	= "Buckshot/vendor/msdf-atlas-gen/msdf-atlas-gen"
+IncludeDir["msdfgen"] 			= "Buckshot/vendor/msdf-atlas-gen/msdfgen"
 
 group "Dependencies"
 	include "Buckshot/vendor/GLFW"
@@ -47,6 +49,7 @@ group "Dependencies"
 	include "Buckshot/vendor/ImGui"
 	include "Buckshot/vendor/YAML"
 	include "Buckshot/vendor/Box2D"
+	include "Buckshot/vendor/msdf-atlas-gen"
 group ""
 
 group "Core"
@@ -93,7 +96,9 @@ project "Buckshot"
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.Box2D}",
 		"%{IncludeDir.mono}",
-		"%{IncludeDir.filewatch}"
+		"%{IncludeDir.filewatch}",
+		"%{IncludeDir.msdf_atlas_gen}",
+		"%{IncludeDir.msdfgen}"
 	}
 
 	links 
@@ -103,6 +108,7 @@ project "Buckshot"
 		"ImGui",
 		"YAML",
 		"Box2D",
+		"msdf-atlas-gen",
 		"opengl32.lib",
 		"Buckshot/vendor/mono/lib/%{cfg.buildcfg}/libmono-static-sgen.lib" -- Mono
 	}
